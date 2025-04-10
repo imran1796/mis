@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\MloStoreRequest;
+use App\Models\Route;
 use App\Services\MloService;
 use Illuminate\Http\Request;
 
@@ -33,8 +34,9 @@ class MloController extends Controller
         return $this->mloService->createMlo($mlo);
     }
 
-    public function mloWiseIndex(){
-        return view('mlos.upload');
+    public function createTradeVolume(){
+        $routes = Route::all();
+        return view('mlos.upload',compact('routes'));
     }
 
     // public function mloWiseStore(Request $request){

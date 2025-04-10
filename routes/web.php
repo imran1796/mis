@@ -39,9 +39,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::group(['prefix' => 'uoload'], function () {
-        Route::get('/mloWise', [\App\Http\Controllers\MloController::class, 'mloWiseIndex'])->name('mloWise.index');
+        Route::get('/mloWise', [\App\Http\Controllers\MloController::class, 'createTradeVolume'])->name('mloWise.upload');
         Route::get('/vesselWise', [\App\Http\Controllers\VesselController::class, 'vesselWiseIndex'])->name('vesselWise.index');
-        Route::post('/mloWise', [\App\Http\Controllers\MloController::class, 'mloWiseStore'])->name('mloWise.store');
+        Route::post('/mloWise', [\App\Http\Controllers\MloController::class, 'storeTradeVolume'])->name('mloWise.store');
         Route::post('/vesselWise', [\App\Http\Controllers\VesselController::class, 'vesselWiseStore'])->name('vesselWise.store');
         
     });

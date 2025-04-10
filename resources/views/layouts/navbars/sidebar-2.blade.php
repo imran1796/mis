@@ -117,7 +117,7 @@
 
             {{-- @can('Vessel-data') --}}
             <li class="nav-item @if ($activePage == 'mlo') active @endif">
-                <a class="nav-link" href="{{ route('mlos.index') }}">
+                <a class="nav-link" href="{{ route('mlos.create') }}">
                     <i class="fa-solid fa-receipt"></i>
                     {{ __('MLO') }}
                 </a>
@@ -134,7 +134,7 @@
                     id="upload">
 
                     <li class="nav-item @if ($activePage == 'mloWise') active @endif">
-                        <a class="nav-link" href="{{ route('mloWise.index') }}">
+                        <a class="nav-link" href="{{ route('mloWise.upload') }}">
                             <i class="fas fa-user"></i>
                             {{ __('MLO') }}
                         </a>

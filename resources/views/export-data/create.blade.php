@@ -37,9 +37,9 @@
                                     </label>
                                     <input required type="file" name="file" class="form-control form-control-sm"
                                         id="customFile">
-                                    {{-- <!--
+                                    {{-- 
                                             <label class="custom-file-label" for="customFile">Choose file</label>
---> --}}
+                                                --}}
                                 </div>
 
                                 <div class="form-group col-md-6">
@@ -137,7 +137,5 @@
                 }
             });
         });
-
-        
     </script>
 @endpush
