@@ -1,0 +1,332 @@
+[
+  {
+    "mlo_code": "ANL",
+    "line_belongs_to": "CMA CGM",
+    "mlo_details": "AUSTRALIAN NATIONAL LINES LTD"
+  },
+  {
+    "mlo_code": "APL",
+    "line_belongs_to": "CMA CGM",
+    "mlo_details": "AMERICAN PRESIDENT LINE"
+  },
+  {
+    "mlo_code": "CMA",
+    "line_belongs_to": "CMA CGM",
+    "mlo_details": "CMA CGM"
+  },
+  {
+    "mlo_code": "CLN",
+    "line_belongs_to": "CMA CGM",
+    "mlo_details": ""
+  },
+  {
+    "mlo_code": "BTC",
+    "line_belongs_to": "BTB",
+    "mlo_details": "BALTIC SHIPPING (PVT) LTD"
+  },
+  {
+    "mlo_code": "BLPL",
+    "line_belongs_to": "BLPL",
+    "mlo_details": "BLPL SINGAPORE PTE LTD"
+  },
+  {
+    "mlo_code": "COSCO",
+    "line_belongs_to": "COSCO",
+    "mlo_details": "CHINA OCEAN SHIPPING COMPANY, LIMITED"
+  },
+  {
+    "mlo_code": "NGS",
+    "line_belongs_to": "COSCO",
+    "mlo_details": "NEW GOLDEN SEA SHIPPING PTE LTD"
+  },
+  {
+    "mlo_code": "EMS",
+    "line_belongs_to": "EVERGREEN",
+    "mlo_details": "EVERGREEN MARINE CORP (SINGAPORE) LTD"
+  },
+  {
+    "mlo_code": "EMC",
+    "line_belongs_to": "EVERGREEN",
+    "mlo_details": "EVERGREEN MARINE CORP LTD"
+  },
+  {
+    "mlo_code": "EMU",
+    "line_belongs_to": "EVERGREEN",
+    "mlo_details": "EVERGREEN MARINE CORP (UK) LTD"
+  },
+  {
+    "mlo_code": "EMA",
+    "line_belongs_to": "EVERGREEN",
+    "mlo_details": ""
+  },
+  {
+    "mlo_code": "IM",
+    "line_belongs_to": "EVERGREEN",
+    "mlo_details": "ITALIA MARITIMA S.P.A."
+  },
+  {
+    "mlo_code": "EGH",
+    "line_belongs_to": "EGH",
+    "mlo_details": ""
+  },
+  {
+    "mlo_code": "GSL",
+    "line_belongs_to": "GSL",
+    "mlo_details": "GOLD STAR LINE LTD"
+  },
+  {
+    "mlo_code": "HL",
+    "line_belongs_to": "HEPAG LIOYD",
+    "mlo_details": "HAPAG LIOYD"
+  },
+  {
+    "mlo_code": "HEUNGA",
+    "line_belongs_to": "HEG",
+    "mlo_details": "HEUNG A LINE CO., LTD"
+  },
+  {
+    "mlo_code": "HMM",
+    "line_belongs_to": "HMM",
+    "mlo_details": "HYUNDAI MERCHANT MARINE CO.LTD."
+  },
+  {
+    "mlo_code": "KMTC",
+    "line_belongs_to": "KMTC",
+    "mlo_details": "KMT CONTAINER LINE PTE. LTD."
+  },
+  {
+    "mlo_code": "MSL",
+    "line_belongs_to": "MAERSK",
+    "mlo_details": "MAERSK LINE"
+  },
+  {
+    "mlo_code": "MCC",
+    "line_belongs_to": "MAERSK",
+    "mlo_details": "MCC TRANSPORT"
+  },
+  {
+    "mlo_code": "SAS",
+    "line_belongs_to": "MAERSK",
+    "mlo_details": "SEALAND – A MAERSK COMPANY"
+  },
+  {
+    "mlo_code": "SAF",
+    "line_belongs_to": "MAERSK",
+    "mlo_details": "SAFMARINE"
+  },
+  {
+    "mlo_code": "MAXI",
+    "line_belongs_to": "MAXI",
+    "mlo_details": "MAXICON CONTAINER LINE"
+  },
+  {
+    "mlo_code": "MSC",
+    "line_belongs_to": "MSC",
+    "mlo_details": "MSC MEDITERRANEAN SHIPPING COMPANY LTD"
+  },
+  {
+    "mlo_code": "ONE",
+    "line_belongs_to": "ONE",
+    "mlo_details": "OCEAN NETWORK EXPRESS LINE"
+  },
+  {
+    "mlo_code": "OOCL",
+    "line_belongs_to": "OOCL",
+    "mlo_details": "ORIENT OVERSEAS CONTAINER LINE"
+  },
+  {
+    "mlo_code": "OUL",
+    "line_belongs_to": "OOCL",
+    "mlo_details": "ORIENT OVERSEAS EUROPE CONTAINER LINE"
+  },
+  {
+    "mlo_code": "PIL",
+    "line_belongs_to": "PIL",
+    "mlo_details": "PACIFIC INTERNATIONAL LINES"
+  },
+  {
+    "mlo_code": "SAMU",
+    "line_belongs_to": "SAMU",
+    "mlo_details": "SAMUDERA SHIPPING LINE LTD"
+  },
+  {
+    "mlo_code": "SETH",
+    "line_belongs_to": "GSL",
+    "mlo_details": "GOLD STAR LINE LTD"
+  },
+  {
+    "mlo_code": "SKN",
+    "line_belongs_to": "SINOKOR",
+    "mlo_details": "SINOKOR MERCHANT MARINE"
+  },
+  {
+    "mlo_code": "WHL",
+    "line_belongs_to": "WHL",
+    "mlo_details": "WAN HAI LINES LTD."
+  },
+  {
+    "mlo_code": "YML",
+    "line_belongs_to": "YML",
+    "mlo_details": "YANGMING MARINE TRANSPORT CORP"
+  },
+  {
+    "mlo_code": "ALL",
+    "line_belongs_to": "ALL",
+    "mlo_details": "ALLSEAS SHIPPING LTD"
+  },
+  {
+    "mlo_code": "VSL",
+    "line_belongs_to": "VSL",
+    "mlo_details": "VASI SHIPPING PTE LTD"
+  },
+  {
+    "mlo_code": "SCC",
+    "line_belongs_to": "SITC",
+    "mlo_details": "SITC CONTAINER LINES"
+  },
+  {
+    "mlo_code": "TIZ",
+    "line_belongs_to": "TIZ",
+    "mlo_details": "TI2 LOGISTICS PTE LTD"
+  },
+  {
+    "mlo_code": "ARL",
+    "line_belongs_to": "ARL",
+    "mlo_details": "ARCANE LINES (PVT) LTD."
+  },
+  {
+    "mlo_code": "BLS",
+    "line_belongs_to": "BLS",
+    "mlo_details": "TRANSWORLD LOGISTICS & SHIPPING LTD"
+  },
+  {
+    "mlo_code": "EGL",
+    "line_belongs_to": "EGL",
+    "mlo_details": ""
+  },
+  {
+    "mlo_code": "FSC",
+    "line_belongs_to": "FSC",
+    "mlo_details": "FASTEX CONTAINER PTE LTD"
+  },
+  {
+    "mlo_code": "GAP",
+    "line_belongs_to": "GAP",
+    "mlo_details": "GREEN GLOBAL TRADING  TRANSPORT SOLUTIONS PTE LTD"
+  },
+  {
+    "mlo_code": "INL",
+    "line_belongs_to": "INL",
+    "mlo_details": "INDIA LANKA EXPRESS (PVT) LTD"
+  },
+  {
+    "mlo_code": "KCS",
+    "line_belongs_to": "KCS",
+    "mlo_details": ""
+  },
+  {
+    "mlo_code": "LCN",
+    "line_belongs_to": "LCN",
+    "mlo_details": ""
+  },
+  {
+    "mlo_code": "LEL",
+    "line_belongs_to": "LEL",
+    "mlo_details": "LOGISTICS EXPEDITORS SDN BHD"
+  },
+  {
+    "mlo_code": "LSC",
+    "line_belongs_to": "LSC",
+    "mlo_details": ""
+  },
+  {
+    "mlo_code": "PLO",
+    "line_belongs_to": "PLO",
+    "mlo_details": "POLISH OCEAN LINES"
+  },
+  {
+    "mlo_code": "QCML",
+    "line_belongs_to": "QCML",
+    "mlo_details": "QC MARITIME LIMITED"
+  },
+  {
+    "mlo_code": "SCI",
+    "line_belongs_to": "SCI",
+    "mlo_details": "THE SHIPPING COPRPORATION OF INDIA LTD"
+  },
+  {
+    "mlo_code": "SITARA",
+    "line_belongs_to": "SITARA",
+    "mlo_details": "SITARA SHIPPING LINES LTD."
+  },
+  {
+    "mlo_code": "TVS",
+    "line_belongs_to": "TVS",
+    "mlo_details": ""
+  },
+  {
+    "mlo_code": "UCL",
+    "line_belongs_to": "UCL",
+    "mlo_details": ""
+  },
+  {
+    "mlo_code": "VMP",
+    "line_belongs_to": "VMP",
+    "mlo_details": ""
+  },
+  {
+    "mlo_code": "MLG",
+    "line_belongs_to": "MLG",
+    "mlo_details": "JUPITER CONTAINER LINES PTE LTD"
+  },
+  {
+    "mlo_code": "MLS",
+    "line_belongs_to": "MLS",
+    "mlo_details": ""
+  },
+  {
+    "mlo_code": "CSI",
+    "line_belongs_to": "CSI",
+    "mlo_details": "CONSOLATED SHIPPING LINE PVT LTD"
+  },
+  {
+    "mlo_code": "PRC",
+    "line_belongs_to": "PRC",
+    "mlo_details": ""
+  },
+  {
+    "mlo_code": "RXL",
+    "line_belongs_to": "RXL",
+    "mlo_details": "RELIANCE SHIPPING AND LOGISTICS LIMITED."
+  },
+  {
+    "mlo_code": "SPI",
+    "line_belongs_to": "SPI",
+    "mlo_details": "SPECTRUM LINES PTE LTD"
+  },
+  {
+    "mlo_code": "VSC",
+    "line_belongs_to": "VSC",
+    "mlo_details": ""
+  },
+  {
+    "mlo_code": "GLG",
+    "line_belongs_to": "GLG",
+    "mlo_details": "GOODRICH SHIPPING & LOGISTICS PTE LTD"
+  },
+  {
+    "mlo_code": "BCS",
+    "line_belongs_to": "BCS",
+    "mlo_details": "BENGAL CONTAINER LINE"
+  },
+  {
+    "mlo_code": "TPS",
+    "line_belongs_to": "TPS",
+    "mlo_details": "SEA HAWK GLOBAL LINES SDN BHD"
+  },
+  {
+    "mlo_code": "TSM",
+    "line_belongs_to": "TSM",
+    "mlo_details": "TRUST SHIPPING MAXCON"
+  }
+]

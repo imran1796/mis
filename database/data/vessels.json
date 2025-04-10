@@ -1,0 +1,2266 @@
+[
+  {
+    "vessel_name": "AS RICCARDA",
+    "loa": 180.35,
+    "crane_status": "GL",
+    "nominal_capacity": 1496,
+    "effective_capacity": 1197,
+    "imo_no": 9449869
+  },
+  {
+    "vessel_name": "ASIATIC KING",
+    "loa": 148.53,
+    "crane_status": "GL",
+    "nominal_capacity": 1155,
+    "effective_capacity": 924,
+    "imo_no": 9318266
+  },
+  {
+    "vessel_name": "BANGKOK",
+    "loa": 168,
+    "crane_status": "GL",
+    "nominal_capacity": 1567,
+    "effective_capacity": 1254,
+    "imo_no": 9197349
+  },
+  {
+    "vessel_name": "BLPL TRUST",
+    "loa": 167.87,
+    "crane_status": "GL",
+    "nominal_capacity": 1512,
+    "effective_capacity": 1210,
+    "imo_no": 9119660
+  },
+  {
+    "vessel_name": "CAPE FORTIUS",
+    "loa": 184.93,
+    "crane_status": "GL",
+    "nominal_capacity": 2190,
+    "effective_capacity": 1752,
+    "imo_no": 9734147
+  },
+  {
+    "vessel_name": "CAPE SYROS",
+    "loa": 184.84,
+    "crane_status": "G",
+    "nominal_capacity": 2190,
+    "effective_capacity": 1752,
+    "imo_no": 9676204
+  },
+  {
+    "vessel_name": "CHERRY",
+    "loa": 162,
+    "crane_status": "GL",
+    "nominal_capacity": 1064,
+    "effective_capacity": 851,
+    "imo_no": 9181754
+  },
+  {
+    "vessel_name": "CNC JUPITER",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1952,
+    "effective_capacity": 1562,
+    "imo_no": 9836672
+  },
+  {
+    "vessel_name": "CNC NEPTUNE",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1952,
+    "effective_capacity": 1562,
+    "imo_no": 9836658
+  },
+  {
+    "vessel_name": "GDYNIA TRADER",
+    "loa": 184.4,
+    "crane_status": "G",
+    "nominal_capacity": 1728,
+    "effective_capacity": 1382,
+    "imo_no": 9230775
+  },
+  {
+    "vessel_name": "HR HERA",
+    "loa": 182.83,
+    "crane_status": "GL",
+    "nominal_capacity": 1454,
+    "effective_capacity": 1163,
+    "imo_no": 9175614
+  },
+  {
+    "vessel_name": "HR RHEA",
+    "loa": 182.83,
+    "crane_status": "GL",
+    "nominal_capacity": 1454,
+    "effective_capacity": 1163,
+    "imo_no": 9175597
+  },
+  {
+    "vessel_name": "INGENUITY",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1707,
+    "effective_capacity": 1366,
+    "imo_no": 9790892
+  },
+  {
+    "vessel_name": "KALAMOTI TRADER",
+    "loa": 184.89,
+    "crane_status": "G",
+    "nominal_capacity": 2190,
+    "effective_capacity": 1752,
+    "imo_no": 9701279
+  },
+  {
+    "vessel_name": "KHUNA BHUM",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1668,
+    "effective_capacity": 1334,
+    "imo_no": 9796286
+  },
+  {
+    "vessel_name": "KOTA NEBULA",
+    "loa": 179.67,
+    "crane_status": "G",
+    "nominal_capacity": 1810,
+    "effective_capacity": 1448,
+    "imo_no": 9494632
+  },
+  {
+    "vessel_name": "KOTA RIA",
+    "loa": 145.93,
+    "crane_status": "G",
+    "nominal_capacity": 851,
+    "effective_capacity": 681,
+    "imo_no": 9296339
+  },
+  {
+    "vessel_name": "KOTA WANGSA",
+    "loa": 184.5,
+    "crane_status": "GL",
+    "nominal_capacity": 1186,
+    "effective_capacity": 949,
+    "imo_no": 9123594
+  },
+  {
+    "vessel_name": "MAERSK BINTULU",
+    "loa": 185.99,
+    "crane_status": "G",
+    "nominal_capacity": 2806,
+    "effective_capacity": 2245,
+    "imo_no": 9840702
+  },
+  {
+    "vessel_name": "MAERSK JAKARTA",
+    "loa": 185.99,
+    "crane_status": "G",
+    "nominal_capacity": 2806,
+    "effective_capacity": 2245,
+    "imo_no": 9865881
+  },
+  {
+    "vessel_name": "MAERSK KWANGYANG",
+    "loa": 186,
+    "crane_status": "G",
+    "nominal_capacity": 2806,
+    "effective_capacity": 2245,
+    "imo_no": 9858747
+  },
+  {
+    "vessel_name": "MAERSK MONGLA",
+    "loa": 186,
+    "crane_status": "G",
+    "nominal_capacity": 2806,
+    "effective_capacity": 2245,
+    "imo_no": 9840738
+  },
+  {
+    "vessel_name": "MAERSK SONGKHLA",
+    "loa": 185.99,
+    "crane_status": "G",
+    "nominal_capacity": 2806,
+    "effective_capacity": 2245,
+    "imo_no": 9840726
+  },
+  {
+    "vessel_name": "MAERSK VLADIVOSTOK",
+    "loa": 185.99,
+    "crane_status": "G",
+    "nominal_capacity": 2806,
+    "effective_capacity": 2245,
+    "imo_no": 9840697
+  },
+  {
+    "vessel_name": "MAERSK XIAMEN",
+    "loa": 186,
+    "crane_status": "G",
+    "nominal_capacity": 1806,
+    "effective_capacity": 1445,
+    "imo_no": 9858723
+  },
+  {
+    "vessel_name": "MARINE BIA",
+    "loa": 171.99,
+    "crane_status": "G",
+    "nominal_capacity": 1577,
+    "effective_capacity": 1262,
+    "imo_no": 9445007
+  },
+  {
+    "vessel_name": "MARINE TARABA",
+    "loa": 171.99,
+    "crane_status": "G",
+    "nominal_capacity": 1577,
+    "effective_capacity": 1262,
+    "imo_no": 9445019
+  },
+  {
+    "vessel_name": "MCC CEBU",
+    "loa": 185.99,
+    "crane_status": "G",
+    "nominal_capacity": 2806,
+    "effective_capacity": 2245,
+    "imo_no": 9823730
+  },
+  {
+    "vessel_name": "MCC CHITTAGONG",
+    "loa": 185.97,
+    "crane_status": "G",
+    "nominal_capacity": 1530,
+    "effective_capacity": 1224,
+    "imo_no": 9761023
+  },
+  {
+    "vessel_name": "MCC DANANG",
+    "loa": 185.99,
+    "crane_status": "G",
+    "nominal_capacity": 2806,
+    "effective_capacity": 2245,
+    "imo_no": 9823742
+  },
+  {
+    "vessel_name": "MCC MANDALAY",
+    "loa": 185.97,
+    "crane_status": "G",
+    "nominal_capacity": 1730,
+    "effective_capacity": 1384,
+    "imo_no": 9751107
+  },
+  {
+    "vessel_name": "MCC NANJING",
+    "loa": 186.02,
+    "crane_status": "G",
+    "nominal_capacity": 1730,
+    "effective_capacity": 1384,
+    "imo_no": 9740653
+  },
+  {
+    "vessel_name": "MCC TAIPEI",
+    "loa": 185.99,
+    "crane_status": "GL",
+    "nominal_capacity": 1806,
+    "effective_capacity": 1445,
+    "imo_no": 9823766
+  },
+  {
+    "vessel_name": "MCC TOKYO",
+    "loa": 185.99,
+    "crane_status": "GL",
+    "nominal_capacity": 1806,
+    "effective_capacity": 1445,
+    "imo_no": 9823728
+  },
+  {
+    "vessel_name": "MCC YANGON",
+    "loa": 185.99,
+    "crane_status": "GL",
+    "nominal_capacity": 1806,
+    "effective_capacity": 1445,
+    "imo_no": 9823754
+  },
+  {
+    "vessel_name": "MOUNT CAMERON",
+    "loa": 169.96,
+    "crane_status": "G",
+    "nominal_capacity": 1700,
+    "effective_capacity": 1360,
+    "imo_no": 9760598
+  },
+  {
+    "vessel_name": "NEGAR",
+    "loa": 168.46,
+    "crane_status": "G",
+    "nominal_capacity": 1600,
+    "effective_capacity": 1280,
+    "imo_no": 9165839
+  },
+  {
+    "vessel_name": "OEL SHASTA",
+    "loa": 179.38,
+    "crane_status": "G",
+    "nominal_capacity": 1684,
+    "effective_capacity": 1347,
+    "imo_no": 9134684
+  },
+  {
+    "vessel_name": "MCC ORNELLA",
+    "loa": 294.1,
+    "crane_status": "GL",
+    "nominal_capacity": 4900,
+    "effective_capacity": 3920,
+    "imo_no": 9281267
+  },
+  {
+    "vessel_name": "PEARL RIVER BRIDGE",
+    "loa": 171.99,
+    "crane_status": "GL",
+    "nominal_capacity": 1708,
+    "effective_capacity": 1366,
+    "imo_no": 9444986
+  },
+  {
+    "vessel_name": "SABRE TRADER",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1774,
+    "effective_capacity": 1419,
+    "imo_no": 9817884
+  },
+  {
+    "vessel_name": "SAHARE",
+    "loa": 184.5,
+    "crane_status": "GL",
+    "nominal_capacity": 1186,
+    "effective_capacity": 949,
+    "imo_no": 9157399
+  },
+  {
+    "vessel_name": "SARERA",
+    "loa": 184.5,
+    "crane_status": "GL",
+    "nominal_capacity": 1550,
+    "effective_capacity": 1240,
+    "imo_no": 9157404
+  },
+  {
+    "vessel_name": "SAWASDEE BALTIC",
+    "loa": 172.07,
+    "crane_status": "GL",
+    "nominal_capacity": 1809,
+    "effective_capacity": 1447,
+    "imo_no": 9886067
+  },
+  {
+    "vessel_name": "SEOUL GLOW",
+    "loa": 175.1,
+    "crane_status": "G",
+    "nominal_capacity": 1700,
+    "effective_capacity": 1360,
+    "imo_no": 9357535
+  },
+  {
+    "vessel_name": "SINAR SORONG",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1876,
+    "effective_capacity": 1501,
+    "imo_no": 9866471
+  },
+  {
+    "vessel_name": "SITC SHANGHAI",
+    "loa": 171.99,
+    "crane_status": "GL",
+    "nominal_capacity": 1808,
+    "effective_capacity": 1446,
+    "imo_no": 9712773
+  },
+  {
+    "vessel_name": "SOL DELTA",
+    "loa": 184.02,
+    "crane_status": "G",
+    "nominal_capacity": 1726,
+    "effective_capacity": 1381,
+    "imo_no": 9082805
+  },
+  {
+    "vessel_name": "SOL HIND",
+    "loa": 183.96,
+    "crane_status": "G",
+    "nominal_capacity": 1726,
+    "effective_capacity": 1381,
+    "imo_no": 9122057
+  },
+  {
+    "vessel_name": "SOL MALAYSIA",
+    "loa": 166.76,
+    "crane_status": "G",
+    "nominal_capacity": 1512,
+    "effective_capacity": 1210,
+    "imo_no": 9081019
+  },
+  {
+    "vessel_name": "ST.JOHN",
+    "loa": 171.9,
+    "crane_status": "G",
+    "nominal_capacity": 1700,
+    "effective_capacity": 1360,
+    "imo_no": 9634646
+  },
+  {
+    "vessel_name": "TAICHUNG",
+    "loa": 183.21,
+    "crane_status": "GL",
+    "nominal_capacity": 1560,
+    "effective_capacity": 1248,
+    "imo_no": 9194505
+  },
+  {
+    "vessel_name": "TZINI",
+    "loa": 170,
+    "crane_status": "G",
+    "nominal_capacity": 1756,
+    "effective_capacity": 1405,
+    "imo_no": 9625906
+  },
+  {
+    "vessel_name": "ULANGA",
+    "loa": 185,
+    "crane_status": "G",
+    "nominal_capacity": 2200,
+    "effective_capacity": 1760,
+    "imo_no": 9690080
+  },
+  {
+    "vessel_name": "VASI MOON",
+    "loa": 168,
+    "crane_status": "GL",
+    "nominal_capacity": 1638,
+    "effective_capacity": 1310,
+    "imo_no": 9216729
+  },
+  {
+    "vessel_name": "VASI STAR",
+    "loa": 183.8,
+    "crane_status": "G",
+    "nominal_capacity": 1694,
+    "effective_capacity": 1355,
+    "imo_no": 9105994
+  },
+  {
+    "vessel_name": "XPRESS NILWALA",
+    "loa": 169.99,
+    "crane_status": "GL",
+    "nominal_capacity": 1700,
+    "effective_capacity": 1360,
+    "imo_no": 9744659
+  },
+  {
+    "vessel_name": "TR ARAMIS",
+    "loa": 185.97,
+    "crane_status": "GL",
+    "nominal_capacity": 2700,
+    "effective_capacity": 2160,
+    "imo_no": 9784661
+  },
+  {
+    "vessel_name": "CAPE ARAXOS",
+    "loa": 184.9,
+    "crane_status": "G",
+    "nominal_capacity": 2190,
+    "effective_capacity": 1752,
+    "imo_no": 9696084
+  },
+  {
+    "vessel_name": "BLPL BLESSING",
+    "loa": 184.3,
+    "crane_status": "G",
+    "nominal_capacity": 1030,
+    "effective_capacity": 824,
+    "imo_no": 9345922
+  },
+  {
+    "vessel_name": "FSL KELANG",
+    "loa": 172,
+    "crane_status": "G",
+    "nominal_capacity": 1528,
+    "effective_capacity": 1222,
+    "imo_no": 9845049
+  },
+  {
+    "vessel_name": "MTT PENGERANG",
+    "loa": 149.6,
+    "crane_status": "GL",
+    "nominal_capacity": 915,
+    "effective_capacity": 732,
+    "imo_no": 9322889
+  },
+  {
+    "vessel_name": "MCC QINGDAO",
+    "loa": 186.2,
+    "crane_status": "G",
+    "nominal_capacity": 1730,
+    "effective_capacity": 1384,
+    "imo_no": 9740665
+  },
+  {
+    "vessel_name": "MAERSK QINZHOU",
+    "loa": 186,
+    "crane_status": "GL",
+    "nominal_capacity": 2806,
+    "effective_capacity": 2245,
+    "imo_no": 9858709
+  },
+  {
+    "vessel_name": "FILOTIMO",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1774,
+    "effective_capacity": 1419,
+    "imo_no": 9817913
+  },
+  {
+    "vessel_name": "MAERSK SIHANOUKVILLE",
+    "loa": 185.99,
+    "crane_status": "G",
+    "nominal_capacity": 2806,
+    "effective_capacity": 2245,
+    "imo_no": 9840714
+  },
+  {
+    "vessel_name": "MAERSK HAI PHONG",
+    "loa": 185.99,
+    "crane_status": "G",
+    "nominal_capacity": 2806,
+    "effective_capacity": 2245,
+    "imo_no": 9858735
+  },
+  {
+    "vessel_name": "SOL BANGLADESH",
+    "loa": 183.94,
+    "crane_status": "G",
+    "nominal_capacity": 1694,
+    "effective_capacity": 1355,
+    "imo_no": 9105968
+  },
+  {
+    "vessel_name": "LUDWIG SCHULTE",
+    "loa": 175.48,
+    "crane_status": "G",
+    "nominal_capacity": 1740,
+    "effective_capacity": 1392,
+    "imo_no": 9435686
+  },
+  {
+    "vessel_name": "SALAM MAJU",
+    "loa": 159.53,
+    "crane_status": "G",
+    "nominal_capacity": 1170,
+    "effective_capacity": 936,
+    "imo_no": 9245225
+  },
+  {
+    "vessel_name": "KOTA RUKUN",
+    "loa": 144,
+    "crane_status": "G",
+    "nominal_capacity": 777,
+    "effective_capacity": 622,
+    "imo_no": 9167459
+  },
+  {
+    "vessel_name": "KOTA BAHAGIA",
+    "loa": 161,
+    "crane_status": "G",
+    "nominal_capacity": 1497,
+    "effective_capacity": 1198,
+    "imo_no": 9593672
+  },
+  {
+    "vessel_name": "HAIAN MIND",
+    "loa": 179.72,
+    "crane_status": "GL",
+    "nominal_capacity": 1807,
+    "effective_capacity": 1446,
+    "imo_no": 9503691
+  },
+  {
+    "vessel_name": "XPRESS MAHAWELI",
+    "loa": 169.98,
+    "crane_status": "GL",
+    "nominal_capacity": 1700,
+    "effective_capacity": 1360,
+    "imo_no": 9744685
+  },
+  {
+    "vessel_name": "MTT SAPANGAR",
+    "loa": 172,
+    "crane_status": "G",
+    "nominal_capacity": 1800,
+    "effective_capacity": 1440,
+    "imo_no": 9872236
+  },
+  {
+    "vessel_name": "TR PORTHOS",
+    "loa": 186,
+    "crane_status": "GL",
+    "nominal_capacity": 2700,
+    "effective_capacity": 2160,
+    "imo_no": 9784659
+  },
+  {
+    "vessel_name": "CONTSHIP",
+    "loa": 147.87,
+    "crane_status": "GL",
+    "nominal_capacity": 1147,
+    "effective_capacity": 918,
+    "imo_no": 9507714
+  },
+  {
+    "vessel_name": "TC SYMPHONY",
+    "loa": 148.53,
+    "crane_status": "GL",
+    "nominal_capacity": 1147,
+    "effective_capacity": 918,
+    "imo_no": 9318242
+  },
+  {
+    "vessel_name": "KOTA BISTARI",
+    "loa": 179.5,
+    "crane_status": "G",
+    "nominal_capacity": 1496,
+    "effective_capacity": 1197,
+    "imo_no": 9695107
+  },
+  {
+    "vessel_name": "ST. JOHN",
+    "loa": 171.9,
+    "crane_status": "G",
+    "nominal_capacity": 1700,
+    "effective_capacity": 1360,
+    "imo_no": 9634646
+  },
+  {
+    "vessel_name": "YM HEIGHTS",
+    "loa": 168.8,
+    "crane_status": "GL",
+    "nominal_capacity": 1500,
+    "effective_capacity": 1200,
+    "imo_no": 9301275
+  },
+  {
+    "vessel_name": "SPIRIT OF DUBAI",
+    "loa": 148.53,
+    "crane_status": "GL",
+    "nominal_capacity": 1147,
+    "effective_capacity": 918,
+    "imo_no": 9366512
+  },
+  {
+    "vessel_name": "UBENA",
+    "loa": 185,
+    "crane_status": "G",
+    "nominal_capacity": 2200,
+    "effective_capacity": 1760,
+    "imo_no": 9690078
+  },
+  {
+    "vessel_name": "MAERSK NESNA",
+    "loa": 171.93,
+    "crane_status": "G",
+    "nominal_capacity": 2086,
+    "effective_capacity": 1669,
+    "imo_no": 9894650
+  },
+  {
+    "vessel_name": "KOTA RANCAK",
+    "loa": 145.93,
+    "crane_status": "GL",
+    "nominal_capacity": 887,
+    "effective_capacity": 710,
+    "imo_no": 9296298
+  },
+  {
+    "vessel_name": "TR ATHOS",
+    "loa": 186,
+    "crane_status": "GL",
+    "nominal_capacity": 2700,
+    "effective_capacity": 2160,
+    "imo_no": 9784647
+  },
+  {
+    "vessel_name": "CAPE QUEST",
+    "loa": 184.92,
+    "crane_status": "GL",
+    "nominal_capacity": 2190,
+    "effective_capacity": 1752,
+    "imo_no": 9734159
+  },
+  {
+    "vessel_name": "IMKE SCHEPERS",
+    "loa": 154.85,
+    "crane_status": "GL",
+    "nominal_capacity": 914,
+    "effective_capacity": 731,
+    "imo_no": 9360520
+  },
+  {
+    "vessel_name": "HAIAN WEST",
+    "loa": 175.57,
+    "crane_status": "G",
+    "nominal_capacity": 1696,
+    "effective_capacity": 1357,
+    "imo_no": 9357860
+  },
+  {
+    "vessel_name": "BLPL FAITH",
+    "loa": 140.06,
+    "crane_status": "GL",
+    "nominal_capacity": 953,
+    "effective_capacity": 762,
+    "imo_no": 9146297
+  },
+  {
+    "vessel_name": "KOTA RAJIN",
+    "loa": 145.93,
+    "crane_status": "GL",
+    "nominal_capacity": 887,
+    "effective_capacity": 710,
+    "imo_no": 9296286
+  },
+  {
+    "vessel_name": "CAPE FLORES",
+    "loa": 154.47,
+    "crane_status": "GL",
+    "nominal_capacity": 1200,
+    "effective_capacity": 960,
+    "imo_no": 9324162
+  },
+  {
+    "vessel_name": "ELA",
+    "loa": 175.49,
+    "crane_status": "G",
+    "nominal_capacity": 1740,
+    "effective_capacity": 1392,
+    "imo_no": 9516777
+  },
+  {
+    "vessel_name": "SITC KEELUNG",
+    "loa": 171.99,
+    "crane_status": "GL",
+    "nominal_capacity": 1800,
+    "effective_capacity": 1440,
+    "imo_no": 9712761
+  },
+  {
+    "vessel_name": "YM HAWK",
+    "loa": 168.8,
+    "crane_status": "GL",
+    "nominal_capacity": 1500,
+    "effective_capacity": 1200,
+    "imo_no": 9299317
+  },
+  {
+    "vessel_name": "OLYMPIA",
+    "loa": 171.94,
+    "crane_status": "GL",
+    "nominal_capacity": 1717,
+    "effective_capacity": 1373.6,
+    "imo_no": 9765574
+  },
+  {
+    "vessel_name": "MOUNT KELLETT",
+    "loa": 169.98,
+    "crane_status": "G",
+    "nominal_capacity": 1730,
+    "effective_capacity": 1384,
+    "imo_no": 9760627
+  },
+  {
+    "vessel_name": "ANTON SCHEPERS",
+    "loa": 164.65,
+    "crane_status": "GL",
+    "nominal_capacity": 750,
+    "effective_capacity": 600,
+    "imo_no": 9255763
+  },
+  {
+    "vessel_name": "SINAR PENIDA",
+    "loa": 117.1,
+    "crane_status": "GL",
+    "nominal_capacity": 613,
+    "effective_capacity": 490.4,
+    "imo_no": 9827968
+  },
+  {
+    "vessel_name": "AS SARA",
+    "loa": 175.1,
+    "crane_status": "G",
+    "nominal_capacity": 1713,
+    "effective_capacity": 1370.4,
+    "imo_no": 9410272
+  },
+  {
+    "vessel_name": "KOTA TENAGA",
+    "loa": 130.36,
+    "crane_status": "G",
+    "nominal_capacity": 802,
+    "effective_capacity": 641.6,
+    "imo_no": 9251157
+  },
+  {
+    "vessel_name": "ALVAN",
+    "loa": 168.46,
+    "crane_status": "G",
+    "nominal_capacity": 1500,
+    "effective_capacity": 1200,
+    "imo_no": 9165798
+  },
+  {
+    "vessel_name": "GREEN EARTH",
+    "loa": 172.07,
+    "crane_status": "GL",
+    "nominal_capacity": 1809,
+    "effective_capacity": 1447.2,
+    "imo_no": 9865984
+  },
+  {
+    "vessel_name": "CALA PAGURO",
+    "loa": 171.99,
+    "crane_status": "G",
+    "nominal_capacity": 1577,
+    "effective_capacity": 1261.6,
+    "imo_no": 9412787
+  },
+  {
+    "vessel_name": "HR SAHARE",
+    "loa": 184.5,
+    "crane_status": "GL",
+    "nominal_capacity": 1186,
+    "effective_capacity": 948.8,
+    "imo_no": 9157399
+  },
+  {
+    "vessel_name": "MCC MEDAN",
+    "loa": 186.2,
+    "crane_status": "G",
+    "nominal_capacity": 1730,
+    "effective_capacity": 1384,
+    "imo_no": 9751092
+  },
+  {
+    "vessel_name": "KOTA BUANA",
+    "loa": 179.5,
+    "crane_status": "G",
+    "nominal_capacity": 1496,
+    "effective_capacity": 1196.8,
+    "imo_no": 9638628
+  },
+  {
+    "vessel_name": "SONGA CHEETAH",
+    "loa": 147.84,
+    "crane_status": "G",
+    "nominal_capacity": 1060,
+    "effective_capacity": 848,
+    "imo_no": 9405100
+  },
+  {
+    "vessel_name": "A.IDEFIX",
+    "loa": 182,
+    "crane_status": "GL",
+    "nominal_capacity": 1700,
+    "effective_capacity": 1360,
+    "imo_no": 9354662
+  },
+  {
+    "vessel_name": "AST MALTA",
+    "loa": 99.63,
+    "crane_status": "GL",
+    "nominal_capacity": 366,
+    "effective_capacity": 292.8,
+    "imo_no": 9143398
+  },
+  {
+    "vessel_name": "HANSA OSTERBURG",
+    "loa": 175.52,
+    "crane_status": "G",
+    "nominal_capacity": 1740,
+    "effective_capacity": 1392,
+    "imo_no": 9373462
+  },
+  {
+    "vessel_name": "SOL STRIDE",
+    "loa": 148.53,
+    "crane_status": "GL",
+    "nominal_capacity": 915,
+    "effective_capacity": 732,
+    "imo_no": 9322877
+  },
+  {
+    "vessel_name": "EM SPETSES",
+    "loa": 174.94,
+    "crane_status": "GL",
+    "nominal_capacity": 1740,
+    "effective_capacity": 1392,
+    "imo_no": 9403413
+  },
+  {
+    "vessel_name": "ADMIRAL STAR",
+    "loa": 125.85,
+    "crane_status": "GL",
+    "nominal_capacity": 801,
+    "effective_capacity": 640.8,
+    "imo_no": 9360972
+  },
+  {
+    "vessel_name": "SINAR SUNDA",
+    "loa": 171.99,
+    "crane_status": "GL",
+    "nominal_capacity": 1876,
+    "effective_capacity": 1500.8,
+    "imo_no": 9866469
+  },
+  {
+    "vessel_name": "SEA MASTER",
+    "loa": 170,
+    "crane_status": "G",
+    "nominal_capacity": 1700,
+    "effective_capacity": 1360,
+    "imo_no": 9625920
+  },
+  {
+    "vessel_name": "AMO",
+    "loa": 185,
+    "crane_status": "G",
+    "nominal_capacity": 1730,
+    "effective_capacity": 1384,
+    "imo_no": 9134622
+  },
+  {
+    "vessel_name": "INSPIRE",
+    "loa": 172.2,
+    "crane_status": "GL",
+    "nominal_capacity": 1785,
+    "effective_capacity": 1428,
+    "imo_no": 9760304
+  },
+  {
+    "vessel_name": "HMM CHITTAGONG",
+    "loa": 184.9,
+    "crane_status": "G",
+    "nominal_capacity": 2190,
+    "effective_capacity": 1752,
+    "imo_no": 9701293
+  },
+  {
+    "vessel_name": "MAERSK DHAKA",
+    "loa": 185.99,
+    "crane_status": "G",
+    "nominal_capacity": 2806,
+    "effective_capacity": 2244.8,
+    "imo_no": 9871165
+  },
+  {
+    "vessel_name": "MAERSK CHATTOGRAM",
+    "loa": 185.97,
+    "crane_status": "G",
+    "nominal_capacity": 1530,
+    "effective_capacity": 1224,
+    "imo_no": 9761023
+  },
+  {
+    "vessel_name": "MSC KYMEA",
+    "loa": 176.97,
+    "crane_status": "G",
+    "nominal_capacity": 1732,
+    "effective_capacity": 1385.6,
+    "imo_no": 9334844
+  },
+  {
+    "vessel_name": "MTT SINGAPORE",
+    "loa": 140.02,
+    "crane_status": "GL",
+    "nominal_capacity": 653,
+    "effective_capacity": 522.4,
+    "imo_no": 9131060
+  },
+  {
+    "vessel_name": "XPRESS DHAULAGIRI",
+    "loa": 169.96,
+    "crane_status": "GL",
+    "nominal_capacity": 1730,
+    "effective_capacity": 1384,
+    "imo_no": 9760639
+  },
+  {
+    "vessel_name": "WINNER",
+    "loa": 186.35,
+    "crane_status": "G",
+    "nominal_capacity": 1819,
+    "effective_capacity": 1455.2,
+    "imo_no": 9347281
+  },
+  {
+    "vessel_name": "SAWASDEE ATLANTIC",
+    "loa": 172.07,
+    "crane_status": "GL",
+    "nominal_capacity": 1809,
+    "effective_capacity": 1447.2,
+    "imo_no": 9879375
+  },
+  {
+    "vessel_name": "SENTOSA TRADER",
+    "loa": 154.03,
+    "crane_status": "G",
+    "nominal_capacity": 1078,
+    "effective_capacity": 862.4,
+    "imo_no": 9255529
+  },
+  {
+    "vessel_name": "SOL PROMISE",
+    "loa": 182.52,
+    "crane_status": "GL",
+    "nominal_capacity": 1700,
+    "effective_capacity": 1360,
+    "imo_no": 9363156
+  },
+  {
+    "vessel_name": "SAN ALFONSO",
+    "loa": 186.37,
+    "crane_status": "G",
+    "nominal_capacity": 1819,
+    "effective_capacity": 1455.2,
+    "imo_no": 9344667
+  },
+  {
+    "vessel_name": "NORDPANTHER",
+    "loa": 169.96,
+    "crane_status": "GL",
+    "nominal_capacity": 1730,
+    "effective_capacity": 1384,
+    "imo_no": 9673654
+  },
+  {
+    "vessel_name": "BBC FINLAND",
+    "loa": 161.36,
+    "crane_status": "G",
+    "nominal_capacity": 1400,
+    "effective_capacity": 1120,
+    "imo_no": 9593684
+  },
+  {
+    "vessel_name": "MTT SAPANGAR OBG",
+    "loa": 172,
+    "crane_status": "G",
+    "nominal_capacity": 1800,
+    "effective_capacity": 1440,
+    "imo_no": 9872236
+  },
+  {
+    "vessel_name": "HMM DHAKA",
+    "loa": 184.9,
+    "crane_status": "G",
+    "nominal_capacity": 2190,
+    "effective_capacity": 1752,
+    "imo_no": 9658458
+  },
+  {
+    "vessel_name": "MSC MAKOTO II",
+    "loa": 175.49,
+    "crane_status": "GL",
+    "nominal_capacity": 1400,
+    "effective_capacity": 1120,
+    "imo_no": 9236212
+  },
+  {
+    "vessel_name": "MSC ALICE II",
+    "loa": 184.7,
+    "crane_status": "G",
+    "nominal_capacity": 1730,
+    "effective_capacity": 1384,
+    "imo_no": 9232632
+  },
+  {
+    "vessel_name": "SOL STRAITS",
+    "loa": 183.91,
+    "crane_status": "G",
+    "nominal_capacity": 1730,
+    "effective_capacity": 1384,
+    "imo_no": 9134658
+  },
+  {
+    "vessel_name": "INTEGRA",
+    "loa": 171.99,
+    "crane_status": "GL",
+    "nominal_capacity": 1808,
+    "effective_capacity": 1446.4,
+    "imo_no": 9730854
+  },
+  {
+    "vessel_name": "SINAR BANGKA",
+    "loa": 147,
+    "crane_status": "G",
+    "nominal_capacity": 1060,
+    "effective_capacity": 848,
+    "imo_no": 9220304
+  },
+  {
+    "vessel_name": "SPICA J",
+    "loa": 139.6,
+    "crane_status": "GL",
+    "nominal_capacity": 850,
+    "effective_capacity": 680,
+    "imo_no": 9355460
+  },
+  {
+    "vessel_name": "TAILWIND PANDA",
+    "loa": 140.58,
+    "crane_status": "GL",
+    "nominal_capacity": 803,
+    "effective_capacity": 642.4,
+    "imo_no": 9328053
+  },
+  {
+    "vessel_name": "X PRESS DHAULARAR",
+    "loa": 169.96,
+    "crane_status": "GL",
+    "nominal_capacity": 1730,
+    "effective_capacity": 1384,
+    "imo_no": 9760639
+  },
+  {
+    "vessel_name": "SAWASDEE CHITTAGONG",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1809,
+    "effective_capacity": 1447.2,
+    "imo_no": 9940758
+  },
+  {
+    "vessel_name": "NORD PANTHER",
+    "loa": 169.96,
+    "crane_status": "GL",
+    "nominal_capacity": 1730,
+    "effective_capacity": 1384,
+    "imo_no": 9673654
+  },
+  {
+    "vessel_name": "CNC URANUS",
+    "loa": 169.98,
+    "crane_status": "G",
+    "nominal_capacity": 1730,
+    "effective_capacity": 1384,
+    "imo_no": 9760627
+  },
+  {
+    "vessel_name": "HONG AN",
+    "loa": 171.9,
+    "crane_status": "GL",
+    "nominal_capacity": 1809,
+    "effective_capacity": 1447.2,
+    "imo_no": 9941116
+  },
+  {
+    "vessel_name": "ANDROMEDA J",
+    "loa": 139.6,
+    "crane_status": "GL",
+    "nominal_capacity": 850,
+    "effective_capacity": 680,
+    "imo_no": 9355422
+  },
+  {
+    "vessel_name": "EMORA",
+    "loa": 179.72,
+    "crane_status": "G",
+    "nominal_capacity": 1794,
+    "effective_capacity": 1435.2,
+    "imo_no": 9362700
+  },
+  {
+    "vessel_name": "MTT SEMPORNA",
+    "loa": 160,
+    "crane_status": "GL",
+    "nominal_capacity": 1162,
+    "effective_capacity": 929.6,
+    "imo_no": 9813888
+  },
+  {
+    "vessel_name": "MSC EMILY II",
+    "loa": 184.06,
+    "crane_status": "G",
+    "nominal_capacity": 1730,
+    "effective_capacity": 1384,
+    "imo_no": 9236444
+  },
+  {
+    "vessel_name": "KAPITAN MASLOV",
+    "loa": 184.1,
+    "crane_status": "GL",
+    "nominal_capacity": 1748,
+    "effective_capacity": 1398.4,
+    "imo_no": 9130157
+  },
+  {
+    "vessel_name": "MSC TRADER II",
+    "loa": 184.04,
+    "crane_status": "G",
+    "nominal_capacity": 1728,
+    "effective_capacity": 1382.4,
+    "imo_no": 9230775
+  },
+  {
+    "vessel_name": "MAERSK DAVAO",
+    "loa": 185.99,
+    "crane_status": "G",
+    "nominal_capacity": 2806,
+    "effective_capacity": 2244.8,
+    "imo_no": 9858711
+  },
+  {
+    "vessel_name": "MAERSK HAIPHONG",
+    "loa": 185.99,
+    "crane_status": "G",
+    "nominal_capacity": 2806,
+    "effective_capacity": 2244.8,
+    "imo_no": 9858735
+  },
+  {
+    "vessel_name": "HAIAN CITY",
+    "loa": 171.99,
+    "crane_status": "G",
+    "nominal_capacity": 1577,
+    "effective_capacity": 1261.6,
+    "imo_no": 9445007
+  },
+  {
+    "vessel_name": "MTT SAMALAJU",
+    "loa": 160,
+    "crane_status": "GL",
+    "nominal_capacity": 1162,
+    "effective_capacity": 929.6,
+    "imo_no": 9813864
+  },
+  {
+    "vessel_name": "SKY WIND",
+    "loa": 172.07,
+    "crane_status": "GL",
+    "nominal_capacity": 1809,
+    "effective_capacity": 1447.2,
+    "imo_no": 9854480
+  },
+  {
+    "vessel_name": "SITC CHUNMING",
+    "loa": 185.99,
+    "crane_status": "G",
+    "nominal_capacity": 2600,
+    "effective_capacity": 2080,
+    "imo_no": 9932828
+  },
+  {
+    "vessel_name": "SITC KANTO",
+    "loa": 171.99,
+    "crane_status": "GL",
+    "nominal_capacity": 1800,
+    "effective_capacity": 1440,
+    "imo_no": 9728007
+  },
+  {
+    "vessel_name": "SITC QIUMING",
+    "loa": 185.99,
+    "crane_status": "G",
+    "nominal_capacity": 2600,
+    "effective_capacity": 2080,
+    "imo_no": 9932830
+  },
+  {
+    "vessel_name": "SITC JIADE",
+    "loa": 171.9,
+    "crane_status": "GL",
+    "nominal_capacity": 1800,
+    "effective_capacity": 1440,
+    "imo_no": 9918688
+  },
+  {
+    "vessel_name": "EF EMMA",
+    "loa": 182.43,
+    "crane_status": "GL",
+    "nominal_capacity": 1710,
+    "effective_capacity": 1368,
+    "imo_no": 9357808
+  },
+  {
+    "vessel_name": "HORAI BRIDGE",
+    "loa": 171.99,
+    "crane_status": "GL",
+    "nominal_capacity": 1708,
+    "effective_capacity": 1366.4,
+    "imo_no": 9515620
+  },
+  {
+    "vessel_name": "YM HARMONY",
+    "loa": 168.8,
+    "crane_status": "GL",
+    "nominal_capacity": 1500,
+    "effective_capacity": 1200,
+    "imo_no": 9299329
+  },
+  {
+    "vessel_name": "CNC LION",
+    "loa": 185.97,
+    "crane_status": "GL",
+    "nominal_capacity": 2700,
+    "effective_capacity": 2160,
+    "imo_no": 9784661
+  },
+  {
+    "vessel_name": "CNC JAGUAR",
+    "loa": 15.99,
+    "crane_status": "GL",
+    "nominal_capacity": 2822,
+    "effective_capacity": 2257.6,
+    "imo_no": 9936185
+  },
+  {
+    "vessel_name": "GH RIVER",
+    "loa": 180,
+    "crane_status": "GL",
+    "nominal_capacity": 1496,
+    "effective_capacity": 1196.8,
+    "imo_no": 9936147
+  },
+  {
+    "vessel_name": "SINAR SANUR",
+    "loa": 171.99,
+    "crane_status": "GL",
+    "nominal_capacity": 1911,
+    "effective_capacity": 1528.8,
+    "imo_no": 9970428
+  },
+  {
+    "vessel_name": "HR TURAG",
+    "loa": 155,
+    "crane_status": "GL",
+    "nominal_capacity": 1092,
+    "effective_capacity": 873.6,
+    "imo_no": 9175779
+  },
+  {
+    "vessel_name": "BATAM TRADER",
+    "loa": 153,
+    "crane_status": "G",
+    "nominal_capacity": 1078,
+    "effective_capacity": 862.4,
+    "imo_no": 9255531
+  },
+  {
+    "vessel_name": "PANDA",
+    "loa": 140.58,
+    "crane_status": "GL",
+    "nominal_capacity": 803,
+    "effective_capacity": 642.4,
+    "imo_no": 9328053
+  },
+  {
+    "vessel_name": "MAERSK NUSANTARA",
+    "loa": 185.99,
+    "crane_status": "G",
+    "nominal_capacity": 2754,
+    "effective_capacity": 2203.2,
+    "imo_no": 9761011
+  },
+  {
+    "vessel_name": "MSC QINGDAO F",
+    "loa": 170,
+    "crane_status": "G",
+    "nominal_capacity": 1510,
+    "effective_capacity": 1208,
+    "imo_no": 9373498
+  },
+  {
+    "vessel_name": "SOL RESILIENCE",
+    "loa": 171.99,
+    "crane_status": "GL",
+    "nominal_capacity": 1264,
+    "effective_capacity": 1011.2,
+    "imo_no": 9266102
+  },
+  {
+    "vessel_name": "XPRESS MEGHNA",
+    "loa": 154.85,
+    "crane_status": "GL",
+    "nominal_capacity": 914,
+    "effective_capacity": 731.2,
+    "imo_no": 9360556
+  },
+  {
+    "vessel_name": "SITC ZHAOMING",
+    "loa": 185.99,
+    "crane_status": "GL",
+    "nominal_capacity": 2600,
+    "effective_capacity": 2080,
+    "imo_no": 9932842
+  },
+  {
+    "vessel_name": "MSC SKY II",
+    "loa": 183.71,
+    "crane_status": "G",
+    "nominal_capacity": 2169,
+    "effective_capacity": 1735.2,
+    "imo_no": 9162277
+  },
+  {
+    "vessel_name": "CNC SERVAL",
+    "loa": 186,
+    "crane_status": "GL",
+    "nominal_capacity": 2700,
+    "effective_capacity": 2160,
+    "imo_no": 9784647
+  },
+  {
+    "vessel_name": "MAERSK TOKYO",
+    "loa": 185.99,
+    "crane_status": "GL",
+    "nominal_capacity": 1806,
+    "effective_capacity": 1445,
+    "imo_no": 9823728
+  },
+  {
+    "vessel_name": "FAITH",
+    "loa": 154.57,
+    "crane_status": "GL",
+    "nominal_capacity": 917,
+    "effective_capacity": 733.6,
+    "imo_no": 9301108
+  },
+  {
+    "vessel_name": "SITC YUANMING",
+    "loa": 185.99,
+    "crane_status": "GL",
+    "nominal_capacity": 2600,
+    "effective_capacity": 2080,
+    "imo_no": 9932866
+  },
+  {
+    "vessel_name": "KANWAY FORTUNE",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1930,
+    "effective_capacity": 1544,
+    "imo_no": 9923968
+  },
+  {
+    "vessel_name": "SITC CHENMING",
+    "loa": 185.99,
+    "crane_status": "GL",
+    "nominal_capacity": 2600,
+    "effective_capacity": 2080,
+    "imo_no": 9932854
+  },
+  {
+    "vessel_name": "VEGA COLIGNY",
+    "loa": 171.95,
+    "crane_status": "GL",
+    "nominal_capacity": 1930,
+    "effective_capacity": 1544,
+    "imo_no": 9939876
+  },
+  {
+    "vessel_name": "CNC TIGER",
+    "loa": 186,
+    "crane_status": "GL",
+    "nominal_capacity": 2700,
+    "effective_capacity": 2160,
+    "imo_no": 9784659
+  },
+  {
+    "vessel_name": "MSC RICCARDA II",
+    "loa": 180.96,
+    "crane_status": "GL",
+    "nominal_capacity": 1496,
+    "effective_capacity": 1196.8,
+    "imo_no": 9449869
+  },
+  {
+    "vessel_name": "CNC CHEETAH",
+    "loa": 183,
+    "crane_status": "GL",
+    "nominal_capacity": 1719,
+    "effective_capacity": 1375.2,
+    "imo_no": 9936197
+  },
+  {
+    "vessel_name": "MTT SANDAKAN",
+    "loa": 172,
+    "crane_status": "G",
+    "nominal_capacity": 1800,
+    "effective_capacity": 1440,
+    "imo_no": 9872248
+  },
+  {
+    "vessel_name": "ASIATIC NEPTUNE",
+    "loa": 148.53,
+    "crane_status": "GL",
+    "nominal_capacity": 1147,
+    "effective_capacity": 917.6,
+    "imo_no": 9366469
+  },
+  {
+    "vessel_name": "HR FARHA",
+    "loa": 148.5,
+    "crane_status": "GL",
+    "nominal_capacity": 1186,
+    "effective_capacity": 948.8,
+    "imo_no": 9123582
+  },
+  {
+    "vessel_name": "VENTO DI BORA",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1930,
+    "effective_capacity": 1544,
+    "imo_no": 9950064
+  },
+  {
+    "vessel_name": "SITC CHANGMING",
+    "loa": 185.99,
+    "crane_status": "GL",
+    "nominal_capacity": 2698,
+    "effective_capacity": 2158.4,
+    "imo_no": 9941051
+  },
+  {
+    "vessel_name": "CELSIUS NEW ORLEANS",
+    "loa": 171.99,
+    "crane_status": "G",
+    "nominal_capacity": 1577,
+    "effective_capacity": 1261.6,
+    "imo_no": 9412842
+  },
+  {
+    "vessel_name": "THORSWIND",
+    "loa": 183.65,
+    "crane_status": "G",
+    "nominal_capacity": 2169,
+    "effective_capacity": 1735.2,
+    "imo_no": 9173135
+  },
+  {
+    "vessel_name": "SINAR SIGLI",
+    "loa": 171.99,
+    "crane_status": "GL",
+    "nominal_capacity": 1911,
+    "effective_capacity": 1528.8,
+    "imo_no": 9970430
+  },
+  {
+    "vessel_name": "SEVILLIA",
+    "loa": 179.74,
+    "crane_status": "G",
+    "nominal_capacity": 1795,
+    "effective_capacity": 1436,
+    "imo_no": 9362712
+  },
+  {
+    "vessel_name": "CNC PUMA",
+    "loa": 186,
+    "crane_status": "GL",
+    "nominal_capacity": 2822,
+    "effective_capacity": 2257.6,
+    "imo_no": 9936202
+  },
+  {
+    "vessel_name": "HIGHWAY",
+    "loa": 182.12,
+    "crane_status": "GL",
+    "nominal_capacity": 2174,
+    "effective_capacity": 1739.2,
+    "imo_no": 9158575
+  },
+  {
+    "vessel_name": "HANSA LANKA",
+    "loa": 182.45,
+    "crane_status": "GL",
+    "nominal_capacity": 1710,
+    "effective_capacity": 1368,
+    "imo_no": 9357793
+  },
+  {
+    "vessel_name": "SAN PEDRO",
+    "loa": 170,
+    "crane_status": "G",
+    "nominal_capacity": 1715,
+    "effective_capacity": 1372,
+    "imo_no": 9625281
+  },
+  {
+    "vessel_name": "PANDA 002",
+    "loa": 140.58,
+    "crane_status": "GL",
+    "nominal_capacity": 803,
+    "effective_capacity": 642.4,
+    "imo_no": 9328053
+  },
+  {
+    "vessel_name": "KOTA RAKYAT",
+    "loa": 145.93,
+    "crane_status": "G",
+    "nominal_capacity": 851,
+    "effective_capacity": 680.8,
+    "imo_no": 9296341
+  },
+  {
+    "vessel_name": "GREEN HOPE",
+    "loa": 171.89,
+    "crane_status": "GL",
+    "nominal_capacity": 1700,
+    "effective_capacity": 1360,
+    "imo_no": 9629160
+  },
+  {
+    "vessel_name": "ZHONG GU YING KOU",
+    "loa": 179.99,
+    "crane_status": "GL",
+    "nominal_capacity": 2500,
+    "effective_capacity": 2000,
+    "imo_no": 9809239
+  },
+  {
+    "vessel_name": "KAI HE ZHI CHENG",
+    "loa": 139.36,
+    "crane_status": "GL",
+    "nominal_capacity": 642,
+    "effective_capacity": 513.6,
+    "imo_no": 9419060
+  },
+  {
+    "vessel_name": "ZHONG GU PENG LAI",
+    "loa": 179.99,
+    "crane_status": "GL",
+    "nominal_capacity": 2500,
+    "effective_capacity": 2000,
+    "imo_no": 9809203
+  },
+  {
+    "vessel_name": "SOLONG",
+    "loa": 140.6,
+    "crane_status": "GL",
+    "nominal_capacity": 803,
+    "effective_capacity": 642.4,
+    "imo_no": 9322554
+  },
+  {
+    "vessel_name": "SITC HUIMING",
+    "loa": 186,
+    "crane_status": "GL",
+    "nominal_capacity": 2698,
+    "effective_capacity": 2158.4,
+    "imo_no": 9941075
+  },
+  {
+    "vessel_name": "CAPE ORIENT",
+    "loa": 184.89,
+    "crane_status": "G",
+    "nominal_capacity": 2190,
+    "effective_capacity": 1752,
+    "imo_no": 9696072
+  },
+  {
+    "vessel_name": "VEGA DAYTONA",
+    "loa": 171.95,
+    "crane_status": "GL",
+    "nominal_capacity": 1735,
+    "effective_capacity": 1388,
+    "imo_no": 9939888
+  },
+  {
+    "vessel_name": "ZHONG GU XIONG AN",
+    "loa": 179.99,
+    "crane_status": "GL",
+    "nominal_capacity": 2518,
+    "effective_capacity": 2014.4,
+    "imo_no": 9812901
+  },
+  {
+    "vessel_name": "HMM MONGLA",
+    "loa": 184.93,
+    "crane_status": "G",
+    "nominal_capacity": 2190,
+    "effective_capacity": 1752,
+    "imo_no": 9658446
+  },
+  {
+    "vessel_name": "ZHONG GU LIN YI",
+    "loa": 180,
+    "crane_status": "GL",
+    "nominal_capacity": 2500,
+    "effective_capacity": 2000,
+    "imo_no": 9809215
+  },
+  {
+    "vessel_name": "ASTERIOS",
+    "loa": 172.07,
+    "crane_status": "GL",
+    "nominal_capacity": 1800,
+    "effective_capacity": 1440,
+    "imo_no": 9951135
+  },
+  {
+    "vessel_name": "SAN GIORGIO",
+    "loa": 170,
+    "crane_status": "G",
+    "nominal_capacity": 1700,
+    "effective_capacity": 1360,
+    "imo_no": 9625918
+  },
+  {
+    "vessel_name": "HAIAN VIEW",
+    "loa": 171.99,
+    "crane_status": "G",
+    "nominal_capacity": 1577,
+    "effective_capacity": 1261.6,
+    "imo_no": 9470727
+  },
+  {
+    "vessel_name": "ADRASTOS",
+    "loa": 172.07,
+    "crane_status": "GL",
+    "nominal_capacity": 1800,
+    "effective_capacity": 1440,
+    "imo_no": 9951185
+  },
+  {
+    "vessel_name": "AS ROBERTA",
+    "loa": 170.15,
+    "crane_status": "GL",
+    "nominal_capacity": 1440,
+    "effective_capacity": 1152,
+    "imo_no": 9330903
+  },
+  {
+    "vessel_name": "CNC LEOPARD",
+    "loa": 186,
+    "crane_status": "GL",
+    "nominal_capacity": 2822,
+    "effective_capacity": 2257.6,
+    "imo_no": 9945356
+  },
+  {
+    "vessel_name": "HAIAN EAST",
+    "loa": 182.52,
+    "crane_status": "GL",
+    "nominal_capacity": 1700,
+    "effective_capacity": 1360,
+    "imo_no": 9363144
+  },
+  {
+    "vessel_name": "LITTLE EMMA",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1800,
+    "effective_capacity": 1440,
+    "imo_no": 9980356
+  },
+  {
+    "vessel_name": "MSC POLO II",
+    "loa": 184.06,
+    "crane_status": "G",
+    "nominal_capacity": 1730,
+    "effective_capacity": 1384,
+    "imo_no": 9139086
+  },
+  {
+    "vessel_name": "HANSA WOLFSBURG",
+    "loa": 176.96,
+    "crane_status": "GL",
+    "nominal_capacity": 1732,
+    "effective_capacity": 1385.6,
+    "imo_no": 9373498
+  },
+  {
+    "vessel_name": "CAPE FELTON",
+    "loa": 170.07,
+    "crane_status": "GL",
+    "nominal_capacity": 1440,
+    "effective_capacity": 1152,
+    "imo_no": 9379375
+  },
+  {
+    "vessel_name": "ST. MARY",
+    "loa": 168.8,
+    "crane_status": "GL",
+    "nominal_capacity": 1679,
+    "effective_capacity": 1343.2,
+    "imo_no": 9219252
+  },
+  {
+    "vessel_name": "CAPE MONTERY",
+    "loa": 184.9,
+    "crane_status": "G",
+    "nominal_capacity": 2190,
+    "effective_capacity": 1752,
+    "imo_no": 9676199
+  },
+  {
+    "vessel_name": "SOL RELIANCE",
+    "loa": 169.99,
+    "crane_status": "GL",
+    "nominal_capacity": 1708,
+    "effective_capacity": 1366.4,
+    "imo_no": 9412854
+  },
+  {
+    "vessel_name": "INCRES",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1682,
+    "effective_capacity": 1345.6,
+    "imo_no": 9833371
+  },
+  {
+    "vessel_name": "SINAR SIANTAR",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1720,
+    "effective_capacity": 1376,
+    "imo_no": 9970442
+  },
+  {
+    "vessel_name": "MAERSK YOKOHAMA",
+    "loa": 186,
+    "crane_status": "GL",
+    "nominal_capacity": 2806,
+    "effective_capacity": 2244.8,
+    "imo_no": 9966116
+  },
+  {
+    "vessel_name": "SINAR SABA",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1900,
+    "effective_capacity": 1520,
+    "imo_no": 9970454
+  },
+  {
+    "vessel_name": "FITZ ROY",
+    "loa": 175,
+    "crane_status": "G",
+    "nominal_capacity": 1800,
+    "effective_capacity": 1440,
+    "imo_no": 9516739
+  },
+  {
+    "vessel_name": "KOTA AZAM",
+    "loa": 182.83,
+    "crane_status": "G",
+    "nominal_capacity": 2200,
+    "effective_capacity": 1760,
+    "imo_no": 9182033
+  },
+  {
+    "vessel_name": "KOTA ANGGUN",
+    "loa": 183,
+    "crane_status": "G",
+    "nominal_capacity": 2190,
+    "effective_capacity": 1752,
+    "imo_no": 9175602
+  },
+  {
+    "vessel_name": "KOTA RATNA",
+    "loa": 144,
+    "crane_status": "G",
+    "nominal_capacity": 777,
+    "effective_capacity": 621.6,
+    "imo_no": 9167447
+  },
+  {
+    "vessel_name": "BF CARP",
+    "loa": 139,
+    "crane_status": "GL",
+    "nominal_capacity": 1325,
+    "effective_capacity": 1060,
+    "imo_no": 9437256
+  },
+  {
+    "vessel_name": "SITC CHANMING",
+    "loa": 186,
+    "crane_status": "GL",
+    "nominal_capacity": 2600,
+    "effective_capacity": 2080,
+    "imo_no": 9941051
+  },
+  {
+    "vessel_name": "ANDERSON DRAGON",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1845,
+    "effective_capacity": 1476,
+    "imo_no": 9470739
+  },
+  {
+    "vessel_name": "CNC PANTHER",
+    "loa": 183,
+    "crane_status": "GL",
+    "nominal_capacity": 2200,
+    "effective_capacity": 1760,
+    "imo_no": 9945344
+  },
+  {
+    "vessel_name": "CAPE MONTEREY",
+    "loa": 185,
+    "crane_status": "G",
+    "nominal_capacity": 2350,
+    "effective_capacity": 1880,
+    "imo_no": 9676199
+  },
+  {
+    "vessel_name": "SHIMANAMI BAY",
+    "loa": 186,
+    "crane_status": "GL",
+    "nominal_capacity": 2630,
+    "effective_capacity": 2104,
+    "imo_no": 9983425
+  },
+  {
+    "vessel_name": "SOFRANA TOURVILLE",
+    "loa": 143,
+    "crane_status": "G",
+    "nominal_capacity": 1550,
+    "effective_capacity": 1240,
+    "imo_no": 9404613
+  },
+  {
+    "vessel_name": "XPRESS LHOTSE",
+    "loa": 170,
+    "crane_status": "G",
+    "nominal_capacity": 1752,
+    "effective_capacity": 1401.6,
+    "imo_no": 9678642
+  },
+  {
+    "vessel_name": "MAERSK NORDDAL",
+    "loa": 172,
+    "crane_status": "G",
+    "nominal_capacity": 1752,
+    "effective_capacity": 1401.6,
+    "imo_no": 9894674
+  },
+  {
+    "vessel_name": "MAERSK NASSJO",
+    "loa": 172,
+    "crane_status": "G",
+    "nominal_capacity": 1820,
+    "effective_capacity": 1456,
+    "imo_no": 9893876
+  },
+  {
+    "vessel_name": "PROSRICH",
+    "loa": 127,
+    "crane_status": "GL",
+    "nominal_capacity": 1028,
+    "effective_capacity": 822.4,
+    "imo_no": 9158226
+  },
+  {
+    "vessel_name": "CNC VENUS",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1776,
+    "effective_capacity": 1420.8,
+    "imo_no": 9817884
+  },
+  {
+    "vessel_name": "JT GLORY",
+    "loa": 176,
+    "crane_status": "G",
+    "nominal_capacity": 1750,
+    "effective_capacity": 1400,
+    "imo_no": 9357858
+  },
+  {
+    "vessel_name": "SITC YUANGMING",
+    "loa": 186,
+    "crane_status": "GL",
+    "nominal_capacity": 2650,
+    "effective_capacity": 2120,
+    "imo_no": 9932866
+  },
+  {
+    "vessel_name": "SITC WENDE",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1790,
+    "effective_capacity": 1432,
+    "imo_no": 9918731
+  },
+  {
+    "vessel_name": "MIA SCHULTE",
+    "loa": 188,
+    "crane_status": "G",
+    "nominal_capacity": 1930,
+    "effective_capacity": 1544,
+    "imo_no": 9676735
+  },
+  {
+    "vessel_name": "MAERSK PORT KLANG",
+    "loa": 186,
+    "crane_status": "GL",
+    "nominal_capacity": 2806,
+    "effective_capacity": 2244.8,
+    "imo_no": 9966130
+  },
+  {
+    "vessel_name": "KOTA HAKIM",
+    "loa": 160,
+    "crane_status": "G",
+    "nominal_capacity": 1350,
+    "effective_capacity": 1080,
+    "imo_no": 9238600
+  },
+  {
+    "vessel_name": "BELAWAN",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1710,
+    "effective_capacity": 1368,
+    "imo_no": 9412828
+  },
+  {
+    "vessel_name": "HR BALU",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1454,
+    "effective_capacity": 1163.2,
+    "imo_no": 9266114
+  },
+  {
+    "vessel_name": "MSC JENNA",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1718,
+    "effective_capacity": 1374.4,
+    "imo_no": 9966960
+  },
+  {
+    "vessel_name": "MSC CHAEWON",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1538,
+    "effective_capacity": 1230.4,
+    "imo_no": 9966972
+  },
+  {
+    "vessel_name": "MSC SUJIN",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1830,
+    "effective_capacity": 1464,
+    "imo_no": 9966958
+  },
+  {
+    "vessel_name": "JAIRAN",
+    "loa": 174,
+    "crane_status": "G",
+    "nominal_capacity": 1350,
+    "effective_capacity": 1080,
+    "imo_no": 9167291
+  },
+  {
+    "vessel_name": "YONG YUE",
+    "loa": 133,
+    "crane_status": "GL",
+    "nominal_capacity": 1080,
+    "effective_capacity": 864,
+    "imo_no": 8741026
+  },
+  {
+    "vessel_name": "HONG JIA",
+    "loa": 100,
+    "crane_status": "GL",
+    "nominal_capacity": 1050,
+    "effective_capacity": 840,
+    "imo_no": 9958585
+  },
+  {
+    "vessel_name": "SMOOTH VENTURE",
+    "loa": 172,
+    "crane_status": "G",
+    "nominal_capacity": 1638,
+    "effective_capacity": 1310.4,
+    "imo_no": 9550319
+  },
+  {
+    "vessel_name": "VIMC DIAMOND",
+    "loa": 148,
+    "crane_status": "G",
+    "nominal_capacity": 1118,
+    "effective_capacity": 894.4,
+    "imo_no": 9330288
+  },
+  {
+    "vessel_name": "IAL",
+    "loa": 146,
+    "crane_status": "GL",
+    "nominal_capacity": 972,
+    "effective_capacity": 777.6,
+    "imo_no": 9140061
+  },
+  {
+    "vessel_name": "AMALFI BAY",
+    "loa": 186,
+    "crane_status": "GL",
+    "nominal_capacity": 2954,
+    "effective_capacity": 2363.2,
+    "imo_no": 9983451
+  },
+  {
+    "vessel_name": "YUAN XIANG FA ZHAN",
+    "loa": 182,
+    "crane_status": "GL",
+    "nominal_capacity": 2300,
+    "effective_capacity": 1840,
+    "imo_no": 1053028
+  },
+  {
+    "vessel_name": "INTERASIA FORWARD",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1708,
+    "effective_capacity": 1366.4,
+    "imo_no": 9444998
+  },
+  {
+    "vessel_name": "MSC RIONA",
+    "loa": 184,
+    "crane_status": "G",
+    "nominal_capacity": 1730,
+    "effective_capacity": 1384,
+    "imo_no": 9144134
+  },
+  {
+    "vessel_name": "MSC AEBIN",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1800,
+    "effective_capacity": 1440,
+    "imo_no": 9966996
+  },
+  {
+    "vessel_name": "MSC SOMIN",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1800,
+    "effective_capacity": 1440,
+    "imo_no": 9967029
+  },
+  {
+    "vessel_name": "MSC GIANNINA",
+    "loa": 175,
+    "crane_status": "G",
+    "nominal_capacity": 1736,
+    "effective_capacity": 1388.8,
+    "imo_no": 9289051
+  },
+  {
+    "vessel_name": "PARNIA",
+    "loa": 174,
+    "crane_status": "G",
+    "nominal_capacity": 980,
+    "effective_capacity": 784,
+    "imo_no": 9167265
+  },
+  {
+    "vessel_name": "AST RISING",
+    "loa": 100,
+    "crane_status": "G",
+    "nominal_capacity": 100,
+    "effective_capacity": 80,
+    "imo_no": 9437828
+  },
+  {
+    "vessel_name": "MSC EYRA II",
+    "loa": 174,
+    "crane_status": "G",
+    "nominal_capacity": 1732,
+    "effective_capacity": 1385.6,
+    "imo_no": 9435222
+  },
+  {
+    "vessel_name": "BOX ENDEAVOUR",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1700,
+    "effective_capacity": 1360,
+    "imo_no": 9706281
+  },
+  {
+    "vessel_name": "KOTA RESTU",
+    "loa": 146,
+    "crane_status": "GL",
+    "nominal_capacity": 943,
+    "effective_capacity": 754.4,
+    "imo_no": 9392169
+  },
+  {
+    "vessel_name": "KOTA NABIL",
+    "loa": 179,
+    "crane_status": "GL",
+    "nominal_capacity": 1810,
+    "effective_capacity": 1448,
+    "imo_no": 9356830
+  },
+  {
+    "vessel_name": "XPRESS NUPTSE",
+    "loa": 170,
+    "crane_status": "G",
+    "nominal_capacity": 1730,
+    "effective_capacity": 1384,
+    "imo_no": 9678630
+  },
+  {
+    "vessel_name": "BRIDGE",
+    "loa": 182,
+    "crane_status": "GL",
+    "nominal_capacity": 2181,
+    "effective_capacity": 1744.8,
+    "imo_no": 9158587
+  },
+  {
+    "vessel_name": "NAVI SUNNY",
+    "loa": 132,
+    "crane_status": "G",
+    "nominal_capacity": 100,
+    "effective_capacity": 80,
+    "imo_no": 9530333
+  },
+  {
+    "vessel_name": "HELGOLAND",
+    "loa": 172,
+    "crane_status": "GL",
+    "nominal_capacity": 1781,
+    "effective_capacity": 1424.8,
+    "imo_no": 9944766
+  },
+  {
+    "vessel_name": "ST MARY",
+    "loa": 168,
+    "crane_status": "G",
+    "nominal_capacity": 1679,
+    "effective_capacity": 1343.2,
+    "imo_no": 9219252
+  },
+  {
+    "vessel_name": "MSC KYMEA II",
+    "loa": 177,
+    "crane_status": "G",
+    "nominal_capacity": 1756,
+    "effective_capacity": 1404.8,
+    "imo_no": 9334844
+  },
+  {
+    "vessel_name": "DEBBE",
+    "loa": 139,
+    "crane_status": "G",
+    "nominal_capacity": 1338,
+    "effective_capacity": 1070.4,
+    "imo_no": 9488061
+  }
+]

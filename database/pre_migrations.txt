@@ -1,0 +1,11 @@
+__mlo_wise_data
+$table->enum('type', ['import', 'export']);
+$table->string('route',50);
+$table->date('date');
+$table->unsignedInteger('DC20');
+$table->unsignedInteger('DC20');
+$table->unsignedInteger('DC20');
+$table->unsignedInteger('DC20');
+$table->unsignedInteger('DC20');
+$table->unsignedInteger('DC20');
+$table->unsignedInteger('DC20');
