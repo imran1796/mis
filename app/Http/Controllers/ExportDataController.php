@@ -6,6 +6,7 @@ use App\Exports\ExportMarketScenarioByPort;
 use App\Exports\RegionWiseExportCounts;
 use App\Models\ExportData;
 use App\Services\ExportDataService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -114,17 +115,19 @@ class ExportDataController extends Controller
 
     public function exportVolByPort(Request $request)
     {
+        $range = Carbon::parse($request['from_date'])->format('M-y') . ' To ' . Carbon::parse($request['to_date'])->format('M-y');
         $filters = $request->only(['from_date', 'to_date']);
         $data =  $this->exportDataService->exportVolByPort($filters);
 
-        return Excel::download(new ExportMarketScenarioByPort($data), 'test.xlsx');
+        return Excel::download(new ExportMarketScenarioByPort($data,$range), 'exportMarketScenario'.$range.'.xlsx');
     }
 
     public function exportVolByRegion(Request $request)
     {
+        $range = Carbon::parse($request['from_date'])->format('M-y') . ' To ' . Carbon::parse($request['to_date'])->format('M-y');
         $filters = $request->only(['from_date', 'to_date']);
         $data = $this->exportDataService->exportVolByRegion($filters);
 
-        return Excel::download(new RegionWiseExportCounts($data), 'test.xlsx');
+        return Excel::download(new RegionWiseExportCounts($data,$range), 'exportVolByRegion'.$range.'.xlsx');
     }
 }

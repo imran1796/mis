@@ -16,10 +16,13 @@ class RegionWiseExportCounts implements FromArray, WithHeadings, WithEvents
     use Exportable;
 
     private array $data;
+    private $range;
+    private $sq = 0;
 
-    public function __construct(array $data)
+    public function __construct(array $data,$range)
     {
         $this->data = $data;
+        $this->range = $range;
     }
 
     public function array(): array
@@ -28,7 +31,7 @@ class RegionWiseExportCounts implements FromArray, WithHeadings, WithEvents
 
         $output[] = ['Sinokor Merchant Marine Co., Ltd.'];
         $output[] = ['Globe Link Associates Ltd.'];
-        $output[] = ['Volume of Global Ports'];
+        $output[] = ['Volume of Global Ports '.$this->range];
         $output[] = [''];
 
         foreach ($this->data as $region => $ports) {

@@ -43,7 +43,7 @@ enum RegionCode: string
      * 
      * @throws InvalidArgumentException
      */
-    public static function fromCode(string $code): self
+    public static function fromCode(string $code)
     {
         $code = strtoupper(trim($code)); // Normalize input
         

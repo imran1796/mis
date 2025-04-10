@@ -20,11 +20,12 @@ class ExportMarketScenarioByPort implements FromCollection, WithMapping, WithHea
     private $data;
     private $range;
     private $previousShipperName = null;
-    private $previousRow = 0; // Track the previous row for merging
+    private $previousRow = 0;
 
-    public function __construct($data, )
+    public function __construct($data, $range)
     {
         $this->data = $data;
+        $this->range = $range;
     }
 
     public function collection()
@@ -57,7 +58,7 @@ class ExportMarketScenarioByPort implements FromCollection, WithMapping, WithHea
         return [
             ['Sinokor Merchant Marine Co., Ltd.'],
             ['Globe Link Associates Ltd.'],
-            ['MONTHLY EXPORT VOLUME (EX BDCGP) REPORT BASIS ON SINOKOR EXISTING SERVICE PORTS'],
+            ['MONTHLY EXPORT VOLUME (EX BDCGP) REPORT BASIS ON SINOKOR EXISTING SERVICE PORTS '.$this->range],
             [''],
             [
                 'SL',

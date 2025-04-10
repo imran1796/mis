@@ -63,11 +63,7 @@
                     </div>
                 @endif
 
-                {{-- start filters --}}
-                <div class="row mb-2">
-
-                </div>
-                <form class="row mb-2">
+                <form class="row ">
                     <div class="col-sm-2 mt-1 pr-0 form-group">
                         <select name="report_type" id="report_type" class="form-control form-control-sm">
                             <option value="">Select Filter</option>
@@ -145,37 +141,42 @@
                     <div class="col-sm-2 pr-0 mt-1">
                         <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
                     </div>
-
-                    <div class="col-sm-12 mt-0">
-                        <div class="row">
-                            <div class="col-sm-2 pr-0 offset-sm-6">
-                                <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download" aria-hidden="true"></i> xls</button>
-                            </div>
-
-                            <div class="col-sm-2 pr-0 ">
-                                <form class="" action="{{ route('export-data.report2') }}" method="POST">
-                                    @csrf
-                                    @method('post')
-                                    <input type="hidden" name="from_date" value="{{ request('from_date') }}">
-                                    <input type="hidden" name="to_date" value="{{ request('to_date') }}">
-                                    <button class="btn btn-success btn-sm w-100" id="exportVolByPort" type="submit"> <i class="fa fa-download" aria-hidden="true"></i> By
-                                        Port</button>
-                                </form>
-                            </div>
-                            <div class="col-sm-2 ">
-                                <form class="" action="{{ route('export-data.report3') }}" method="POST">
-                                    @csrf
-                                    @method('post')
-                                    <input type="hidden" name="from_date" value="{{ request('from_date') }}">
-                                    <input type="hidden" name="to_date" value="{{ request('to_date') }}">
-                                    <button class="btn btn-success btn-sm w-100" type="submit"> <i class="fa fa-download" aria-hidden="true"></i> By Region</button>
-                                </form>
-                            </div>
-                        </div>
+                    <div class="col-sm-2 pr-0 mt-1">
+                        <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download"
+                                aria-hidden="true"></i> xls</button>
                     </div>
-
-
                 </form>
+                <div class="row mb-2">
+                    <div class="col-sm-2 pr-0 offset-sm-8">
+                        <form class="" action="{{ route('export-data.report2') }}" method="POST">
+                            @csrf
+                            @method('post')
+                            <input type="hidden" name="from_date" value="{{ request('from_date') }}">
+                            <input type="hidden" name="to_date" value="{{ request('to_date') }}">
+                            {{-- @foreach ((array) request('pod') as $pod)
+                                <input type="hidden" name="pod[]" value="{{ $pod }}">
+                            @endforeach --}}
+
+                            <button class="btn btn-success btn-sm w-100" id="exportVolByPort" type="submit"> <i
+                                    class="fa fa-download" aria-hidden="true"></i> By
+                                Port</button>
+                        </form>
+                    </div>
+                    <div class="col-sm-2 ">
+                        <form class="" action="{{ route('export-data.report3') }}" method="POST">
+                            @csrf
+                            @method('post')
+                            <input type="hidden" name="from_date" value="{{ request('from_date') }}">
+                            <input type="hidden" name="to_date" value="{{ request('to_date') }}">
+                            {{-- @foreach ((array) request('pod') as $pod)
+                                <input type="hidden" name="pod[]" value="{{ $pod }}">
+                            @endforeach --}}
+
+                            <button class="btn btn-success btn-sm w-100" type="submit"> <i class="fa fa-download"
+                                    aria-hidden="true"></i> By Region</button>
+                        </form>
+                    </div>
+                </div>
 
                 {{-- exportVolByPort --}}
 
