@@ -43,9 +43,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/vesselWise', [\App\Http\Controllers\VesselController::class, 'vesselWiseIndex'])->name('vesselWise.index');
         Route::post('/mloWise', [\App\Http\Controllers\MloController::class, 'mloWiseStore'])->name('mloWise.store');
         Route::post('/vesselWise', [\App\Http\Controllers\VesselController::class, 'vesselWiseStore'])->name('vesselWise.store');
-
-        // Route::post('export-data/report2', [\App\Http\Controllers\ExportDataController::class, 'exportVolByPort'])->name('export-data.report2');
-        // Route::post('export-data/report3', [\App\Http\Controllers\ExportDataController::class, 'exportVolByRegion'])->name('export-data.report3');
         
     });
     
