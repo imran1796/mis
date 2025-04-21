@@ -1,18 +1,23 @@
 @extends('layouts.app', [
-    'activePage' => 'mloWise',
+    'activePage' => 'vesselInfo-create',
     'title' => 'GLA Admin',
-    'navName' => 'MLO',
+    'navName' => 'Vessel',
     'activeButton' => 'laravel',
 ])
 
 @section('content')
+    <style>
+        .ui-datepicker-calendar {
+            display: none;
+        }
+    </style>
     <div class="content">
         <div class="container-fluid">
             <div class="section-image">
                 <div class="row mb-2">
                     <div class="col-lg-12 margin-tb">
                         <div class="pull-left">
-                            <h2>MLO Wise Volume</h2>
+                            <h2>Vessel Info - Import Export Data</h2>
                         </div>
                     </div>
                 </div>
@@ -24,10 +29,10 @@
                             <div class="form">
                                 <div class="row mb-3">
                                     <div class="col-sm-2">
-                                        <label for="route" class="form-label">Route</label>
+                                        <label for="route_id" class="form-label">Route</label>
                                     </div>
                                     <div class="col-sm-10">
-                                        <select name="route" id="route" class="form-control" required>
+                                        <select name="route_id" id="route_id" class="form-control" required>
                                             @foreach ($routes as $route)
                                                 <option value="{{ $route->id }}">{{ $route->name }}</option>
                                             @endforeach
@@ -81,42 +86,40 @@
 
             initializeMonthYearPicker('.datepicker');
 
-            
 
+            $('#uploadForm').on('submit', function(e) {
+                e.preventDefault();
 
-            // $('#createMloModalForm').on('submit', function(e) {
-            //     e.preventDefault();
+                let formData = new FormData(this);
 
-            //     let formData = new FormData(this);
-            //     console.log(formData);
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('vesselInfo.store') }}',
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    enctype: 'multipart/form-data',
+                    success: function(response) {
+                        demo.customShowNotification('success', response.success);
+                        window.location.reload();
+                    },
+                    error: function(response) {
+                        console.log(response);
+                        if (response.responseJSON.error) {
+                            demo.customShowNotification('danger', response.responseJSON.error);
+                        }
+                        for (let field in response.responseJSON.errors) {
+                            for (let i = 0; i < response.responseJSON.errors[field]
+                                .length; i++) {
+                                demo.customShowNotification('danger', response.responseJSON
+                                    .errors[field][i]);
+                            }
+                        }
+                    }
+                });
 
-            //     $.ajax({
-            //         type: 'POST',
-            //         url: '{{ route('mlos.store') }}',
-            //         data: formData,
-            //         cache: false,
-            //         contentType: false,
-            //         processData: false,
-            //         enctype: 'multipart/form-data',
-            //         success: function(response) {
-            //             $('#createMloModal').modal('hide');
-            //             demo.customShowNotification('success', response.success);
-            //             window.location.reload();
-            //         },
-            //         error: function(response) {
-            //             if (response.responseJSON.error) {
-            //                 demo.customShowNotification('danger', response.responseJSON.error);
-            //             }
-            //             for (let field in response.responseJSON.errors) {
-            //                 for (let i = 0; i < response.responseJSON.errors[field]
-            //                     .length; i++) {
-            //                     demo.customShowNotification('danger', response.responseJSON
-            //                         .errors[field][i]);
-            //                 }
-            //             }
-            //         }
-            //     });
-            // });
+            });
         });
 
         function initializeMonthYearPicker(selector) {

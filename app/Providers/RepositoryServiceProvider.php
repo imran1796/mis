@@ -6,8 +6,10 @@ use App\Interfaces\ExportDataInterface;
 use App\Interfaces\MloInterface;
 use App\Interfaces\PermissionInterface;
 use App\Interfaces\RoleInterface;
+use App\Interfaces\RouteInterface;
 use App\Interfaces\UserInterface;
 use App\Interfaces\VesselInterface;
+use App\Repositories\RouteRepository;
 use App\Repositories\ExportDataRepository;
 use App\Repositories\MloRepository;
 use App\Repositories\PermissionRepository;
@@ -29,6 +31,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ExportDataInterface::class, ExportDataRepository::class);
         $this->app->bind(VesselInterface::class, VesselRepository::class);
         $this->app->bind(MloInterface::class, MloRepository::class);
+        $this->app->bind(RouteInterface::class, RouteRepository::class);
     }
 
     /**

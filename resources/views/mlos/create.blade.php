@@ -24,15 +24,15 @@
                             enctype="multipart/form-data">
                             @csrf
                             <div class="row">
-                                <div class="col-sm-2 text-center">
+                                <div class="col-md-2 text-center">
                                     <p><i class="fa fa-file"></i>{{ __(' XLS File') }}</p>
                                 </div>
-                                <div class="form-group col-sm-8">
+                                <div class="form-group col-md-8">
                                     <input required type="file" name="file" class="form-control form-control-sm">
                                 </div>
 
 
-                                <div class="form-group col-sm-2 text-center">
+                                <div class="form-group col-md-2 text-center">
                                     <button type="submit" class="btn btn-sm btn-primary">Upload Vessels</button>
                                 </div>
                             </div>

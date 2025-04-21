@@ -3,8 +3,11 @@
 namespace App\Repositories;
 
 use App\Interfaces\VesselInterface;
+use App\Models\ImportExportCount;
 use Illuminate\Support\Facades\Log;
 use App\Models\Vessel;
+use App\Models\VesselInfos;
+use Carbon\Carbon;
 
 class VesselRepository implements VesselInterface
 {
@@ -18,8 +21,9 @@ class VesselRepository implements VesselInterface
         return Vessel::findOrFail($id);
     }
 
-    public function getVesselByName(string $name){
-        return Vessel::findOrFail($name);
+    public function getVesselByName(string $name)
+    {
+        return Vessel::where('vessel_name', $name)->first();
     }
 
     public function createVessel(array $data)
@@ -86,5 +90,73 @@ class VesselRepository implements VesselInterface
                 'error' => 'Error Deleting Vessel: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function createVesselInfos(array $data)
+    {
+        return VesselInfos::create($data);
+    }
+
+    public function createImportExportCount(array $data)
+    {
+        return ImportExportCount::create($data);
+    }
+
+    public function getAllImportExportCount($filters = [])
+    {
+        if (empty($filters)) {
+            return collect();
+        }
+
+        $query = ImportExportCount::query();
+        if (!empty($filters['from_date'])) {
+            $query->whereDate('date', '>=', $filters['from_date']);
+        }
+
+        if (!empty($filters['to_date'])) {
+            $query->whereDate('date', '<=', $filters['to_date']);
+        }
+
+        if (!empty($filters['vessel_name'])) {
+            $query->whereIn('mlo_code', $filters['mlo']);
+        }
+
+        if (!empty($filters['pod'])) {
+            $query->whereIn('route_id', $filters['pod']);
+        }
+
+        if (!empty($filters['type'])) {
+            if ($filters['type'] == 'all') {
+                $query->whereIn('type', ['IMPORT', 'EXPORT']);
+            } else {
+                $query->where('type', $filters['type']);
+            }
+        }
+
+        return $query->get();
+    }
+
+    public function getAllVesselInfos($filters = [])
+    {
+        $query = VesselInfos::with([
+            'importExportCounts',
+            'vessel'
+        ]);
+
+        if (!empty($filters['route_id'])) {
+            $query->whereIn('route_id', $filters['route_id']);
+        }
+
+        if (!empty($filters['from_date'])) {
+            $fromDate = Carbon::parse($filters['from_date'])->startOfMonth();
+            $query->whereDate('date', '>=', $fromDate);
+        }
+
+        if (!empty($filters['to_date'])) {
+            $toDate = Carbon::parse($filters['to_date'])->endOfMonth();
+            $query->whereDate('date', '<=', $toDate);
+        }
+
+        return $query->get();
     }
 }

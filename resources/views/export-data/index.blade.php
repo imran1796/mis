@@ -148,7 +148,7 @@
                 </form>
                 <div class="row mb-2">
                     <div class="col-sm-2 pr-0 offset-sm-8">
-                        <form class="" action="{{ route('export-data.report2') }}" method="POST">
+                        <form class="" action="{{ route('export-data.report.port') }}" method="POST">
                             @csrf
                             @method('post')
                             <input type="hidden" name="from_date" value="{{ request('from_date') }}">
@@ -163,7 +163,7 @@
                         </form>
                     </div>
                     <div class="col-sm-2 ">
-                        <form class="" action="{{ route('export-data.report3') }}" method="POST">
+                        <form class="" action="{{ route('export-data.report.region') }}" method="POST">
                             @csrf
                             @method('post')
                             <input type="hidden" name="from_date" value="{{ request('from_date') }}">
@@ -413,10 +413,6 @@
                 });
             });
 
-
-
-
-
             $('.select-row').on('change', function() {
                 let labels = $(this).closest('tr').data('labels');
                 let series = $(this).closest('tr').data('series');
@@ -436,7 +432,6 @@
 
                 updateChart();
             });
-
 
         });
 
@@ -470,7 +465,6 @@
             demo.initExportDataBar(allLabels, allSeries, max_val);
             demo.initExportDataChart(_teus);
         }
-
 
         function initializeMonthYearPicker(selector) {
             $(selector).datepicker({
@@ -508,6 +502,7 @@
                 }
             });
         }
+
         $('.selectpicker').selectpicker({
             actionsBox: true,
             deselectAllText: 'Deselect All',

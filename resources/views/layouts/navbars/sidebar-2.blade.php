@@ -106,48 +106,88 @@
 
 
             {{-- @can('Vessel-data') --}}
-            <li class="nav-item @if ($activePage == 'vessel') active @endif">
+            {{-- <li class="nav-item @if ($activePage == 'vessel') active @endif">
                 <a class="nav-link" href="{{ route('vessels.index') }}">
                     <i class="fa fa-ship" aria-hidden="true"></i>
 
                     {{ __('Vessel') }}
                 </a>
-            </li>
+            </li> --}}
             {{-- @endcan --}}
 
             {{-- @can('Vessel-data') --}}
-            <li class="nav-item @if ($activePage == 'mlo') active @endif">
-                <a class="nav-link" href="{{ route('mlos.create') }}">
+            {{-- <li class="nav-item @if ($activePage == 'mlo') active @endif">
+                <a class="nav-link" href="{{ route('mlos.index') }}">
                     <i class="fa-solid fa-receipt"></i>
                     {{ __('MLO') }}
                 </a>
-            </li>
+            </li> --}}
             {{-- @endcan --}}
 
             <li class="">
-                <a href="#upload" data-toggle="collapse"
-                    aria-expanded="{{ in_array($activePage, ['mloWise','vesselWise']) ? 'true' : 'false' }}"
+                <a href="#mlo" data-toggle="collapse"
+                    aria-expanded="{{ in_array($activePage, ['mlo']) ? 'true' : 'false' }}"
                     class="dropdown-toggle">
                     <i class="fas fa-bars"></i>
-                    Upload</a>
-                <ul class="collapse list-unstyled {{ in_array($activePage, ['mloWise','vesselWise']) ? 'show' : '' }}"
-                    id="upload">
+                    MLO</a>
+                <ul class="collapse list-unstyled {{ in_array($activePage, ['mlo','mloWiseCount-index','mloWiseCount-create']) ? 'show' : '' }}"
+                    id="mlo">
 
-                    <li class="nav-item @if ($activePage == 'mloWise') active @endif">
-                        <a class="nav-link" href="{{ route('mloWise.upload') }}">
-                            <i class="fas fa-user"></i>
-                            {{ __('MLO') }}
+                    <li class="nav-item @if ($activePage == 'mlo') active @endif">
+                        <a class="nav-link" href="{{ route('mlos.index') }}">
+                            <i class="fa-solid fa-receipt"></i>
+                            {{ __('MLOs') }}
                         </a>
                     </li>
 
-                    <li class="nav-item @if ($activePage == 'vesselWise') active @endif">
-                        <a class="nav-link" href="{{ route('vesselWise.index') }}">
+                    <li class="nav-item @if ($activePage == 'mloWiseCount-create') active @endif">
+                        <a class="nav-link" href="{{ route('mloWiseCount.create') }}">
                             <i class="fas fa-user"></i>
-                            {{ __('Vessel-Op') }}
+                            {{ __('Upload XLS') }}
+                        </a>
+                    </li>
+
+                    {{-- <li class="nav-item @if ($activePage == 'mloWiseCount-index') active @endif">
+                        <a class="nav-link" href="{{ route('mloWiseCount.index') }}">
+                            <i class="fas fa-user"></i>
+                            {{ __('MLO Wise Data') }}
+                        </a>
+                    </li> --}}
+                </ul>
+            </li>
+
+            <li class="">
+                <a href="#vessel" data-toggle="collapse"
+                    aria-expanded="{{ in_array($activePage, ['vessel','vesselInfo-create','vesselInfo-index']) ? 'true' : 'false' }}"
+                    class="dropdown-toggle">
+                    <i class="fas fa-bars"></i>
+                    Vessel</a>
+                <ul class="collapse list-unstyled {{ in_array($activePage, ['vessel','vesselInfo-create','vesselInfo-index']) ? 'show' : '' }}"
+                    id="vessel">
+
+                    <li class="nav-item @if ($activePage == 'vessel') active @endif">
+                        <a class="nav-link" href="{{ route('vessels.index') }}">
+                            <i class="fa fa-ship" aria-hidden="true"></i>
+                            {{ __('Vessel') }}
+                        </a>
+                    </li>
+
+                    <li class="nav-item @if ($activePage == 'vesselInfo-create') active @endif">
+                        <a class="nav-link" href="{{ route('vesselInfo.create') }}">
+                            <i class="fas fa-user"></i>
+                            {{ __('Upload XLS') }}
                         </a>
                     </li>
                 </ul>
             </li>
+
+            <li class="nav-item @if ($activePage == 'reports') active @endif">
+                <a class="nav-link" href="{{ route('reports.index') }}">
+                    <i class="fas fa-user"></i>
+                    {{ __('Reports') }}
+                </a>
+            </li>
+
 
         </ul>
     </div>
