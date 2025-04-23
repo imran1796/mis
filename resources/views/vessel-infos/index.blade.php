@@ -1,7 +1,7 @@
 @extends('layouts.app', [
     'activePage' => 'vesselInfo-index',
     'title' => 'GLA Admin',
-    'navName' => 'MLO Wise Data',
+    'navName' => 'Vessel Info',
     'activeButton' => 'laravel',
 ])
 
@@ -12,7 +12,7 @@
                 <div class="row mb-2">
                     <div class="col-lg-12 margin-tb">
                         <div class="pull-left">
-                            <h2>Mlo Wise Data</h2>
+                            <h2>Vessel Info</h2>
                         </div>
 
 
@@ -20,15 +20,6 @@
                 </div>
 
                 <form class="row ">
-
-
-                    <div class="col-sm-2 pr-0 form-group">
-                        <select id="filter-type" name="type" class="form-control form-control-sm">
-                            <option value="">All</option>
-                            <option value="IMPORT">Import</option>
-                            <option value="EXPORT">Export</option>
-                        </select>
-                    </div>
 
                     <div class="col-sm-2 pr-0 mt-1 form-group">
                         <label for="from_date" class="sr-only">From Date</label>
@@ -45,9 +36,9 @@
                         <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
                     </div>
                     <!-- <div class="col-sm-2 pr-0 mt-1">
-                                <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download"
-                                        aria-hidden="true"></i> xls</button>
-                            </div> -->
+                                                                            <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download"
+                                                                                    aria-hidden="true"></i> xls</button>
+                                                                        </div> -->
                 </form>
 
                 <div class="card bg-white">
@@ -65,58 +56,143 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>MLO Code</th>
-                                    <th>Date</th>
-                                    <th>Type</th>
-                                    <th>DC20</th>
-                                    <th>DC40</th>
-                                    <th>DC45</th>
-                                    <th>R20</th>
-                                    <th>R40</th>
-                                    <th>MTY20</th>
-                                    <th>MTY40</th>
-                                    <th>Laden Teus</th>
-                                    <th>Empty Teus</th>
-
+                                    <th>Vessel</th>
+                                    <th>Rotation</th>
+                                    <th>Jetty</th>
+                                    <th>Operator</th>
+                                    <th>Local Agent</th>
+                                    <th>Nom Cap.</th>
+                                    <th>Eff Cap.</th>
+                                    <th>LOA</th>
+                                    <th>Crane</th>
+                                    <th>IMO No.</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($data as $mlo)
+                                @foreach ($data as $dt)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ strtoupper($mlo->mlo_code) }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($mlo->date)->format('F y') }}</td>
-                                        <td>{{ ucfirst($mlo->type) }}</td>
-                                        <td>{{ $mlo->dc20 ?? 0 }}</td>
-                                        <td>{{ $mlo->dc40 ?? 0 }}</td>
-                                        <td>{{ $mlo->dc45 ?? 0 }}</td>
-                                        <td>{{ $mlo->r20 ?? 0 }}</td>
-                                        <td>{{ $mlo->r40 ?? 0 }}</td>
-                                        <td>{{ $mlo->mty20 ?? 0 }}</td>
-                                        <td>{{ $mlo->mty40 ?? 0 }}</td>
-                                        <td>{{ ($mlo->dc20 ?? 0) + ($mlo->r20 ?? 0) + (($mlo->dc40 ?? 0) + ($mlo->dc45 ?? 0) + ($mlo->r40 ?? 0)) * 2 }}
+                                        <td>{{ $dt->vessel->vessel_name }} </td>
+                                        <td>{{ $dt->rotation_no }} </td>
+                                        <td>{{ $dt->jetty }} </td>
+                                        <td>{{ $dt->operator }} </td>
+                                        <td>{{ $dt->local_agent }}</td>
+                                        <td>{{ $dt->vessel->nominal_capacity }}</td>
+                                        <td>{{ $dt->effective_capacity }} </td>
+                                        <td>{{ $dt->vessel->length_overall }}</td>
+                                        <td>{{ $dt->vessel->crane_status }}</td>
+                                        <td>{{ $dt->vessel->imo_no }}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-success editVesselInfoBtn"
+                                                data-id="{{ $dt->id }}"
+                                                data-vessel_name="{{ $dt->vessel->vessel_name }}"
+                                                data-rotation_no="{{ $dt->rotation_no ??''}}" 
+                                                data-jetty="{{ $dt->jetty??'' }}"
+                                                data-operator="{{ $dt->operator??'' }}"
+                                                data-local_agent="{{ $dt->local_agent??'' }}"
+                                                data-berth_date="{{ $dt->berth_date??'' }}"
+                                                data-arrival_date="{{ $dt->arrival_date??'' }}"
+                                                data-sail_date="{{ $dt->sail_date??'' }}"
+                                                data-berth_time="{{ $dt->berth_time??'' }}"
+                                                data-arrival_time="{{ $dt->arrival_time??'' }}"
+                                                data-sail_time="{{ $dt->sail_time??'' }}"
+                                                data-effective_capacity="{{ $dt->effective_capacity??'' }}"
+                                                data-target="#editVesselInfoModal">
+                                                Edit
+                                            </button>
+
                                         </td>
-                                        <td>{{ ($mlo->mty20 ?? 0) + ($mlo->mty40 ? $mlo->mty40 * 2 : 0) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
-                            <tfoot>
-                                <td colspan="4" class="text-center">Total</td>
-                                <td>{{ $data->sum('dc20') }}</td>
-                                <td>{{ $data->sum('dc40') }}</td>
-                                <td>{{ $data->sum('dc45') }}</td>
-                                <td>{{ $data->sum('r20') }}</td>
-                                <td>{{ $data->sum('r45') }}</td>
-                                <td>{{ $data->sum('mty20') }}</td>
-                                <td>{{ $data->sum('mty40') }}</td>
-                                <td>{{ $data->sum('dc20') + $data->sum('r40') + ($data->sum('dc45') + $data->sum('dc40') + $data->sum('r40')) * 2 }}
-                                </td>
-                                <td>{{ $data->sum('mty20') + $data->sum('mty40') * 2 }}</td>
-                            </tfoot>
                         </table>
                     </div>
 
                 </div>
+
+                @component('components.modal', [
+                    'id' => 'editVesselInfoModal',
+                    'title' => 'Edit Vessel Info',
+                    'size' => 'modal-md',
+                    'submitButton' => 'editVesselInfoButton',
+                ])
+                    <input type="hidden" name="vessel_info_id" id="vessel_info_id">
+
+                    <div class="form-group row">
+                        <div class="col-sm-3"><label for="rotation_no"><strong>Rot No:</strong></label></div>
+                        <div class="col-sm-9"><input type="text" name="rotation_no" id="rotation_no"
+                                class="form-control form-control-sm" placeholder="Rotation No"></div>
+
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-sm-3"><label for="jetty"><strong>Jetty:</strong></label></div>
+                        <div class="col-sm-9"><input type="text" name="jetty" id="jetty"
+                                class="form-control form-control-sm" placeholder="Jetty"></div>
+
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-sm-3"><label for="operator"><strong>Opt:</strong></label></div>
+                        <div class="col-sm-9"><input type="text" name="operator" id="operator"
+                                class="form-control form-control-sm" placeholder="Operator"></div>
+
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-sm-3"><label for="local_agent"><strong>L.Agent:</strong></label></div>
+                        <div class="col-sm-9"><input type="text" name="local_agent" id="local_agent"
+                                class="form-control form-control-sm" placeholder="Local Agent"></div>
+
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-sm-3"><label for="effective_capacity"><strong>Eff Cap:</strong></label>
+                        </div>
+                        <div class="col-sm-9"><input type="number" name="effective_capacity" id="effective_capacity"
+                                class="form-control form-control-sm" placeholder="Effective Capacity"></div>
+
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for=""><strong>Arrival Date/Time</strong></label>
+                        <div class="row">
+                            <div class="col-sm-6"><input type="number" step="0.1" name="arrival_date"
+                                    id="arrival_date" class="form-control form-control-sm" placeholder="Arrival Date">
+                            </div>
+                            <div class="col-sm-6"><input type="number" step="0.1" name="arrival_time"
+                                    id="arrival_time" class="form-control form-control-sm" placeholder="Arrival Time">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for=""><strong>Berth Date/Time</strong></label>
+                        <div class="row">
+                            <div class="col-sm-6"><input type="number" step="0.1" name="beth_date" id="beth_date"
+                                    class="form-control form-control-sm" placeholder="Berth Date">
+                            </div>
+                            <div class="col-sm-6"><input type="number" step="0.1" name="berth_time" id="berth_time"
+                                    class="form-control form-control-sm" placeholder="Berth Time">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for=""><strong>Sail Date/Time</strong></label>
+                        <div class="row">
+                            <div class="col-sm-6"><input type="number" step="0.1" name="sail_date" id="sail_date"
+                                    class="form-control form-control-sm" placeholder="Sail Date">
+                            </div>
+                            <div class="col-sm-6"><input type="number" step="0.1" name="sail_time" id="sail_time"
+                                    class="form-control form-control-sm" placeholder="Sail Time">
+                            </div>
+                        </div>
+                    </div>
+                @endcomponent
+
             </div>
         </div>
     </div>
@@ -130,6 +206,53 @@
                 $(".tableFixHead tbody tr").filter(function() {
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
+            });
+
+            $('.editVesselInfoBtn').on('click', function() {
+                $('#vessel_info_id').val($(this).data('id'));
+                $('#rotation_no').val($(this).data('rotation_no'));
+                $('#jetty').val($(this).data('jetty'));
+                $('#operator').val($(this).data('operator'));
+                $('#local_agent').val($(this).data('local_agent'));
+                $('#effective_capacity').val($(this).data('effective_capacity'));
+                $('#berth_date').val($(this).data('berth_date'));
+                $('#arrival_date').val($(this).data('arrival_date'));
+                $('#sail_date').val($(this).data('sail_date'));
+                $('#berth_time').val($(this).data('berth_time'));
+                $('#arrival_time').val($(this).data('arrival_time'));
+                $('#sail_time').val($(this).data('sail_time'));
+            });
+
+            // Submit Modal Form
+            $('#editVesselInfoModalForm').on('submit', function(e) {
+                e.preventDefault();
+                let formData = new FormData(this);
+                console.log(formData);
+                // $.ajax({
+                //     type: 'POST',
+                //     url: '{{ route('vesselInfo.update') }}',
+                //     data: formData,
+                //     cache: false,
+                //     contentType: false,
+                //     processData: false,
+                //     enctype: 'multipart/form-data',
+                //     success: function(response) {
+                //         $('#editVesselInfoModal').modal('hide');
+                //         demo.customShowNotification('success', response.success);
+                //         window.location.reload();
+                //     },
+                //     error: function(response) {
+                //         if (response.responseJSON?.error) {
+                //             demo.customShowNotification('danger', response.responseJSON.error);
+                //         }
+                //         const errors = response.responseJSON?.errors || {};
+                //         Object.keys(errors).forEach(field => {
+                //             errors[field].forEach(msg => {
+                //                 demo.customShowNotification('danger', msg);
+                //             });
+                //         });
+                //     }
+                // });
             });
         });
     </script>

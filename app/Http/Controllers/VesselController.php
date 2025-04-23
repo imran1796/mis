@@ -51,9 +51,9 @@ class VesselController extends Controller
 
     public function indexVesselInfo(Request $request)
     {
-        $filters = $request->only(['from_date', 'to_date', 'type']);
+        $filters = $request->only(['from_date', 'to_date']);
         $data = $this->vesselService->getAllVesselWiseData($filters);
-        return view('vessel-infos.index', compact('data'));
+        return view('vessel-infos.index',compact('data'));
     }
 
     public function createVesselInfo()
@@ -84,15 +84,26 @@ class VesselController extends Controller
     public function operatorWiseLiftingDownload(Request $request)
     {
         $filters = $request->only(['from_date', 'to_date', 'route_id']);
-        $range = Carbon::parse($request['from_date'])->format('d-M-y') . ' To ' . Carbon::parse($request['to_date'])->format('d-M-y');
+
+        if (empty($filters['from_date']) || empty($filters['to_date']) || empty($filters['route_id'])) {
+            return redirect()->back();
+        }
+
+        $range = Carbon::parse($filters['from_date'])->format('M-y') . ' To ' . Carbon::parse($filters['to_date'])->format('M-y');
+
+        $routeNames = [1 => 'SIN', 2 => 'CBO', 3 => 'CCU'];
+        $route = collect($filters['route_id'] ?? [])
+            ->map(fn($id) => $routeNames[$id] ?? '')
+            ->filter()
+            ->implode(', ');
+
         $data = $this->vesselService->operatorWiseLifting($filters);
 
-        return Excel::download(
-            new OperatorWiseSummary($data[0], $data[1], $range),
-            'OperatorWiseLifting(Summary).xlsx'
-        );
+        $fileName = "OperatorWiseLifting(Summary) - {$range}" . ($route ? " - {$route}" : '') . ".xlsx";
+
+        return Excel::download(new OperatorWiseSummary($data[0], $data[1], $range, $route), $fileName);
     }
-    
+
 
     public function socInOutBound(Request $request)
     {

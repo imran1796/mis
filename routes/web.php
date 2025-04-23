@@ -44,15 +44,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     Route::resource('vessels', App\Http\Controllers\VesselController::class);
     Route::group(['prefix' => 'vessel-info'], function () {
-        Route::get('/index', [\App\Http\Controllers\VesselController::class, 'indexVesselInfo'])->name('vesselInfo.index');
+        Route::get('/', [\App\Http\Controllers\VesselController::class, 'indexVesselInfo'])->name('vesselInfo.index');
         Route::get('/create', [\App\Http\Controllers\VesselController::class, 'createVesselInfo'])->name('vesselInfo.create');
         Route::post('/store', [\App\Http\Controllers\VesselController::class, 'storeVesselInfo'])->name('vesselInfo.store');
+        Route::post('/update', [\App\Http\Controllers\VesselController::class, 'updateVesselInfo'])->name('vesselInfo.update');
     });
 
     Route::group(['prefix' => 'reports'], function () {
         Route::get('/index', [\App\Http\Controllers\VesselController::class, 'indexReport'])->name('reports.index');
         Route::get('/operator-wise-lifting', [\App\Http\Controllers\VesselController::class, 'operatorWiseLifting'])->name('reports.operator-wise-lifting');
+        Route::get('/operator-wise-lifting/download', [\App\Http\Controllers\VesselController::class, 'operatorWiseLiftingDownload'])->name('reports.operator-wise-lifting.download');
+
         Route::get('/soc-inout-bound', [\App\Http\Controllers\VesselController::class, 'socInOutBound'])->name('reports.soc-inout-bound');
+        Route::get('/soc-inout-bound/download', [\App\Http\Controllers\VesselController::class, 'socInOutBoundDownload'])->name('reports.soc-inout-bound.download');
+
         Route::get('/vessel-turn-around-time', [\App\Http\Controllers\VesselController::class, 'vesselTurnAroundTime'])->name('reports.vessel-turn-around');
         Route::get('/market-competitors', [\App\Http\Controllers\VesselController::class, 'marketCompetitors'])->name('reports.market-competitors');
         Route::get('/soc-outbound-market-strategy', [\App\Http\Controllers\VesselController::class, 'socOutboundMarketStrategy'])->name('reports.soc-outbound-market');

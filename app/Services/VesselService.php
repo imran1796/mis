@@ -178,7 +178,7 @@ class VesselService
 
     public function getAllVesselWiseData($filters)
     {
-        return $this->getAllvesselWiseData($filters);
+        return $this->vesselRepository->getAllVesselInfos($filters);
     }
 
     public function getAllRoutes()

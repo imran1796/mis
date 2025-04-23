@@ -10,20 +10,24 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
-
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class OperatorWiseSummary implements FromCollection, WithMapping, WithHeadings, WithEvents
 {
     use Exportable;
 
-    private $sq = 1;
+    private int $sq = 1;
     private $data;
     private $data2;
+    private string $range;
+    private string $route;
 
-    public function __construct($data, $data2)
+    public function __construct($data,  $data2, string $range, string $route)
     {
         $this->data = $data;
         $this->data2 = $data2;
+        $this->range = $range;
+        $this->route = $route;
     }
 
     public function collection()
@@ -36,37 +40,31 @@ class OperatorWiseSummary implements FromCollection, WithMapping, WithHeadings, 
         return [
             $this->sq++,
             $data['operator'] ?? '',
-
-            $data['total_laden_import'] ?? '',
-            $data['total_empty_import'] ?? '',
-            $data['import_laden_eff'] ?? '',
-            $data['import_empty_eff'] ?? '',
-
-            $data['total_laden_export'] ?? '',
-            $data['total_empty_export'] ?? '',
-            $data['export_laden_eff'] ?? '',
-            $data['export_empty_eff'] ?? '',
-
-            $data['vessel_calls'] ?? '',
-            $data['unique_vessels'] ?? '',
-            $data['effective_capacity'] ?? '',
-            $data['nominal_capacity'] ?? '',
-            $data['import'] ?? '',
-            $data['export_laden'] ?? '',
-            $data['export_empty'] ?? '',
+            $data['total_laden_import'] ?? 0,
+            $data['total_empty_import'] ?? 0,
+            $data['import_laden_eff'] ?? 0,
+            $data['import_empty_eff'] ?? 0,
+            $data['total_laden_export'] ?? 0,
+            $data['total_empty_export'] ?? 0,
+            $data['export_laden_eff'] ?? 0,
+            $data['export_empty_eff'] ?? 0,
+            $data['vessel_calls'] ?? 0,
+            $data['unique_vessels'] ?? 0,
+            $data['effective_capacity'] ?? 0,
+            $data['nominal_capacity'] ?? 0,
+            $data['import'] ?? 0,
+            $data['export_laden'] ?? 0,
+            $data['export_empty'] ?? 0,
         ];
     }
-
 
     public function headings(): array
     {
         return [
             ['Sinokor Merchant Marine Co., Ltd.'],
             ['Globe Link Associates Ltd.'],
-            ['Operator Wise Container Lifting (Summary)'],
+            ['Operator Wise Container Lifting (Summary) ' . $this->range . ' - ' . strtoupper($this->route)],
             [''],
-
-            // Grouped Header for Operator-wise Analysis
             [
                 'Sl',
                 'Operator',
@@ -86,21 +84,8 @@ class OperatorWiseSummary implements FromCollection, WithMapping, WithHeadings, 
                 'Export Laden %',
                 'Export Empty %'
             ],
-
-            // Empty line
-            // [''],
-
-            // Load Factor Table Headers
-            // ['Load Factor Summary'],
-            // [''],
-            // ['Type', 'Effective Capacity %', 'Nominal Capacity %'],
-            // ['Import Laden', $this->data2['import_laden_load_factor_effective'], $this->data2['import_laden_load_factor_nominal']],
-            // ['Import Empty', $this->data2['import_empty_load_factor_effective'], $this->data2['import_empty_load_factor_nominal']],
-            // ['Export Laden', $this->data2['export_laden_load_factor_effective'], $this->data2['export_laden_load_factor_nominal']],
-            // ['Export Empty', $this->data2['export_empty_load_factor_effective'], $this->data2['export_empty_load_factor_nominal']],
         ];
     }
-
 
     public function registerEvents(): array
     {
@@ -109,15 +94,7 @@ class OperatorWiseSummary implements FromCollection, WithMapping, WithHeadings, 
                 $sheet = $event->sheet->getDelegate();
                 $parent = $sheet->getParent();
 
-                
-
-                // $event->sheet->getColumnDimension('B')->setAutoSize(true);
-                // $event->sheet->getColumnDimension('C')->setWidth(25);
-                // $event->sheet->getColumnDimension('J')->setWidth(25);
-
-
                 $parent->getDefaultStyle()->getFont()->setSize(11);
-
                 $parent->getDefaultStyle()->getAlignment()->applyFromArray([
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                     'vertical' => Alignment::VERTICAL_CENTER,
@@ -125,15 +102,34 @@ class OperatorWiseSummary implements FromCollection, WithMapping, WithHeadings, 
                 ]);
 
                 $highestColumn = $sheet->getHighestColumn();
-                $highestRow = $sheet->getHighestRow() + 1;
+                $highestRow = $sheet->getHighestRow();
                 $range = "A1:{$highestColumn}{$highestRow}";
 
+                // Merge headers
                 $sheet->mergeCells("A1:{$highestColumn}1");
                 $sheet->mergeCells("A2:{$highestColumn}2");
                 $sheet->mergeCells("A3:{$highestColumn}3");
                 $sheet->mergeCells("A4:{$highestColumn}4");
 
-                $sheet->getStyle($range)->applyFromArray([
+                $totalsRow = $highestRow + 1;
+                $sheet->setCellValue("A{$totalsRow}", 'Total');
+                $sheet->mergeCells("A{$totalsRow}:B{$totalsRow}");
+                $sheet->getStyle("A{$totalsRow}")->getFont()->setBold(true);
+
+                $columnsToTotal = ['C', 'D', 'G', 'H', 'K', 'L', 'M', 'N'];
+
+                foreach ($columnsToTotal as $col) {
+                    $sheet->setCellValue("{$col}{$totalsRow}", "=SUM({$col}5:{$col}{$highestRow})");
+                    $sheet->getStyle("{$col}{$totalsRow}")->getFont()->setBold(true);
+                }
+
+                // Style headers
+                foreach ([1, 2, 3] as $row) {
+                    $sheet->getStyle("A{$row}:{$highestColumn}{$row}")->getFont()->setBold(true)->setSize(13);
+                }
+
+                // Borders
+                $sheet->getStyle("A5:{$highestColumn}{$highestRow}")->applyFromArray([
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => Border::BORDER_THIN,
@@ -142,27 +138,55 @@ class OperatorWiseSummary implements FromCollection, WithMapping, WithHeadings, 
                     ],
                 ]);
 
-                $event->sheet->mergeCells("A6:R6"); // 'Load Factor Summary'
-                $event->sheet->getDelegate()->getStyle("A6")->getFont()->setBold(true)->setSize(12);
+                // ========== Load Factor Table ==========
+                $loadFactorStartRow = $highestRow + 3;
+                $sheet->setCellValue("A{$loadFactorStartRow}", 'Load Factor Summary');
+                $sheet->mergeCells("A{$loadFactorStartRow}:F{$loadFactorStartRow}");
+                $sheet->getStyle("A{$loadFactorStartRow}")->getFont()->setBold(true)->setSize(12);
 
+                // Header row
+                $headersRow = $loadFactorStartRow + 1;
+                $sheet->setCellValue("A{$headersRow}", '');
+                $sheet->setCellValue("B{$headersRow}", 'IMP LDN');
+                $sheet->setCellValue("C{$headersRow}", 'IMP MTY');
+                $sheet->setCellValue("D{$headersRow}", '');
+                $sheet->setCellValue("E{$headersRow}", 'EXP LDN');
+                $sheet->setCellValue("F{$headersRow}", 'EXP MTY');
 
-                $event->sheet->getDelegate()->getStyle("A1:{$highestColumn}1")->getFont()->setSize(13)->setBold(true);
-                $event->sheet->getDelegate()->getStyle("A2:{$highestColumn}2")->getFont()->setSize(13)->setBold(true);
-                $event->sheet->getDelegate()->getStyle("A3:{$highestColumn}3")->getFont()->setSize(13)->setBold(true);
-                // $event->sheet->getDelegate()->getStyle("A5:{$highestColumn}5")->getFont()->setSize(12)->setBold(true);
-                // $event->sheet->getDelegate()->getStyle("A6:{$highestColumn}6")->getFont()->setSize(12)->setBold(true);
-                // $event->sheet->getDelegate()->getStyle("A7:{$highestColumn}7")->getFont()->setSize(12)->setSize(12)->setBold(true);
-                // $event->sheet->getDelegate()->getStyle("A9:{$highestColumn}9")->getFont()->setSize(12)->setBold(true);
+                // Style header
+                $sheet->getStyle("A{$headersRow}:F{$headersRow}")->getFont()->setBold(true);
 
-                // $lastRow = $event->sheet->getHighestRow();
-                // $event->sheet->setCellValue("A{$lastRow}", "Total");
-                // $event->sheet->mergeCells("A{$lastRow}:C{$lastRow}");
-                // $event->sheet->mergeCells("F{$lastRow}:M{$lastRow}");
-                // $event->sheet->setCellValue('D'. ($event->sheet->getHighestRow()), '=SUM(D9:D'.($lastRow-1).')');
-                // $event->sheet->setCellValue('E'. ($event->sheet->getHighestRow()), '=SUM(E9:E'.($lastRow-1).')');
-                // // $event->sheet->setCellValue("C{$lastRow}", 12);
+                // Rows
+                $rows = [
+                    ['Eff Capacity', 'imp_ldn_lf_eff', 'imp_mty_lf_eff', 'exp_ldn_lf_eff', 'exp_mty_lf_eff'],
+                    ['Nom Capacity', 'imp_ldn_lf_nom', 'imp_mty_lf_nom', 'exp_ldn_lf_nom', 'exp_mty_lf_nom'],
+                ];
 
-                $sheet->getStyle("A1:{$highestColumn}1")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                foreach ($rows as $i => [$label, $key1, $key2, $key3, $key4]) {
+                    $row = $headersRow + 1 + $i;
+                    $sheet->setCellValue("A{$row}", $label);
+                    $sheet->setCellValue("B{$row}", $this->data2[$key1] ?? 0);
+                    $sheet->setCellValue("C{$row}", $this->data2[$key2] ?? 0);
+                    // $sheet->setCellValue("D{$row}", $this->data2[$key2] ?? 0);
+                    $sheet->setCellValue("E{$row}", $this->data2[$key3] ?? 0);
+                    $sheet->setCellValue("F{$row}", $this->data2[$key4] ?? 0);
+                }
+
+                // Borders and alignment
+                $endRow = $headersRow + count($rows);
+                $sheet->getStyle("A{$headersRow}:F{$endRow}")->applyFromArray([
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                            'color' => ['argb' => '000000'],
+                        ],
+                    ],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ],
+                ]);
             },
         ];
     }

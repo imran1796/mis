@@ -146,12 +146,12 @@ class ExportDataService
         // $array = Excel::toArray(new ImportUser, $request->file('file'));
         $array = Excel::toArray([], $request->file('file'));
         $array = $array[0];
-        $array2[0] = array_slice($array, 3);
-        // dd($array);
+        $array2[0] = array_slice($array, 2);
+        // dd($array2[0],$array[0]);
 
         $data = [];
         foreach ($array2[0] as $a) {
-            if ($a[1] === 'G.Total') {
+            if (strtoupper($a[1]) === 'G.TOTAL') {
                 break;
             }
 
@@ -165,7 +165,7 @@ class ExportDataService
                 'commodity' => strtoupper(trim($a[7])),
                 'pod' => strtoupper(trim($a[8])),
                 'trade' => strtoupper(trim($a[9])),
-                'port_code' => strtoupper(trim($a[10])),
+                'port_code' => strtoupper(trim($a[10]??'')),
                 'date' => $date,
             ];
         }

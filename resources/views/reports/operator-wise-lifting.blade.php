@@ -1,7 +1,7 @@
 @extends('layouts.app', [
     'activePage' => 'reports',
     'title' => 'GLA Admin',
-    'navName' => 'MLO',
+    'navName' => 'Operator Wise Lifting',
     'activeButton' => 'laravel',
 ])
 
@@ -44,6 +44,17 @@
                     <div class="col-md-2 px-1 mt-1">
                         <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
                     </div>
+
+                    <div class="col-sm-2 pr-0 mt-1">
+                        {{-- <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download"
+                                aria-hidden="true"></i> xls</button> --}}
+                        <a href="{{ route('reports.operator-wise-lifting.download', ['from_date' => request()->get('from_date'), 'to_date' => request()->get('to_date'), 'route_id' => request()->get('route_id')]) }}"
+                            class="btn btn-success btn-sm w-100">
+                            <i class="fa fa-download" aria-hidden="true"></i> (xlsx)
+                        </a>
+                        {{-- reports.operator-wise-lifting.download --}}
+                        {{-- btn btn-info btn-fill btn-sm pull-right --}}
+                    </div>
                 </form>
 
                 <div class="card bg-white">
@@ -57,7 +68,7 @@
                         {{-- end auto search --}}
                     </div>
                     <div class="card-body">
-                        <table class="tableFixHead table-bordered table2excel custom-table-report mb-3">
+                        <table class="tableFixHead table2excel table-bordered table2excel custom-table-report mb-3">
                             <thead>
                                 <tr>
                                     <th></th>
@@ -93,7 +104,7 @@
                         </table>
                     </div>
                     <div class="card-body">
-                        <table class="tableFixHead table-bordered table2excel custom-table-report mb-3">
+                        <table class="tableFixHead table2excel table-bordered table2excel custom-table-report mb-3">
                             <thead>
                                 <tr>
                                     <th rowspan="2">#</th>
@@ -156,6 +167,7 @@
 @endsection
 
 @push('js')
+    <script src="{{ asset('light-bootstrap/js/jquery.table2excel.min.js') }}"></script>
     <script>
         $(document).ready(function() {
             $(".datepicker").datepicker({
@@ -176,6 +188,28 @@
                             });
                     }, 1);
                 }
+            });
+
+            $('#btnExport').on('click', function() {
+                // var heading_name = $("#heading_name").text();
+                // $(".table2excel").table2excel({
+                //     exclude: ".noExl",
+                //     name: heading_name,
+                //     filename: heading_name,
+                //     fileext: ".xls",
+                //     exclude_img: true,
+                //     exclude_links: true,
+                //     exclude_inputs: true,
+                //     excel: {
+                //         beforeSave: function() {
+                //             // set the row height for all rows in the sheet
+                //             var sheet = this.sheet;
+                //             sheet.rowHeight(0, sheet.rowCount(),
+                //                 30); // set row height to 30 pixels
+                //         }
+                //     }
+
+                // });
             });
 
             $("#autosearch").on("keyup", function() {

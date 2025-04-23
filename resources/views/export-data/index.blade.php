@@ -237,7 +237,7 @@
                 {{-- end container summary --}}
 
                 {{-- start chart --}}
-                <div class="row mb-2" style="padding-right:15px; padding-left:15px" id="barChart">
+                {{-- <div class="row mb-2" style="padding-right:15px; padding-left:15px" id="barChart">
                     <div class="card m-0 p-0 col-sm-9">
                         <div class="card-body mx-0 px-0 mb-0 chart-container">
                             <div id="chart1"></div>
@@ -255,7 +255,7 @@
                             <div id="chartPie"></div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
                 {{-- end chart --}}
 
                 <div class="card bg-white">
@@ -272,11 +272,51 @@
                         <table class="tableFixHead table-bordered table2excel custom-table-report mb-3">
                             <thead>
                                 <tr class="text-center merge-row">
-                                    <th class="full" colspan="14">
-                                        <span id="heading_name" style="font-size: 22px;">Export Data Analysis
-                                            Report</span>
+                                    <th class="full" colspan="{{ match (substr_count(request('report_type'), '_')) {
+                                        3 => 11,
+                                        2 => 10,
+                                        1 => 9,
+                                        default => 11,
+                                    } }}">
+                                        <span id="heading_name" style="font-size: 20px;">
+                                            {{ request()->filled('report_type')
+                                                ? Str::title(str_replace('_', ' ', request('report_type'))) . ' Report'
+                                                : 'Export Data' }}
+
+                                        </span>
+                                        <br>
+
+                                        @if (request()->filled('commodity'))
+                                            @php $commodities = request('commodity'); @endphp
+                                            <span>
+                                                Commodity:
+                                                {{ count($commodities) > 20 ? count($commodities) . ' Commodities' : implode(', ', $commodities) }}
+                                            </span><br>
+                                        @endif
+
+                                        @if (request()->filled('mlo'))
+                                            @php $mlos = request('mlo'); @endphp
+                                            <span>
+                                                MLO:
+                                                {{ count($mlos) > 20 ? count($mlos) . ' MLOs' : implode(', ', $mlos) }}
+                                            </span><br>
+                                        @endif
+
+                                        @if (request()->filled('pod'))
+                                            @php $pods = request('pod'); @endphp
+                                            <span>
+                                                POD:
+                                                {{ count($pods) > 20 ? count($pods) . ' PODs' : implode(', ', $pods) }}
+                                            </span><br>
+                                        @endif
+
+
+                                        @if (request()->filled('from_date') && request()->filled('to_date'))
+                                            <span>Date: {{ request('from_date') }} to {{ request('to_date') }}</span>
+                                        @endif
                                     </th>
                                 </tr>
+
                                 <tr>
                                     @unless (request()->filled('report_type'))
                                         <th>#</th>
@@ -326,7 +366,8 @@
                                             <th scope="row">{{ $loop->iteration }}</th>
                                             <td>{{ $row->mlo }}</td>
                                             <td>{{ $row->commodity }}</td>
-                                            <td>{{ $row->pod . ' (' . $row->port_code . ')' }}</td>
+                                            {{-- <td>{{ $row->pod . ' (' . $row->port_code . ')' }}</td> --}}
+                                            <td>{{ $row->pod }}</td>
                                         @endunless
 
                                         @if (request()->filled('report_type'))
@@ -334,7 +375,10 @@
                                                 <input type="checkbox" class="select-row" />
                                             </td> --}}
                                             @foreach ($exportDatas[0][1] as $key)
-                                                <td><input type="checkbox" class="select-row" /> {{ $row[$key] }}</td>
+                                                <td>
+                                                    {{-- <input type="checkbox" class="select-row" />  --}}
+                                                    {{ $row[$key] }}
+                                                </td>
                                             @endforeach
                                         @endif
 
@@ -357,6 +401,38 @@
                                     </tr>
                                 @endforeach
                             </tbody>
+                            <tfoot>
+                                @if (request()->filled('report_type'))
+                                    <tr>
+                                        {{-- <td colspan="{{substr_count(request('report_type'), '_') === 2 ? (request('report_type') == 1 ? 5 : 4) : 4}}">Total</td> --}}
+                                        <th class="text-center"
+                                            colspan="{{ match (substr_count(request('report_type'), '_')) {
+                                                3 => 3,
+                                                2 => 2,
+                                                default => 1,
+                                            } }}">
+                                            Total</th>
+                                        <th>{{ collect($exportDatas[0][0])->sum('20ft') }}</th>
+                                        <th>{{ collect($exportDatas[0][0])->sum('40ft') }}</th>
+                                        <th>{{ collect($exportDatas[0][0])->sum('45ft') }}</th>
+                                        <th>{{ collect($exportDatas[0][0])->sum('20R') }}</th>
+                                        <th>{{ collect($exportDatas[0][0])->sum('40R') }}</th>
+                                        <th>{{ collect($exportDatas[0][0])->sum('unit_count') }}</th>
+                                        <th>{{ collect($exportDatas[0][0])->sum('teus') }}</th>
+                                        <th>{{ round(collect($exportDatas[0][0])->sum('teus_percentage')) }}</th>
+                                    </tr>
+                                @else
+                                    <tr>
+                                        <th class="text-center" colspan="4">Total</th>
+                                        <th>{{ $exportDatas[0]->sum('20ft') }}</th>
+                                        <th>{{ $exportDatas[0]->sum('40ft') }}</th>
+                                        <th>{{ $exportDatas[0]->sum('45ft') }}</th>
+                                        <th>{{ $exportDatas[0]->sum('20R') }}</th>
+                                        <th>{{ $exportDatas[0]->sum('40R') }}</th>
+                                        <th colspan="2"></th>
+                                    </tr>
+                                @endif
+                            </tfoot>
 
 
                         </table>
@@ -380,7 +456,7 @@
 
             //date picker in date input field
             initializeMonthYearPicker('.datepicker');
-            updateChart();
+            // updateChart();
 
             //auto search
             $("#autosearch").on("keyup", function() {
@@ -403,7 +479,6 @@
                     exclude_inputs: true,
                     excel: {
                         beforeSave: function() {
-                            // set the row height for all rows in the sheet
                             var sheet = this.sheet;
                             sheet.rowHeight(0, sheet.rowCount(),
                                 30); // set row height to 30 pixels
@@ -430,7 +505,7 @@
                         rowData));
                 }
 
-                updateChart();
+                // updateChart();
             });
 
         });
