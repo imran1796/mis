@@ -44,6 +44,16 @@
                     <div class="col-md-2 px-1 mt-1">
                         <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
                     </div>
+
+                    <div class="col-md-2 px-1 mt-1">
+                        {{-- <a href="{{ route('reports.operator-wise-lifting.download', ['from_date' => request()->get('from_date'), 'to_date' => request()->get('to_date'), 'route_id' => request()->get('route_id')]) }}"
+                            class="btn btn-success btn-sm w-100">
+                            <i class="fa fa-download" aria-hidden="true"></i> (xlsx)
+                        </a> --}}
+                        <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download"
+                            aria-hidden="true"></i> xls</button>
+                    </div>
+
                 </form>
 
                 <div class="card bg-white">
@@ -57,24 +67,34 @@
                         {{-- end auto search --}}
                     </div>
                     <div class="card-body">
-                        <table class="tableFixHead table-bordered table2excel custom-table-report mb-3">
+                        <table id="excelJsTable" class="tableFixHead table-bordered table2excel custom-table-report mb-3">
+                            @if (request('from_date') && request('to_date'))
+                            <p class="reportRange" style="display: none;">
+                                {{ '(' . \Carbon\Carbon::parse(request('from_date'))->format('M y') . ' to ' . \Carbon\Carbon::parse(request('to_date'))->format('M y') . ')' }}
+                            </p>
+                            
+                            @endif
+                            <p class="reportTitle" style="display: none;" type="hidden">Market Competitors</p>
                             <thead>
                                 <tr>
-                                    <td rowspan="2">Operator </td>
-                                    <td rowspan="2">Local Agent </td>
-                                    <td rowspan="2">No. of Vessel </td>
-                                    <td rowspan="2">No. of Call </td>
-                                    <td rowspan="2">Eff. Capacity </td>
-                                    <td rowspan="2">Eff .Cap/Week(4) </td>
-                                    <td rowspan="2">Slot Partner </td>
-                                    <td rowspan="2">Slot Buyer </td>
-                                    <td colspan="3">Market Share</td>
-                                    <td rowspan="2"> Sailing Freq </td>
+                                    <th colspan="12" class="text-center" style="font-size: 17px">Market Competitors</th>
                                 </tr>
                                 <tr>
-                                    <td>Import %</td>
-                                    <td>Export LDN%</td>
-                                    <td>Export MTY%</td>
+                                    <th rowspan="2">Operator </th>
+                                    <th rowspan="2">Local Agent </th>
+                                    <th rowspan="2">No. of Vessel </th>
+                                    <th rowspan="2">No. of Call </th>
+                                    <th rowspan="2">Eff. Capacity </th>
+                                    <th rowspan="2">Eff .Cap/Week(4) </th>
+                                    <th rowspan="2">Slot Partner </th>
+                                    <th rowspan="2">Slot Buyer </th>
+                                    <th colspan="3">Market Share</th>
+                                    <th rowspan="2"> Sailing Freq </th>
+                                </tr>
+                                <tr>
+                                    <th>Import %</th>
+                                    <th>Export LDN%</th>
+                                    <th>Export MTY%</th>
                                 </tr>
                             </thead>
                             <tbody>

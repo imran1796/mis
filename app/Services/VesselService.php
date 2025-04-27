@@ -6,6 +6,8 @@ use App\Helpers\ContainerCountHelper;
 use App\Imports\MyImport;
 use Illuminate\Http\UploadedFile;
 use App\Interfaces\VesselInterface;
+use App\Models\Mlo;
+use App\Models\MloWiseCount;
 use App\Models\VesselInfos;
 use App\Repositories\DatabaseRepository;
 use Carbon\Carbon;
@@ -178,6 +180,9 @@ class VesselService
 
     public function getAllVesselWiseData($filters)
     {
+        if (empty($filters['from_date']) && empty($filters['to_date'])) {
+            return [];
+        }
         return $this->vesselRepository->getAllVesselInfos($filters);
     }
 
@@ -284,9 +289,11 @@ class VesselService
                 $monthKey = \Carbon\Carbon::parse($v->date)->format('M');
 
                 $route = strtoupper($v->route->short_name);
+                // dd($v->toArray());
                 if (!isset($datas[$monthKey])) {
                     $datas[$monthKey] = [
                         'import' => array_fill_keys(array_keys($types), 0),
+                        // 'importLdn' => $datas[$monthKey] + $datas[$monthKey]['import'];
                         'export' => array_fill_keys(array_keys($types), 0),
                         'calls' => ['SIN' => 0, 'CBO' => 0, 'CGP' => 0],
                         'vessels' => ['SIN' => [], 'CBO' => [], 'CGP' => []],
@@ -294,16 +301,13 @@ class VesselService
                     ];
                 }
 
-                // Increment total call
                 $datas[$monthKey]['calls'][$route]++;
 
-                // Track unique vessels
                 if (!in_array($v->vessel_id, $datas[$monthKey]['vessels'][$route])) {
                     $datas[$monthKey]['vessels'][$route][] = $v->vessel_id;
                     $datas[$monthKey]['vessels_count'][$route] += 1;
                 }
 
-                // Safe Import/Export count handling
                 foreach ($v->importExportCounts as $iec) {
                     $direction = strtolower($iec->type);
                     foreach ($types as $key => $column) {
@@ -312,6 +316,8 @@ class VesselService
                 }
             }
         }
+
+        // dd($datas);
 
         return $datas;
     }
@@ -448,7 +454,7 @@ class VesselService
                     }
                 }
             }
-            $frequency = 'Fortnightly';
+            // $frequency = 'Fortnightly';
             // $frequency = for a operator one vessel's how many time a month repeated; 
 
             $results[$operator] = [
@@ -462,7 +468,7 @@ class VesselService
                 'import%' => $totalImport > 0 ? round(($importTeus / $totalImport) * 100, 2) : 0,
                 'exportLdn%' => $totalExportLdn > 0 ? round(($exportLdnTeus / $totalExportLdn) * 100, 2) : 0,
                 'exportMty%' => $totalExportMty > 0 ? round(($exportMtyTeus / $totalExportMty) * 100, 2) : 0,
-                'sailingFreq' => $frequency,
+                'sailingFreq' => count($vesselIds)==count($vessels)?'Monthly':'Fortnightly',
                 'vessels' => array_keys($vesselIds),
             ];
         }
@@ -475,29 +481,58 @@ class VesselService
         if (empty($filters)) {
             return [];
         }
-        $vessels = $this->vesselRepository->getAllVesselInfos($filters)->groupBy('operator');
-        $results = [];
+        // $vessels = $this->vesselRepository->getAllVesselInfos($filters)->groupBy('line_bleongs_to');
+        $mlos = MloWiseCount::with('mlo')->get()
+            ->groupBy(function ($item) {
+                return optional($item->mlo)->line_belongs_to ?? $item->mlo_code;
+            })
+            ->map(function ($groupedByLine) {
+                return $groupedByLine->groupBy('mlo_code');
+            });
 
-        foreach ($vessels as $opt => $items) {
-            $results[$opt] = [
-                'exportLdn' => 0,
-                'exportMty' => 0,
-            ];
+        // dd($mlos->toArray());
 
-            foreach ($items as $iec) {
-                $export = $iec->importExportCounts->where('type', 'export')->first();
 
-                if ($export) {
-                    $results[$opt]['exportLdn'] += $export->dc20 + $export->r20 + (($export->dc40 + $export->dc45 + $export->r40) * 2);
-                    $results[$opt]['exportMty'] += $export->mty20 + ($export->mty40 * 2);
+        // $results = [];
+        // dd($vessels->toArray());
+
+        $summary = [];
+
+        foreach ($mlos as $line => $mloGroup) {
+            $mloCodes = array_keys($mloGroup->toArray());
+            $firstMlo = collect($mloGroup[$mloCodes[0]])->first();
+            $mloName = optional($firstMlo['mlo'])['mlo_details'] ?? $mloCodes[0];
+
+            $exportLdn = 0;
+            $exportMty = 0;
+
+            foreach ($mloGroup as $mloCode => $records) {
+                foreach ($records as $record) {
+                    if ($record['type'] === 'export') {
+                        $exportLdn +=
+                            ($record['dc20'] ?? 0) +
+                            ($record['r20'] ?? 0) +
+                            2 * (($record['dc40'] ?? 0) + ($record['dc45'] ?? 0) + ($record['r40'] ?? 0));
+                        $exportMty +=
+                            ($record['mty20'] ?? 0) +
+                            2 * ($record['mty40'] ?? 0);
+                    }
                 }
             }
 
-            // Average over 4 weeks
-            $results[$opt]['exportLdn'] = round($results[$opt]['exportLdn'] / 4, 2);
-            $results[$opt]['exportMty'] = round($results[$opt]['exportMty'] / 4, 2);
+            $summary[$line] = [
+                'mlo_code'   => implode('/', $mloCodes),
+                'mlo_name'   => $mloName,
+                'exportLdn'  => intval(round($exportLdn/4)),
+                'exportMty'  => intval(round($exportMty/4)),
+            ];
         }
 
-        return $results;
+        // dd($summary);
+
+
+        // dd($results);
+
+        return $summary;
     }
 }

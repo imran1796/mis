@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Exports\OperatorWiseSummary;
+use App\Exports\SocInOutBound;
 use App\Http\Requests\ImportExportCountCreateRequest;
 use App\Http\Requests\VesselInfoCreateRequest;
+use App\Http\Requests\VesselInfoUpdateRequest;
 use App\Http\Requests\VesselStoreRequest;
 use App\Http\Requests\VesselUpdateRequest;
 use App\Models\ImportExportCount;
@@ -52,8 +54,9 @@ class VesselController extends Controller
     public function indexVesselInfo(Request $request)
     {
         $filters = $request->only(['from_date', 'to_date']);
+        
         $data = $this->vesselService->getAllVesselWiseData($filters);
-        return view('vessel-infos.index',compact('data'));
+        return view('vessel-infos.index', compact('data'));
     }
 
     public function createVesselInfo()
@@ -65,6 +68,14 @@ class VesselController extends Controller
     public function storeVesselInfo(VesselInfoCreateRequest $request)
     {
         return $this->vesselService->createVesselWiseData($request->validated());
+    }
+
+    public function updateVesselInfo(VesselInfoUpdateRequest $request)
+    {
+        // dd($request->all());
+        $vesselInfo = VesselInfos::findOrFail($request->vessel_info_id);
+        // dd($request->validated());
+        $vesselInfo->update($request->validated());
     }
 
     public function indexReport()
@@ -114,6 +125,25 @@ class VesselController extends Controller
         return view('reports.soc-in-out-bound', compact('pods', 'datas'));
     }
 
+    public function socInOutBoundDownload(Request $request)
+    {
+        $filters = $request->only(['from_date', 'to_date', 'route_id']);
+        if (empty($filters['from_date']) && empty($filters['to_date'])) {
+            return [];
+        }
+
+        // dd($filters);
+        $datas = $this->vesselService->socInOutBound($filters);
+        $range = Carbon::parse($filters['from_date'])->format('M-y') . ' To ' . Carbon::parse($filters['to_date'])->format('M-y');
+
+        $routeNames = [1 => 'SIN', 2 => 'CBO', 3 => 'CCU'];
+        $route = collect($filters['route_id'] ?? [])
+            ->map(fn($id) => $routeNames[$id] ?? '')
+            ->filter()
+            ->implode(', ');
+
+        return Excel::download(new SocInOutBound($datas,$range,$route), 'soc_in_out_bound.xlsx');
+    }
 
 
     public function vesselTurnAroundTime(Request $request)

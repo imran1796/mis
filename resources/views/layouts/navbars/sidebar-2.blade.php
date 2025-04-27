@@ -178,6 +178,13 @@
                             {{ __('Upload XLS') }}
                         </a>
                     </li>
+
+                    <li class="nav-item @if ($activePage == 'vesselInfo-index') active @endif">
+                        <a class="nav-link" href="{{ route('vesselInfo.index') }}">
+                            <i class="fas fa-user"></i>
+                            {{ __('Vessel Infos') }}
+                        </a>
+                    </li>
                 </ul>
             </li>
 

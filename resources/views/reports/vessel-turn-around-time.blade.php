@@ -44,6 +44,15 @@
                     <div class="col-md-2 px-1 mt-1">
                         <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
                     </div>
+
+                    <div class="col-md-2 px-1 mt-1">
+                        {{-- <a href="{{ route('reports.soc-inout-bound.download', ['from_date' => request()->get('from_date'), 'to_date' => request()->get('to_date'), 'route_id' => request()->get('route_id')]) }}"
+                            class="btn btn-success btn-sm w-100">
+                            <i class="fa fa-download" aria-hidden="true"></i> (xlsx)
+                        </a> --}}
+                        <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download"
+                            aria-hidden="true"></i> xls</button>
+                    </div>
                 </form>
 
                 <div class="card bg-white">
@@ -57,34 +66,41 @@
                         {{-- end auto search --}}
                     </div>
                     <div class="card-body">
-                        <table class="tableFixHead table-bordered table2excel custom-table-report mb-3">
+                        <table id="excelJsTable" class="tableFixHead table-bordered table2excel custom-table-report mb-3">
+                            @if (request('from_date') && request('to_date'))
+                            <p class="reportRange" style="display: none;">
+                                {{ '(' . \Carbon\Carbon::parse(request('from_date'))->format('M y') . ' to ' . \Carbon\Carbon::parse(request('to_date'))->format('M y') . ')' }}
+                            </p>
+                            
+                            @endif
+                            <p class="reportTitle" style="display: none;" type="hidden">Vessel Turn Around Time</p>
                             <thead>
+                                <tr><th class="text-center" style="font-size: 17px" colspan="19">Vessel Turn Around Time</th></tr>
                                 <tr>
-                                    <td rowspan="2">#sl</td>
-                                    <td rowspan="2">Name of Vessel</td>
-                                    <td rowspan="2">Bearthed at(jetty)</td>
-                                    <td rowspan="2">GL/Gearless</td>
-                                    <td rowspan="2">Eta (arrival_date arrival_time)</td>
-                                    <td rowspan="2">OA Stay (arrival_date arrival_time to bearth_date bearth_time's total
-                                        hours)</td>
-                                    <td rowspan="2">Berth Date(date + time)</td>
-                                    <td rowspan="2">Sailing Date(date+time)</td>
-                                    <td rowspan="2">Bearth Stay(hrs of berth to sail datetime)</td>
-                                    <td rowspan="2">Operator</td>
-                                    <td colspan="3">Import</td>
-                                    <td colspan="3">Export</td>
-                                    <td rowspan="2">In-Out TTL Count</td>
-                                    <td rowspan="2">In Out TTL Teus Count</td>
-                                    <td rowspan="2">Turn Around Time (OA hrs + Bearth Stay hrs)</td>
+                                    <th rowspan="2">#sl</th>
+                                    <th rowspan="2">VSL</th>
+                                    <th rowspan="2">Jetty</th>
+                                    <th rowspan="2">Crane Status</th>
+                                    <th rowspan="2">ETA</th>
+                                    <th rowspan="2">OA Stay</th>
+                                    <th rowspan="2">Berth Date</th>
+                                    <th rowspan="2">Sailing Date</th>
+                                    <th rowspan="2">Bearth Stay</th>
+                                    <th rowspan="2">Operator</th>
+                                    <th colspan="3">Import</th>
+                                    <th colspan="3">Export</th>
+                                    <th rowspan="2">In-Out TTL Count</th>
+                                    <th rowspan="2">In Out TTL Teus Count</th>
+                                    <th rowspan="2">Turn Around Time</th>
 
                                 </tr>
                                 <tr>
-                                    <td>LDN Teus</td>
-                                    <td>MTY Teus</td>
-                                    <td>TTL Teus</td>
-                                    <td>LDN Teus</td>
-                                    <td>MTY Teus</td>
-                                    <td>TTL Teus</td>
+                                    <th>LDN Teus</th>
+                                    <th>MTY Teus</th>
+                                    <th>TTL Teus</th>
+                                    <th>LDN Teus</th>
+                                    <th>MTY Teus</th>
+                                    <th>TTL Teus</th>
                                 </tr>
 
                             </thead>

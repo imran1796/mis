@@ -1,7 +1,7 @@
 @extends('layouts.app', [
     'activePage' => 'reports',
     'title' => 'GLA Admin',
-    'navName' => 'MLO',
+    'navName' => 'SOC Out Bound',
     'activeButton' => 'laravel',
 ])
 
@@ -44,6 +44,10 @@
                     <div class="col-md-2 px-1 mt-1">
                         <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
                     </div>
+                    <div class="col-md-2 px-1 mt-1">
+                        <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download"
+                                aria-hidden="true"></i> xls</button>
+                    </div>
                 </form>
 
                 <div class="card bg-white">
@@ -57,26 +61,33 @@
                         {{-- end auto search --}}
                     </div>
                     <div class="card-body">
-                        <table class="tableFixHead table-bordered table2excel custom-table-report mb-3">
+                        @if (request('from_date') && request('to_date'))
+                            <p class="reportRange" style="display: none;">
+                                {{ '(' . \Carbon\Carbon::parse(request('from_date'))->format('M y') . ' to ' . \Carbon\Carbon::parse(request('to_date'))->format('M y') . ')' }}
+                            </p>
+                        @endif
+                        <p class="reportTitle" style="display: none;" type="hidden">Outbound Market Strategy</p>
+                        <table id="excelJsTable" class="tableFixHead table-bordered table2excel custom-table-report mb-3">
                             <thead>
+                                <tr><th colspan="6" class="text-center" style="font-size: 17px">Outbound Market Strategy</th></tr>
                                 <tr>
-                                    <td rowspan="2">MLO Code</td>
-                                    <td rowspan="2">MLO Name</td>
-                                    <td rowspan="2">LocalAgent</td>
-                                    <td rowspan="2">Principal contact Address</td>
-                                    <td colspan="2">AVG Weekly Volume</td>
+                                    <th rowspan="2">MLO Code</th>
+                                    <th rowspan="2">MLO Name</th>
+                                    <th rowspan="2">Local Agent Address</th>
+                                    <th rowspan="2">Principal Contact Address</th>
+                                    <th colspan="2">AVG Weekly Volume</th>
                                 </tr>
                                 <tr>
-                                    <td>LDN</td>
-                                    <td>MTY</td>
+                                    <th>LDN</th>
+                                    <th>MTY</th>
                                 </tr>
 
                             </thead>
                             <tbody>
                                 @foreach ($datas as $opt => $item)
                                     <tr>
-                                        <td>{{ $opt }}</td>
-                                        <td></td>
+                                        <td>{{ $item['mlo_code'] }}</td>
+                                        <td>{{ $item['mlo_name'] }}</td>
                                         <td></td>
                                         <td></td>
                                         <td>{{ $item['exportLdn'] }}</td>

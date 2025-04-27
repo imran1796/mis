@@ -31,7 +31,10 @@
     <link rel="icon" type="image/png" href="{{ asset('light-bootstrap/img/favicon.ico') }}">
     {{--  --}}
 
-    
+    {{-- time picker --}}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+
+
 
     <!-- CSS Files -->
     <link href="{{ asset('light-bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
@@ -93,6 +96,9 @@
 {{-- mulitple select --}}
 {{-- <script src="{{ asset('light-bootstrap/js/multiselect-dropdown.js')}}" ></script> --}}
 
+{{-- time picker --}}
+<script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+
 <!--  Plugin for Switches, full documentation here: http://www.jque.re/plugins/version3/bootstrap.switch/ -->
 <script src="{{ asset('light-bootstrap/js/plugins/bootstrap-switch.js') }}"></script>
 
@@ -115,6 +121,9 @@
 {{-- <script src="{{ asset('light-bootstrap/js/jquery.datetimepicker.js') }}"></script> --}}
 <script src="{{ asset('light-bootstrap/js/main.js') }}"></script>
 <script src="{{ asset('light-bootstrap/js/bootstrap-select.min.js') }}"></script>
+
+<script src="{{ asset('light-bootstrap/js/exceljs.min.js') }}"></script>
+<script src="{{ asset('light-bootstrap/js/excelJsFinal.js') }}"></script>
 
 
 

@@ -12,7 +12,7 @@
                 <div class="row mb-2">
                     <div class="col-lg-12 margin-tb">
                         <div class="pull-left">
-                            <h2>SOC IN/OUT BOUND</h2>
+                            <h2>SOC In/Out Bound</h2>
                         </div>
 
                         <div class="pull-right">
@@ -44,6 +44,18 @@
                     <div class="col-md-2 px-1 mt-1">
                         <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
                     </div>
+
+                    <div class="col-md-2 px-1 mt-1">
+                        {{-- <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download"
+                                aria-hidden="true"></i> xls</button> --}}
+                        {{-- <a href="{{ route('reports.soc-inout-bound.download', ['from_date' => request()->get('from_date'), 'to_date' => request()->get('to_date'), 'route_id' => request()->get('route_id')]) }}"
+                            class="btn btn-success btn-sm w-100">
+                            <i class="fa fa-download" aria-hidden="true"></i> (xlsx)
+                        </a> --}}
+                        <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download"
+                            aria-hidden="true"></i> xls</button>
+                    </div>
+
                 </form>
 
                 <div class="card bg-white">
@@ -57,8 +69,19 @@
                         {{-- end auto search --}}
                     </div>
                     <div class="card-body">
-                        <table class="tableFixHead table-bordered table2excel custom-table-report mb-3">
+                        <table id="excelJsTable" class="tableFixHead table-bordered table2excel custom-table-report mb-3">
+                            @if (request('from_date') && request('to_date'))
+                            <p class="reportRange" style="display: none;">
+                                {{ '(' . \Carbon\Carbon::parse(request('from_date'))->format('M y') . ' to ' . \Carbon\Carbon::parse(request('to_date'))->format('M y') . ')' }}
+                            </p>
+                            
+                            @endif
+                            <p class="reportTitle" style="display: none;" type="hidden">SOC_In/Out_Bound_Report</p>
                             <thead>
+                                
+                                <tr>
+                                    <th colspan="29" class="text-center" style="font-size: 17px">SOC In/Out Bound Report</th>
+                                </tr>
                                 <tr>
                                     <th rowspan="2">Month</th>
                                     <th colspan="10">Import</th>
@@ -163,6 +186,8 @@
 
                             </tbody>
 
+                            <tfoot>
+                            </tfoot>
 
 
                         </table>
@@ -174,6 +199,7 @@
 @endsection
 
 @push('js')
+    <script src="{{ asset('light-bootstrap/js/jquery.table2excel.min.js') }}"></script>
     <script>
         $(document).ready(function() {
             $(".datepicker").datepicker({
@@ -196,12 +222,76 @@
                 }
             });
 
+            $('#btnExport').on('click', function() {
+                var row1 = $('<tr class="text-center">').append(
+                    '<td colspan="29">Sinokor Merchant Marine Co., Ltd.</td>');
+                var row2 = $('<tr class="text-center">').append(
+                    '<td colspan="29">Globe Link Associates Ltd.</td>');
+                var row3 = $('<tr class="text-center">').append('<td colspan="29"></td>');
+                $('thead').prepend(row1, row2, row3);
+
+                var heading_name = 'SOC IN/OUT Bound';
+                $(".table2excel").table2excel({
+                    exclude: ".noExl",
+                    name: heading_name,
+                    filename: heading_name,
+                    fileext: ".xls",
+                    exclude_img: true,
+                    exclude_links: true,
+                    exclude_inputs: true,
+                    excel: {
+                        beforeSave: function() {
+                            var sheet = this.sheet;
+                            sheet.rowHeight(0, sheet.rowCount(),
+                                30);
+                        }
+                    }
+
+                });
+                row1.remove();
+                row2.remove();
+                row3.remove();
+            });
+
             $("#autosearch").on("keyup", function() {
                 var value = $(this).val().toLowerCase();
                 $(".tableFixHead tbody tr").filter(function() {
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             });
+
+            calculateTotal();
         });
+
+        function calculateTotal() {
+            const $table = $('.table2excel');
+            const $tbody = $table.find('tbody');
+            const $tfoot = $table.find('tfoot');
+
+            const numMonths = $tbody.find('tr').length;
+            const colCount = $tbody.find('tr:first td').length;
+
+            let totals = Array(colCount).fill(0);
+
+            $tbody.find('tr').each(function() {
+                $(this).find('td').each(function(index) {
+                    const val = parseFloat($(this).text().replace(/,/g, '')) || 0;
+                    totals[index] += val;
+                });
+            });
+
+            const $totalRow = $('<tr>').append('<th>Total</th>');
+            totals.slice(1).forEach(total => {
+                $totalRow.append(`<th>${Math.round(total)}</th>`);
+            });
+
+            const $averageRow = $('<tr>').append('<th>AVG/Month</th>');
+            totals.slice(1).forEach(total => {
+                const avg = total / numMonths;
+                $averageRow.append(`<th>${Math.round(avg)}</th>`);
+            });
+
+            $tfoot.html('').append($totalRow).append($averageRow);
+        }
     </script>
 @endpush

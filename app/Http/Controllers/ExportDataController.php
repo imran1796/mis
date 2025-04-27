@@ -14,7 +14,8 @@ class ExportDataController extends Controller
 {
     protected $exportDataService;
 
-    public function __construct(ExportDataService $exportDataService){
+    public function __construct(ExportDataService $exportDataService)
+    {
         $this->exportDataService = $exportDataService;
 
         // $this->middleware(
@@ -40,7 +41,7 @@ class ExportDataController extends Controller
         $commodities = $this->exportDataService->getUniqueExportData('commodity');
         $mlos = $this->exportDataService->getUniqueExportData('mlo');
         $pods = $this->exportDataService->getUniqueExportData('pod');
-        return view('export-data.index',compact('exportDatas','commodities','mlos','pods'));
+        return view('export-data.index', compact('exportDatas', 'commodities', 'mlos', 'pods'));
     }
 
     // public function exportDataReport(Request){
@@ -115,19 +116,23 @@ class ExportDataController extends Controller
 
     public function exportVolByPort(Request $request)
     {
-        $range = Carbon::parse($request['from_date'])->format('M-y') . ' To ' . Carbon::parse($request['to_date'])->format('M-y');
+        $range = ($request['from_date'] ? Carbon::parse($request['from_date'])->format('M-y') : 'up') .
+            ' to ' . Carbon::parse($request['to_date'])->format('M-y');
         $filters = $request->only(['from_date', 'to_date']);
         $data =  $this->exportDataService->exportVolByPort($filters);
 
-        return Excel::download(new ExportMarketScenarioByPort($data,$range), 'exportMarketScenario'.$range.'.xlsx');
+        return Excel::download(new ExportMarketScenarioByPort($data, $range), 'exportMarketScenario' . $range . '.xlsx');
     }
 
     public function exportVolByRegion(Request $request)
     {
-        $range = Carbon::parse($request['from_date'])->format('M-y') . ' To ' . Carbon::parse($request['to_date'])->format('M-y');
+        // dd($request->from_date);
+        $range = ($request['from_date'] ? Carbon::parse($request['from_date'])->format('M-y') : 'up') .
+            ' to ' . Carbon::parse($request['to_date'])->format('M-y');
+
         $filters = $request->only(['from_date', 'to_date']);
         $data = $this->exportDataService->exportVolByRegion($filters);
 
-        return Excel::download(new RegionWiseExportCounts($data,$range), 'exportVolByRegion'.$range.'.xlsx');
+        return Excel::download(new RegionWiseExportCounts($data, $range), 'exportVolByRegion' . $range . '.xlsx');
     }
 }

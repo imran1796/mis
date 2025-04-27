@@ -269,53 +269,56 @@
                         {{-- end auto search --}}
                     </div>
                     <div class="card-body">
-                        <table class="tableFixHead table-bordered table2excel custom-table-report mb-3">
+                        <table id="excelJsTable" class="tableFixHead table-bordered table2excel custom-table-report mb-3">
                             <thead>
-                                <tr class="text-center merge-row">
-                                    <th class="full" colspan="{{ match (substr_count(request('report_type'), '_')) {
-                                        3 => 11,
-                                        2 => 10,
-                                        1 => 9,
+                                @php
+                                    $colspan = match (substr_count(request('report_type'), '_')) {
+                                        3 => 12,
+                                        2 => 11,
+                                        1 => 10,
                                         default => 11,
-                                    } }}">
-                                        <span id="heading_name" style="font-size: 20px;">
-                                            {{ request()->filled('report_type')
+                                    };
+                                @endphp
+
+                                <tr class="text-center merge-row">
+                                    <th class="text-center" colspan="{{ $colspan }}">
+                                        <p class="m-0 reportTitle" style="font-size: 18px">
+                                            <strong>{{ request()->filled('report_type')
                                                 ? Str::title(str_replace('_', ' ', request('report_type'))) . ' Report'
                                                 : 'Export Data' }}
-
-                                        </span>
-                                        <br>
-
-                                        @if (request()->filled('commodity'))
-                                            @php $commodities = request('commodity'); @endphp
-                                            <span>
-                                                Commodity:
-                                                {{ count($commodities) > 20 ? count($commodities) . ' Commodities' : implode(', ', $commodities) }}
-                                            </span><br>
-                                        @endif
-
-                                        @if (request()->filled('mlo'))
-                                            @php $mlos = request('mlo'); @endphp
-                                            <span>
-                                                MLO:
-                                                {{ count($mlos) > 20 ? count($mlos) . ' MLOs' : implode(', ', $mlos) }}
-                                            </span><br>
-                                        @endif
-
-                                        @if (request()->filled('pod'))
-                                            @php $pods = request('pod'); @endphp
-                                            <span>
-                                                POD:
-                                                {{ count($pods) > 20 ? count($pods) . ' PODs' : implode(', ', $pods) }}
-                                            </span><br>
-                                        @endif
-
-
-                                        @if (request()->filled('from_date') && request()->filled('to_date'))
-                                            <span>Date: {{ request('from_date') }} to {{ request('to_date') }}</span>
-                                        @endif
+                                            </strong>
+                                        </p>
                                     </th>
                                 </tr>
+
+                                @if (request()->filled('commodity'))
+                                    <tr>
+                                        <th class="text-center" colspan="{{ $colspan }}">
+                                            Commodity: {{ count(request('commodity')) > 20 ? count(request('commodity')) . ' Commodities' : implode(', ', request('commodity')) }}
+                                        </th>
+                                    </tr>
+                                @endif
+                                @if (request()->filled('mlo'))
+                                    <tr>
+                                        <th class="text-center" colspan="{{ $colspan }}">
+                                            MLO: {{ count(request('mlo')) > 20 ? count(request('mlo')) . ' MLOs' : implode(', ', request('mlo')) }}
+                                        </th>
+                                    </tr>
+                                @endif
+                                @if (request()->filled('pod'))
+                                    <tr>
+                                        <th class="text-center" colspan="{{ $colspan }}">
+                                            POD: {{ count(request('pod')) > 20 ? count(request('pod')) . ' PODs' : implode(', ', request('pod')) }}
+                                        </th>
+                                    </tr>
+                                @endif
+                                @if (request()->filled('from_date') && request()->filled('to_date'))
+                                    <tr>
+                                        <th class="text-center reportRange" colspan="{{ $colspan }}">
+                                            Date: {{ request('from_date') }} to {{ request('to_date') }}
+                                        </th>
+                                    </tr>
+                                @endif
 
                                 <tr>
                                     @unless (request()->filled('report_type'))
@@ -326,6 +329,7 @@
                                     @endunless
 
                                     @if (request()->filled('report_type'))
+                                        <th>#</th>
                                         @foreach ($exportDatas[0][1] as $header)
                                             <th>{{ ucfirst($header) }}</th>
                                         @endforeach
@@ -374,6 +378,7 @@
                                             {{-- <td>
                                                 <input type="checkbox" class="select-row" />
                                             </td> --}}
+                                            <th scope="row">{{ $loop->iteration }}</th>
                                             @foreach ($exportDatas[0][1] as $key)
                                                 <td>
                                                     {{-- <input type="checkbox" class="select-row" />  --}}
@@ -408,8 +413,8 @@
                                         <th class="text-center"
                                             colspan="{{ match (substr_count(request('report_type'), '_')) {
                                                 3 => 3,
-                                                2 => 2,
-                                                default => 1,
+                                                2 => 3,
+                                                default => 2,
                                             } }}">
                                             Total</th>
                                         <th>{{ collect($exportDatas[0][0])->sum('20ft') }}</th>
@@ -444,7 +449,8 @@
 @endsection
 
 @push('js')
-    <script src="{{ asset('light-bootstrap/js/jquery.table2excel.min.js') }}"></script>
+    {{-- <script src="{{ asset('light-bootstrap/js/jquery.table2excel.min.js') }}"></script> --}}
+    {{-- <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script> --}}
     <script>
         let selectedData = [];
         $(document).ready(function() {
@@ -467,26 +473,279 @@
             });
 
             // export to xls
-            $('#btnExport').on('click', function() {
-                var heading_name = $("#heading_name").text();
-                $(".table2excel").table2excel({
-                    exclude: ".noExl",
-                    name: heading_name,
-                    filename: heading_name,
-                    fileext: ".xls",
-                    exclude_img: true,
-                    exclude_links: true,
-                    exclude_inputs: true,
-                    excel: {
-                        beforeSave: function() {
-                            var sheet = this.sheet;
-                            sheet.rowHeight(0, sheet.rowCount(),
-                                30); // set row height to 30 pixels
-                        }
+            // $('#btnExport').on('click', async function () {
+            //     const workbook = new ExcelJS.Workbook();
+            //     const worksheet = workbook.addWorksheet("Sheet1");
+
+            //     const table = document.getElementById("myTable");
+
+            //     // Loop through table rows
+            //     for (let i = 0; i < table.rows.length; i++) {
+            //         const row = table.rows[i];
+            //         const cells = Array.from(row.cells).map(cell => cell.innerText);
+            //         const excelRow = worksheet.addRow(cells);
+
+            //         // Apply border to each cell in the row
+            //         excelRow.eachCell(cell => {
+            //             cell.border = {
+            //                 top: { style: "thin" },
+            //                 left: { style: "thin" },
+            //                 bottom: { style: "thin" },
+            //                 right: { style: "thin" }
+            //             };
+            //         });
+            //     }
+            //     // Example: merge A1 and B1
+            //     worksheet.mergeCells("A1:I1");
+            //   //  worksheet.getCell("A1").value = "Merged Header"; // Change to your actual header name
+            //     worksheet.getCell("A1").alignment = {
+            //         horizontal: "center",
+            //         vertical: "middle",
+            //        wrapText: true
+            //     };
+            //     worksheet.getCell("A1").font = { bold: true };
+
+            //     // auto fit column
+
+
+            //     worksheet.columns.forEach(column => {
+            //         let maxLength = 0;
+            //         column.eachCell({ includeEmpty: true }, cell => {
+            //             const cellValue = cell.value ? cell.value.toString() : "";
+            //             maxLength = Math.max(maxLength, cellValue.length);
+            //         });
+            //        // column.width = maxLength + 1;
+            //         column.width = Math.min(maxLength + 2, 15);
+            //     });
+
+            //     // Export to Excel file
+            //     const buffer = await workbook.xlsx.writeBuffer(); 
+            //     const blob = new Blob([buffer], {
+            //         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            //     });
+            //     const link = document.createElement("a");
+            //     link.href = URL.createObjectURL(blob);
+            //     link.download = "table-with-borders.xlsx";
+            //     link.click();
+            // });
+
+            // $('#btnExport').on('click', async function() {
+            //     const workbook = new ExcelJS.Workbook();
+            //     const worksheet = workbook.addWorksheet("Export Report");
+
+            //     const table = document.getElementById("excelJsTable");
+            //     let mergeInstructions = [];
+            //     for (let i = 0; i < table.rows.length; i++) {
+            //         const row = table.rows[i];
+            //         const cells = Array.from(row.cells);
+            //         const rowData = cells.map(cell => cell.innerText.trim());
+
+            //         // Add row to worksheet
+            //         const excelRow = worksheet.addRow(rowData);
+
+            //         // Apply border and styling to each cell
+            //         excelRow.eachCell((cell, colNumber) => {
+            //             cell.border = {
+            //                 top: {
+            //                     style: "thin"
+            //                 },
+            //                 left: {
+            //                     style: "thin"
+            //                 },
+            //                 bottom: {
+            //                     style: "thin"
+            //                 },
+            //                 right: {
+            //                     style: "thin"
+            //                 }
+            //             };
+            //             cell.alignment = {
+            //                 horizontal: "center",
+            //                 vertical: "middle",
+            //                 wrapText: true
+            //             };
+            //         });
+
+            //         // Handle merged headers (colspan)
+            //         const firstCell = cells[0]
+            //         if (firstCell && firstCell.hasAttribute("colspan")) {
+            //             const colspan = parseInt(firstCell.getAttribute("colspan"));
+            //             const cellRange = `A${i + 1}:${String.fromCharCode(64 + colspan)}${i + 1}`;
+            //             mergeInstructions.push(cellRange);
+
+            //             // Optional: center the merged text and make it bold
+            //             worksheet.mergeCells(cellRange);
+            //             const mergedCell = worksheet.getCell(`A${i + 1}`);
+            //             mergedCell.font = {
+            //                 bold: true
+            //             };
+            //         }
+            //     }
+
+            //     // Auto fit column widths (with limit)
+            //     worksheet.columns.forEach(column => {
+            //         let maxLength = 0;
+            //         column.eachCell({
+            //             includeEmpty: true
+            //         }, cell => {
+            //             const value = cell.value ? cell.value.toString() : "";
+            //             maxLength = Math.max(maxLength, value.length);
+            //         });
+            //         column.width = Math.min(maxLength + 2, 15);
+            //     });
+
+
+            //     // Generate and download Excel file
+            //     const buffer = await workbook.xlsx.writeBuffer();
+            //     const blob = new Blob([buffer], {
+            //         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            //     });
+
+            //     const link = document.createElement("a");
+            //     link.href = URL.createObjectURL(blob);
+            //     link.download = "export_report.xlsx";
+            //     document.body.appendChild(link);
+            //     link.click();
+            //     document.body.removeChild(link);
+            // });
+
+            function columnNumberToName(num) {
+                let columnName = '';
+                while (num > 0) {
+                    let remainder = (num - 1) % 26;
+                    columnName = String.fromCharCode(65 + remainder) + columnName;
+                    num = Math.floor((num - 1) / 26);
+                }
+                return columnName;
+            }
+
+            // Process thead, tbody, and tfoot
+            function processHtmlTableToExcelJs(table, worksheet) {
+                const cellMap = {}; // Track occupied cells (row,col)
+                let currentRowIndex = 1;
+
+                const sections = ['thead', 'tbody', 'tfoot'];
+
+                sections.forEach(section => {
+                    const rows = table.querySelectorAll(`${section} tr`);
+
+                    rows.forEach((row) => {
+                        const cells = Array.from(row.children);
+                        let currentColIndex = 1;
+
+                        const rowData = []; // for normal cells
+
+                        cells.forEach((cell) => {
+                            // Skip already occupied cells (because of rowspan/colspan)
+                            while (cellMap[`${currentRowIndex},${currentColIndex}`]) {
+                                currentColIndex++;
+                            }
+
+                            const colspan = parseInt(cell.getAttribute("colspan") || 1);
+                            const rowspan = parseInt(cell.getAttribute("rowspan") || 1);
+
+                            const startCol = currentColIndex;
+                            const endCol = currentColIndex + colspan - 1;
+                            const startRow = currentRowIndex;
+                            const endRow = currentRowIndex + rowspan - 1;
+
+                            // Merge cells if colspan or rowspan > 1
+                            if (colspan > 1 || rowspan > 1) {
+                                const startCell = columnNumberToName(startCol) + startRow;
+                                const endCell = columnNumberToName(endCol) + endRow;
+                                worksheet.mergeCells(`${startCell}:${endCell}`);
+                            }
+
+                            const excelCell = worksheet.getCell(columnNumberToName(
+                                startCol) + startRow);
+                            excelCell.value = cell.textContent.trim();
+                            excelCell.alignment = {
+                                vertical: 'middle',
+                                horizontal: 'center',
+                                wrapText: true
+                            };
+                            excelCell.border = {
+                                top: {
+                                    style: 'thin'
+                                },
+                                left: {
+                                    style: 'thin'
+                                },
+                                bottom: {
+                                    style: 'thin'
+                                },
+                                right: {
+                                    style: 'thin'
+                                }
+                            };
+                            if (section !== 'tbody') {
+                                excelCell.font = {
+                                    bold: true
+                                };
+                            }
+
+                            // Mark occupied cells
+                            for (let r = startRow; r <= endRow; r++) {
+                                for (let c = startCol; c <= endCol; c++) {
+                                    cellMap[`${r},${c}`] = true;
+                                }
+                            }
+
+                            currentColIndex += colspan;
+                        });
+
+                        currentRowIndex++;
+                    });
+                });
+            }
+
+            $('#btnExport').on('click', async function() {
+                try {
+                    const reportTitle = $('.reportTitle').text().trim().replace(/\s+/g, '_'); 
+                    const reportRange = $('.reportRange').text().trim().replace(/\s+/g, '_');
+
+                    const workbook = new ExcelJS.Workbook();
+                    const worksheet = workbook.addWorksheet("Export Report");
+
+                    const table = document.getElementById("excelJsTable");
+
+                    if (!table) {
+                        throw new Error("Table not found");
                     }
 
-                });
+                    processHtmlTableToExcelJs(table, worksheet);
+
+                    // Auto-fit columns width (with max width limit)
+                    worksheet.columns.forEach((column) => {
+                        let maxLength = 0;
+                        column.eachCell({
+                            includeEmpty: true
+                        }, (cell) => {
+                            const value = cell.value ? cell.value.toString() : "";
+                            maxLength = Math.max(maxLength, value.length);
+                        });
+                        column.width = Math.min(maxLength + 2, 15);
+                    });
+
+                    // Download Excel
+                    const buffer = await workbook.xlsx.writeBuffer();
+                    const blob = new Blob([buffer], {
+                        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    });
+
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = `${reportTitle}_${reportRange}.xlsx`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                } catch (error) {
+                    console.error("Export failed:", error);
+                    alert("Failed to export Excel: " + error.message);
+                }
             });
+
 
             $('.select-row').on('change', function() {
                 let labels = $(this).closest('tr').data('labels');
@@ -510,36 +769,36 @@
 
         });
 
-        function updateChart() {
-            if (selectedData.length === 0) {
-                $('#barChart').hide();
-                return;
-            }
+        // function updateChart() {
+        //     if (selectedData.length === 0) {
+        //         $('#barChart').hide();
+        //         return;
+        //     }
 
-            $('#barChart').show();
+        //     $('#barChart').show();
 
-            let allLabels = [];
+        //     let allLabels = [];
 
-            let _20 = [];
-            let _40 = [];
-            let _teus = [];
-            let max_val = 0;
+        //     let _20 = [];
+        //     let _40 = [];
+        //     let _teus = [];
+        //     let max_val = 0;
 
-            selectedData.forEach(row => {
-                // console.log(row.labels,row.labels.join('/'));
-                let labelText = row.labels.join('/');
-                allLabels.push(labelText);
-                _20.push(row.series[0] + row.series[3]);
-                _40.push(row.series[1] + row.series[2] + row.series[4]);
-                _teus.push(row.series[5]);
-                max_val = Math.max(max_val, row.series[0] || 0, row.series[1] || 0);
-            });
+        //     selectedData.forEach(row => {
+        //         // console.log(row.labels,row.labels.join('/'));
+        //         let labelText = row.labels.join('/');
+        //         allLabels.push(labelText);
+        //         _20.push(row.series[0] + row.series[3]);
+        //         _40.push(row.series[1] + row.series[2] + row.series[4]);
+        //         _teus.push(row.series[5]);
+        //         max_val = Math.max(max_val, row.series[0] || 0, row.series[1] || 0);
+        //     });
 
-            let allSeries = [_20, _40];
+        //     let allSeries = [_20, _40];
 
-            demo.initExportDataBar(allLabels, allSeries, max_val);
-            demo.initExportDataChart(_teus);
-        }
+        //     demo.initExportDataBar(allLabels, allSeries, max_val);
+        //     demo.initExportDataChart(_teus);
+        // }
 
         function initializeMonthYearPicker(selector) {
             $(selector).datepicker({
@@ -555,9 +814,11 @@
                 onClose: function() {
                     const iMonth = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
                     const iYear = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                    const dateExist = $('.datepicker').val();
+                    // // const tDateExist = $('.tdatepicker').val();
+                    // console.log(dateExist);
 
-
-                    if (iMonth !== null && iYear !== null) {
+                    if (iMonth !== null && iYear !== null && dateExist != '') {
                         $(this).datepicker('setDate', new Date(iYear, iMonth, 1));
                     }
                 },

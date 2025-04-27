@@ -6,6 +6,11 @@
 ])
 
 @section('content')
+<style>
+    .ui-timepicker-container {
+    z-index: 9999 !important; 
+  }
+</style>
     <div class="content">
         <div class="container-fluid">
             <div class="section-image">
@@ -36,9 +41,9 @@
                         <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
                     </div>
                     <!-- <div class="col-sm-2 pr-0 mt-1">
-                                                                            <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download"
-                                                                                    aria-hidden="true"></i> xls</button>
-                                                                        </div> -->
+                                                                                        <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download"
+                                                                                                aria-hidden="true"></i> xls</button>
+                                                                                    </div> -->
                 </form>
 
                 <div class="card bg-white">
@@ -87,18 +92,18 @@
                                             <button class="btn btn-sm btn-success editVesselInfoBtn"
                                                 data-id="{{ $dt->id }}"
                                                 data-vessel_name="{{ $dt->vessel->vessel_name }}"
-                                                data-rotation_no="{{ $dt->rotation_no ??''}}" 
-                                                data-jetty="{{ $dt->jetty??'' }}"
-                                                data-operator="{{ $dt->operator??'' }}"
-                                                data-local_agent="{{ $dt->local_agent??'' }}"
-                                                data-berth_date="{{ $dt->berth_date??'' }}"
-                                                data-arrival_date="{{ $dt->arrival_date??'' }}"
-                                                data-sail_date="{{ $dt->sail_date??'' }}"
-                                                data-berth_time="{{ $dt->berth_time??'' }}"
-                                                data-arrival_time="{{ $dt->arrival_time??'' }}"
-                                                data-sail_time="{{ $dt->sail_time??'' }}"
-                                                data-effective_capacity="{{ $dt->effective_capacity??'' }}"
-                                                data-target="#editVesselInfoModal">
+                                                data-rotation_no="{{ $dt->rotation_no ?? '' }}"
+                                                data-jetty="{{ $dt->jetty ?? '' }}"
+                                                data-operator="{{ $dt->operator ?? '' }}"
+                                                data-local_agent="{{ $dt->local_agent ?? '' }}"
+                                                data-berth_date="{{ $dt->berth_date ?? '' }}"
+                                                data-arrival_date="{{ $dt->arrival_date ?? '' }}"
+                                                data-sail_date="{{ $dt->sail_date ?? '' }}"
+                                                data-berth_time="{{ $dt->berth_time ?? '' }}"
+                                                data-arrival_time="{{ $dt->arrival_time ?? '' }}"
+                                                data-sail_time="{{ $dt->sail_time ?? '' }}"
+                                                data-effective_capacity="{{ $dt->effective_capacity ?? '' }}"
+                                                data-target="#editVesselInfoModal" data-toggle="modal">
                                                 Edit
                                             </button>
 
@@ -159,11 +164,13 @@
                     <div class="form-group">
                         <label for=""><strong>Arrival Date/Time</strong></label>
                         <div class="row">
-                            <div class="col-sm-6"><input type="number" step="0.1" name="arrival_date"
-                                    id="arrival_date" class="form-control form-control-sm" placeholder="Arrival Date">
+                            <div class="col-sm-6"><input type="text" step="0.1" name="arrival_date"
+                                    id="arrival_date" class="form-control form-control-sm datepicker"
+                                    placeholder="Arrival Date">
                             </div>
-                            <div class="col-sm-6"><input type="number" step="0.1" name="arrival_time"
-                                    id="arrival_time" class="form-control form-control-sm" placeholder="Arrival Time">
+                            <div class="col-sm-6"><input type="text" step="0.1" name="arrival_time"
+                                    id="arrival_time" class="form-control form-control-sm timepicker"
+                                    placeholder="Arrival Time">
                             </div>
                         </div>
                     </div>
@@ -171,11 +178,11 @@
                     <div class="form-group">
                         <label for=""><strong>Berth Date/Time</strong></label>
                         <div class="row">
-                            <div class="col-sm-6"><input type="number" step="0.1" name="beth_date" id="beth_date"
-                                    class="form-control form-control-sm" placeholder="Berth Date">
+                            <div class="col-sm-6"><input type="text" step="0.1" name="berth_date" id="berth_date"
+                                    class="form-control form-control-sm datepicker" placeholder="Berth Date">
                             </div>
-                            <div class="col-sm-6"><input type="number" step="0.1" name="berth_time" id="berth_time"
-                                    class="form-control form-control-sm" placeholder="Berth Time">
+                            <div class="col-sm-6"><input type="text" step="0.1" name="berth_time" id="berth_time"
+                                    class="form-control form-control-sm timepicker" placeholder="Berth Time">
                             </div>
                         </div>
                     </div>
@@ -183,11 +190,11 @@
                     <div class="form-group">
                         <label for=""><strong>Sail Date/Time</strong></label>
                         <div class="row">
-                            <div class="col-sm-6"><input type="number" step="0.1" name="sail_date" id="sail_date"
-                                    class="form-control form-control-sm" placeholder="Sail Date">
+                            <div class="col-sm-6"><input type="text" step="0.1" name="sail_date" id="sail_date"
+                                    class="form-control form-control-sm datepicker" placeholder="Sail Date">
                             </div>
-                            <div class="col-sm-6"><input type="number" step="0.1" name="sail_time" id="sail_time"
-                                    class="form-control form-control-sm" placeholder="Sail Time">
+                            <div class="col-sm-6"><input type="text" step="0.1" name="sail_time" id="sail_time"
+                                    class="form-control form-control-sm timepicker" placeholder="Sail Time">
                             </div>
                         </div>
                     </div>
@@ -208,6 +215,34 @@
                 });
             });
 
+            $(".datepicker").datepicker({
+                dateFormat: 'yy-mm-dd',
+                showButtonPanel: true,
+                currentText: "Today",
+
+                beforeShow: function(input, inst) {
+                    setTimeout(function() {
+                        var buttonPane = $(inst.dpDiv).find('.ui-datepicker-buttonpane');
+
+                        buttonPane.find('.ui-datepicker-current').off('click').on('click',
+                            function() {
+                                var today = new Date();
+                                $(input).datepicker('setDate', today);
+                                $.datepicker._hideDatepicker(input); //close after selecting
+                                $(input).blur(); //prevent auto-focus/reopen
+                            });
+                    }, 1);
+                }
+            });
+
+            $('.timepicker').timepicker({
+                timeFormat: 'HH:mm:ss',
+                showSeconds: true,
+                showMeridian: false, 
+                defaultTime: false
+            });
+
+
             $('.editVesselInfoBtn').on('click', function() {
                 $('#vessel_info_id').val($(this).data('id'));
                 $('#rotation_no').val($(this).data('rotation_no'));
@@ -227,32 +262,32 @@
             $('#editVesselInfoModalForm').on('submit', function(e) {
                 e.preventDefault();
                 let formData = new FormData(this);
-                console.log(formData);
-                // $.ajax({
-                //     type: 'POST',
-                //     url: '{{ route('vesselInfo.update') }}',
-                //     data: formData,
-                //     cache: false,
-                //     contentType: false,
-                //     processData: false,
-                //     enctype: 'multipart/form-data',
-                //     success: function(response) {
-                //         $('#editVesselInfoModal').modal('hide');
-                //         demo.customShowNotification('success', response.success);
-                //         window.location.reload();
-                //     },
-                //     error: function(response) {
-                //         if (response.responseJSON?.error) {
-                //             demo.customShowNotification('danger', response.responseJSON.error);
-                //         }
-                //         const errors = response.responseJSON?.errors || {};
-                //         Object.keys(errors).forEach(field => {
-                //             errors[field].forEach(msg => {
-                //                 demo.customShowNotification('danger', msg);
-                //             });
-                //         });
-                //     }
-                // });
+                // console.log(formData);
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('vesselInfo.update') }}',
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    enctype: 'multipart/form-data',
+                    success: function(response) {
+                        $('#editVesselInfoModal').modal('hide');
+                        demo.customShowNotification('success', response.success);
+                        window.location.reload();
+                    },
+                    error: function(response) {
+                        if (response.responseJSON?.error) {
+                            demo.customShowNotification('danger', response.responseJSON.error);
+                        }
+                        const errors = response.responseJSON?.errors || {};
+                        Object.keys(errors).forEach(field => {
+                            errors[field].forEach(msg => {
+                                demo.customShowNotification('danger', msg);
+                            });
+                        });
+                    }
+                });
             });
         });
     </script>

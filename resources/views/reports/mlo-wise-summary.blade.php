@@ -44,6 +44,15 @@
                     <div class="col-md-2 px-1 mt-1">
                         <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
                     </div>
+
+                    <div class="col-md-2 px-1 mt-1">
+                        {{-- <a href="{{ route('reports.soc-inout-bound.download', ['from_date' => request()->get('from_date'), 'to_date' => request()->get('to_date'), 'route_id' => request()->get('route_id')]) }}"
+                            class="btn btn-success btn-sm w-100">
+                            <i class="fa fa-download" aria-hidden="true"></i> (xlsx)
+                        </a> --}}
+                        <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download"
+                            aria-hidden="true"></i> xls</button>
+                    </div>
                 </form>
 
                 <div class="card bg-white">
@@ -57,42 +66,46 @@
                         {{-- end auto search --}}
                     </div>
                     <div class="card-body">
-                        <table class="tableFixHead table-bordered table2excel custom-table-report mb-3">
+                        <table id="excelJsTable" class="tableFixHead table-bordered table2excel custom-table-report mb-3">
+                            <p class="reportRange" style="display: none;" type="hidden">Date: {{ request('from_date') }} to {{ request('to_date') }}</p>
+                            <p class="reportTitle" style="display: none;" type="hidden">Mlo_Wise_Summary</p>
+                            <input class="reportRange" type="hidden" value="Date: {{ request('from_date') }} to {{ request('to_date') }}">
+                            <input class="reportTitle" type="hidden" value="Mlo_Wise_Summary">
                             <thead>
                                 <tr>
-                                    <td rowspan="3">MLO</td>
-                                    <td rowspan="3">Line Belongs To</td>
-                                    <td rowspan="3">Mlo Details</td>
+                                    <th rowspan="3">MLO</th>
+                                    <th rowspan="3">Line Belongs To</th>
+                                    <th rowspan="3">Mlo Details</th>
                                     @foreach (collect($results)->first()['permonth'] as $month => $d)
-                                        <td colspan="4">{{ $month }}</td>
+                                        <th colspan="4">{{ $month }}</th>
                                     @endforeach
                                     {{-- {{dd(collect($results))}} --}}
 
-                                    {{-- <td colspan="4">foreach teus</td> --}}
-                                    <td colspan="4">Total Teus</td>
-                                    <td colspan="4">Average Teus</td>
+                                    {{-- <th colspan="4">foreach teus</th> --}}
+                                    <th colspan="4">Total Teus</th>
+                                    <th colspan="4">Average Teus</th>
                                 </tr>
                                 <tr>
-                                    <td colspan="2">Import</td>
-                                    <td colspan="2">Export</td>
-                                    <td colspan="2">Import</td>
-                                    <td colspan="2">Export</td>
-                                    <td colspan="2">Import</td>
-                                    <td colspan="2">Export</td>
+                                    <th colspan="2">Import</th>
+                                    <th colspan="2">Export</th>
+                                    <th colspan="2">Import</th>
+                                    <th colspan="2">Export</th>
+                                    <th colspan="2">Import</th>
+                                    <th colspan="2">Export</th>
                                 </tr>
                                 <tr>
-                                    <td>LDN</td>
-                                    <td>MTY</td>
-                                    <td>LDN</td>
-                                    <td>MTY</td>
-                                    <td>LDN</td>
-                                    <td>MTY</td>
-                                    <td>LDN</td>
-                                    <td>MTY</td>
-                                    <td>LDN</td>
-                                    <td>MTY</td>
-                                    <td>LDN</td>
-                                    <td>MTY</td>
+                                    <th>LDN</th>
+                                    <th>MTY</th>
+                                    <th>LDN</th>
+                                    <th>MTY</th>
+                                    <th>LDN</th>
+                                    <th>MTY</th>
+                                    <th>LDN</th>
+                                    <th>MTY</th>
+                                    <th>LDN</th>
+                                    <th>MTY</th>
+                                    <th>LDN</th>
+                                    <th>MTY</th>
                                 </tr>
 
                             </thead>
