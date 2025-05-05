@@ -1,4 +1,4 @@
-@extends('layouts.app', ['activePage' => 'export-data', 'title' => 'GLA Admin', 'navName' => 'Export Data', 'activeButton' => 'laravel'])
+@extends('layouts.app', ['activePage' => 'export-data-create', 'title' => 'GLA Admin', 'navName' => 'Export Data', 'activeButton' => 'laravel'])
 @section('content')
     <style>
         .ui-datepicker-calendar {
@@ -37,9 +37,6 @@
                                     </label>
                                     <input required type="file" name="file" class="form-control form-control-sm"
                                         id="customFile">
-                                    {{-- 
-                                            <label class="custom-file-label" for="customFile">Choose file</label>
-                                                --}}
                                 </div>
 
                                 <div class="form-group col-md-6">
@@ -51,16 +48,79 @@
                                 </div>
 
                                 <div class="form-group col-md-12 d-flex justify-content-end">
-                                    <button class="btn btn-primary">Import Data</button>
-
-                                    {{-- <!--
-                                        <a class="btn btn-success" href="{{ route('export-users') }}">Export Users</a>
---> --}}
-
+                                    <button class="btn btn-primary">Upload</button>
                                 </div>
                             </div>
                         </form>
 
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h4 class="p-0 m-0">Records</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="tableFixHead table-bordered custom-table-report table-sm">
+                            <thead>
+                                <tr class="text-center">
+                                    <th>#</th>
+                                    <th>Month</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($exportDataMonthly as $item)
+                                    @php
+                                        $formattedDate = \Carbon\Carbon::parse($item->date)->format('F Y');
+                                        $safeDate = \Str::slug($item->date); // e.g., 2024-01-01 becomes 2024-01-01
+                                        $modalId = 'confirmModal-' . $safeDate;
+                                    @endphp
+                                    <tr class="text-center">
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $formattedDate }}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger btn-sm deleteBtn"
+                                                data-date="{{ $item->date }}" data-modal-id="{{ $modalId }}">
+                                                <i class="fas fa-trash" aria-hidden="true"></i>
+                                            </button>
+
+                                            <!-- Confirmation Modal -->
+                                            <div class="modal fade" id="{{ $modalId }}" tabindex="-1" role="dialog"
+                                                aria-labelledby="{{ $modalId }}Label" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header bg-warning p-3">
+                                                            <h5 class="modal-title" id="{{ $modalId }}Label">
+                                                                Confirmation Required
+                                                            </h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                                <span>&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body text-center">
+                                                            <h5>Are you sure you want to delete export data for
+                                                                {{ $formattedDate }}?</h5>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-sm btn-secondary"
+                                                                data-dismiss="modal">Cancel</button>
+                                                            <button type="button"
+                                                                class="btn btn-sm btn-success confirmDeleteBtn"
+                                                                data-date="{{ $item->date }}">
+                                                                Confirm
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+
+                        </table>
                     </div>
                 </div>
 
@@ -72,6 +132,74 @@
     <script>
         $(document).ready(function() {
             initializeMonthYearPicker('.datepicker');
+
+            $('#exportDataForm').on('submit', function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                // console.log(formData);
+                $.ajax({
+                    url: '{{ route('export-data.store') }}',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        demo.customShowNotification('success', data.success);
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2000);
+                    },
+
+                    error: function(data) {
+                        if (data.responseJSON.error) {
+                            demo.customShowNotification('danger', data.responseJSON.error);
+                        }
+                        for (let field in data.responseJSON.errors) {
+                            for (let i = 0; i < data.responseJSON.errors[field].length; i++) {
+                                demo.customShowNotification('danger', data.responseJSON.errors[
+                                    field][i]);
+                            }
+                        }
+                    }
+                });
+            });
+
+            $('.deleteBtn').on('click', function() {
+                const modalId = $(this).data('modal-id');
+                $('#' + modalId).modal('show');
+            });
+
+            $('.confirmDeleteBtn').on('click', function(e) {
+                e.preventDefault();
+                const date = $(this).data('date');
+                const deleteUrl = '{{ route('export-data.deleteByDate', ':date') }}'.replace(':date',
+                    date);
+                $.ajax({
+                    url: deleteUrl,
+                    method: 'DELETE',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        demo.customShowNotification('success', response.success);
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2000);
+                    },
+                    error: function(xhr) {
+                        const res = xhr.responseJSON;
+                        if (res?.error) {
+                            demo.customShowNotification('danger', res.error);
+                        }
+                        const errors = res?.errors || {};
+                        Object.values(errors).forEach(messages =>
+                            messages.forEach(msg => demo.customShowNotification('danger',
+                                msg))
+                        );
+                    }
+                });
+            });
+
         });
 
         function initializeMonthYearPicker(selector) {
@@ -110,32 +238,5 @@
                 }
             });
         }
-
-        $('#exportDataForm').on('submit', function(e) {
-            e.preventDefault();
-            var formData = new FormData(this);
-            // console.log(formData);
-            $.ajax({
-                url: '{{ route('export-data.store') }}',
-                type: 'POST',
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function(data) {
-                    demo.customShowNotification('success', data.success);
-                },
-                error: function(data) {
-                    if (data.responseJSON.error) {
-                        demo.customShowNotification('danger', data.responseJSON.error);
-                    }
-                    for (let field in data.responseJSON.errors) {
-                        for (let i = 0; i < data.responseJSON.errors[field].length; i++) {
-                            demo.customShowNotification('danger', data.responseJSON.errors[
-                                field][i]);
-                        }
-                    }
-                }
-            });
-        });
     </script>
 @endpush

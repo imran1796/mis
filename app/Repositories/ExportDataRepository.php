@@ -33,6 +33,10 @@ class ExportDataRepository implements ExportDataInterface
             $query->whereIn('pod', $filters['pod']);
         }
 
+        if (!empty($filters['region'])) {
+            $query->whereIn('trade', $filters['region']);
+        }
+
         if (!empty($filters['mlo'])) {
             $query->whereIn('mlo', $filters['mlo']);
         }

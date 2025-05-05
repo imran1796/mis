@@ -14,6 +14,7 @@ use App\Models\Mlo;
 use App\Models\MloWiseCount;
 use App\Models\Route;
 use App\Models\VesselInfos;
+use App\Services\VesselInfoService;
 use App\Services\VesselService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -22,11 +23,12 @@ use SebastianBergmann\CodeCoverage\Report\Xml\Totals;
 
 class VesselController extends Controller
 {
-    protected $vesselService;
+    protected $vesselService, $vesselInfoService;
 
-    public function __construct(VesselService $vesselService)
+    public function __construct(VesselService $vesselService, VesselInfoService $vesselInfoService)
     {
         $this->vesselService = $vesselService;
+        $this->vesselInfoService = $vesselInfoService;
 
         // $this->middleware('permission:vessel-list|vessel-create|vessel-edit|vessel-delete', ['only' => ['index', 'show']]);
         // $this->middleware('permission:vessel-create', ['only' => ['create', 'store']]);
@@ -54,20 +56,28 @@ class VesselController extends Controller
     public function indexVesselInfo(Request $request)
     {
         $filters = $request->only(['from_date', 'to_date']);
-        
-        $data = $this->vesselService->getAllVesselWiseData($filters);
+
+        $data = $this->vesselInfoService->getAllVesselWiseData($filters);
         return view('vessel-infos.index', compact('data'));
     }
 
     public function createVesselInfo()
     {
         $routes = Route::all();
-        return view('vessel-infos.create', compact('routes'));
+        $vesselWisePerMonth = VesselInfos::select('date', 'route_id')
+            ->with('route', 'importExportCounts')
+            ->distinct()
+            ->orderByDesc('date')
+            ->get()
+            // ->groupBy(['date','route.short_name']);
+            ->groupBy('date');
+        // dd($vesselWiseData->toArray());
+        return view('vessel-infos.create', compact('routes', 'vesselWisePerMonth'));
     }
 
     public function storeVesselInfo(VesselInfoCreateRequest $request)
     {
-        return $this->vesselService->createVesselWiseData($request->validated());
+        return $this->vesselInfoService->createVesselWiseData($request->validated());
     }
 
     public function updateVesselInfo(VesselInfoUpdateRequest $request)
@@ -78,6 +88,43 @@ class VesselController extends Controller
         $vesselInfo->update($request->validated());
     }
 
+    public function deletVesselInfoByDateRoute(Request $request)
+    {
+        $request->validate([
+            'date' => 'required|date',
+            'route_id' => 'required|integer|exists:routes,id',
+        ]);
+        // return $this->mloService->deleteMloWiseCountByDateRoute($request);
+        \DB::beginTransaction();
+        try {
+            // Get all vessel_info records for the route and date
+            $vesselInfos = VesselInfos::where('route_id', $request->route_id)
+                ->whereDate('date', $request->date)
+                ->with('importExportCounts')
+                ->get();
+
+            if ($vesselInfos->isEmpty()) {
+                return response()->json(['error' => 'No records found for the selected route and date'], 404);
+            }
+
+            foreach ($vesselInfos as $vesselInfo) {
+                $vesselInfo->importExportCounts()->delete();
+                $vesselInfo->delete();
+            }
+
+            \DB::commit();
+            return response()->json(['success' => 'Vessel-wise data deleted successfully.'], 200);
+        } catch (\Throwable $e) {
+            \DB::rollBack();
+            \Log::error('Failed to delete vessel-wise data: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'route_id' => $request->route_id,
+                'date' => $request->date
+            ]);
+            return response()->json(['error' => 'An unexpected error occurred while deleting.'], 500);
+        }
+    }
+
     public function indexReport()
     {
         return view('reports.index');
@@ -86,8 +133,8 @@ class VesselController extends Controller
     public function operatorWiseLifting(Request $request)
     {
         $filters = $request->only(['from_date', 'to_date', 'route_id']);
-        $pods = $this->vesselService->getAllRoutes();
-        $data = $this->vesselService->operatorWiseLifting($filters);
+        $pods = $this->vesselInfoService->getAllRoutes();
+        $data = $this->vesselInfoService->operatorWiseLifting($filters);
         // dd($data);
         return view('reports.operator-wise-lifting', compact('pods', 'data'));
     }
@@ -108,7 +155,7 @@ class VesselController extends Controller
             ->filter()
             ->implode(', ');
 
-        $data = $this->vesselService->operatorWiseLifting($filters);
+        $data = $this->vesselInfoService->operatorWiseLifting($filters);
 
         $fileName = "OperatorWiseLifting(Summary) - {$range}" . ($route ? " - {$route}" : '') . ".xlsx";
 
@@ -119,8 +166,8 @@ class VesselController extends Controller
     public function socInOutBound(Request $request)
     {
         $filters = $request->only(['from_date', 'to_date', 'route_id']);
-        $pods = $this->vesselService->getData('Route');
-        $datas = $this->vesselService->socInOutBound($filters);
+        $pods = $this->vesselInfoService->getData('Route');
+        $datas = $this->vesselInfoService->socInOutBound($filters);
 
         return view('reports.soc-in-out-bound', compact('pods', 'datas'));
     }
@@ -133,7 +180,7 @@ class VesselController extends Controller
         }
 
         // dd($filters);
-        $datas = $this->vesselService->socInOutBound($filters);
+        $datas = $this->vesselInfoService->socInOutBound($filters);
         $range = Carbon::parse($filters['from_date'])->format('M-y') . ' To ' . Carbon::parse($filters['to_date'])->format('M-y');
 
         $routeNames = [1 => 'SIN', 2 => 'CBO', 3 => 'CCU'];
@@ -142,15 +189,15 @@ class VesselController extends Controller
             ->filter()
             ->implode(', ');
 
-        return Excel::download(new SocInOutBound($datas,$range,$route), 'soc_in_out_bound.xlsx');
+        return Excel::download(new SocInOutBound($datas, $range, $route), 'soc_in_out_bound.xlsx');
     }
 
 
     public function vesselTurnAroundTime(Request $request)
     {
         $filters = $request->only(['from_date', 'to_date', 'route_id']);
-        $pods = $this->vesselService->getData('Route');
-        $datas = $this->vesselService->vesselTurnAroundTime($filters);
+        $pods = $this->vesselInfoService->getData('Route');
+        $datas = $this->vesselInfoService->vesselTurnAroundTime($filters);
 
 
         return view('reports.vessel-turn-around-time', compact('pods', 'datas'));
@@ -159,18 +206,23 @@ class VesselController extends Controller
     public function marketCompetitors(Request $request)
     {
         $filters = $request->only(['from_date', 'to_date', 'route_id']);
-        $pods = $this->vesselService->getData('Route');
-        $datas = $this->vesselService->marketCompetitors($filters);
+        $pods = $this->vesselInfoService->getData('Route');
+        $datas = $this->vesselInfoService->marketCompetitors($filters);
 
         return view('reports.market-competitors', compact('pods', 'datas'));
     }
 
-    public function socOutboundMarketStrategy(Request $request)
+    public function vesselInfoReport(Request $request)
     {
-        $filters = $request->only(['from_date', 'to_date', 'route_id']);
-        $pods = $this->vesselService->getData('Route');
-        $datas = $this->vesselService->socOutboundMarketStrategy($filters);
 
-        return view('reports.soc-outbound-market', compact('datas', 'pods'));
+
+        $routes = Route::all();
+
+        $data = $this->vesselInfoService->vesselInfoReport($request);
+
+        // dd($data);
+
+
+        return view('reports.vessel-info', compact('data', 'routes'));
     }
 }

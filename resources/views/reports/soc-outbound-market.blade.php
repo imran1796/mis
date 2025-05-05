@@ -45,8 +45,8 @@
                         <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
                     </div>
                     <div class="col-md-2 px-1 mt-1">
-                        <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download"
-                                aria-hidden="true"></i> xls</button>
+                        <button class="btn btn-success btn-sm w-100" id="btnExcelJsExport" type="button"><i
+                                class="fa fa-download" aria-hidden="true"></i> xls</button>
                     </div>
                 </form>
 
@@ -69,7 +69,10 @@
                         <p class="reportTitle" style="display: none;" type="hidden">Outbound Market Strategy</p>
                         <table id="excelJsTable" class="tableFixHead table-bordered table2excel custom-table-report mb-3">
                             <thead>
-                                <tr><th colspan="6" class="text-center" style="font-size: 17px">Outbound Market Strategy</th></tr>
+                                <tr>
+                                    <th colspan="6" class="text-center" style="font-size: 17px">Outbound Market Strategy
+                                    </th>
+                                </tr>
                                 <tr>
                                     <th rowspan="2">MLO Code</th>
                                     <th rowspan="2">MLO Name</th>

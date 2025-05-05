@@ -62,9 +62,9 @@
                         <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
                     </div>
                     <!-- <div class="col-md-2 px-1 mt-1">
-                                                            <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download"
-                                                                    aria-hidden="true"></i> xls</button>
-                                                        </div> -->
+                                                                <button class="btn btn-success btn-sm w-100" id="btnExcelJsExport" type="button"><i class="fa fa-download"
+                                                                        aria-hidden="true"></i> xls</button>
+                                                            </div> -->
                     <div class="col-md-2 px-1"><button class="btn btn-success btn-sm w-100" id="mloSummaryReport"
                             type="button"> <i class="fa fa-download" aria-hidden="true"></i>Summary</button></div>
 

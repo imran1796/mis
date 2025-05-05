@@ -10,6 +10,7 @@ interface MloInterface
     public function createMlo(array $data);
     public function updateMlo($id, array $data);
     public function deleteMlo($id);
+    
     public function getAllMloWiseCount($filters = []);
     public function createMloWiseCount(array $data);
 }

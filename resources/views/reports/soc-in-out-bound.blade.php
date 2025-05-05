@@ -46,14 +46,14 @@
                     </div>
 
                     <div class="col-md-2 px-1 mt-1">
-                        {{-- <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download"
+                        {{-- <button class="btn btn-success btn-sm w-100" id="btnExcelJsExport" type="button"><i class="fa fa-download"
                                 aria-hidden="true"></i> xls</button> --}}
                         {{-- <a href="{{ route('reports.soc-inout-bound.download', ['from_date' => request()->get('from_date'), 'to_date' => request()->get('to_date'), 'route_id' => request()->get('route_id')]) }}"
                             class="btn btn-success btn-sm w-100">
                             <i class="fa fa-download" aria-hidden="true"></i> (xlsx)
                         </a> --}}
-                        <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download"
-                            aria-hidden="true"></i> xls</button>
+                        <button class="btn btn-success btn-sm w-100" id="btnExcelJsExport" type="button"><i
+                                class="fa fa-download" aria-hidden="true"></i> xls</button>
                     </div>
 
                 </form>
@@ -71,16 +71,16 @@
                     <div class="card-body">
                         <table id="excelJsTable" class="tableFixHead table-bordered table2excel custom-table-report mb-3">
                             @if (request('from_date') && request('to_date'))
-                            <p class="reportRange" style="display: none;">
-                                {{ '(' . \Carbon\Carbon::parse(request('from_date'))->format('M y') . ' to ' . \Carbon\Carbon::parse(request('to_date'))->format('M y') . ')' }}
-                            </p>
-                            
+                                <p class="reportRange" style="display: none;">
+                                    {{ '(' . \Carbon\Carbon::parse(request('from_date'))->format('M y') . ' to ' . \Carbon\Carbon::parse(request('to_date'))->format('M y') . ')' }}
+                                </p>
                             @endif
                             <p class="reportTitle" style="display: none;" type="hidden">SOC_In/Out_Bound_Report</p>
                             <thead>
-                                
+
                                 <tr>
-                                    <th colspan="29" class="text-center" style="font-size: 17px">SOC In/Out Bound Report</th>
+                                    <th colspan="29" class="text-center" style="font-size: 17px">SOC In/Out Bound Report
+                                    </th>
                                 </tr>
                                 <tr>
                                     <th rowspan="2">Month</th>
@@ -124,7 +124,6 @@
                                         @foreach (['20', '40', '45', '20R', '40R', 'MTY20', 'MTY40'] as $col)
                                             @php
                                                 $val = $data['import'][$col];
-                                                // Calculate Laden and Empty TEUs for Import
                                                 if (in_array($col, ['MTY20', 'MTY40'])) {
                                                     $importEmptyTeus += $col === 'MTY40' ? $val * 2 : $val;
                                                 } else {
@@ -222,7 +221,7 @@
                 }
             });
 
-            $('#btnExport').on('click', function() {
+            $('#btnExcelJsExport').on('click', function() {
                 var row1 = $('<tr class="text-center">').append(
                     '<td colspan="29">Sinokor Merchant Marine Co., Ltd.</td>');
                 var row2 = $('<tr class="text-center">').append(

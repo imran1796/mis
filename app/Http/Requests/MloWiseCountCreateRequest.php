@@ -38,7 +38,7 @@ class MloWiseCountCreateRequest extends FormRequest
 
             $exists = \DB::table('mlo_wise_counts')
                 ->where('route_id', $routeId)
-                ->whereDate('date', Carbon::createFromFormat('M-Y', $date)->startOfMonth())
+                ->whereDate('date', Carbon::createFromFormat('d-M-Y', '01-' . $date)->startOfMonth())
                 ->exists();
 
             if ($exists) {

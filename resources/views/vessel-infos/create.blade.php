@@ -69,6 +69,89 @@
                     </div>
 
                 </div>
+
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h4 class="p-0 m-0">Records</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="tableFixHead table-bordered custom-table-report table-sm">
+                            <thead>
+                                <tr class="text-center">
+                                    <th>#</th>
+                                    <th>Month</th>
+                                    <th>Route</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($vesselWisePerMonth as $date => $items)
+                                    @foreach ($items as $item)
+                                        @php
+                                            $formattedDate = \Carbon\Carbon::parse($date)->format('F Y');
+                                            $formId = 'deleteVesselWiseByDateForm-' . md5($date . $item->route_id);
+                                            $modalId = 'confirmModal-' . md5($date . $item->route_id);
+                                        @endphp
+
+                                        <tr class="text-center">
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $formattedDate }}</td>
+                                            <td>{{ $item->route->name }}</td>
+                                            <td>
+                                                <!-- Delete Button -->
+                                                <button type="button" class="btn btn-danger btn-sm deleteBtn"
+                                                    data-date="{{ $date }}" data-route-id="{{ $item->route_id }}"
+                                                    data-form-id="{{ $formId }}" data-modal-id="{{ $modalId }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+
+                                                <!-- Delete Form -->
+                                                <form id="{{ $formId }}" class="delete-vessel-form" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <input type="hidden" name="date" value="{{ $date }}">
+                                                    <input type="hidden" name="route_id" value="{{ $item->route_id }}">
+                                                </form>
+
+                                                <!-- Confirmation Modal -->
+                                                <div class="modal fade" id="{{ $modalId }}" tabindex="-1"
+                                                    role="dialog" aria-labelledby="{{ $modalId }}Label"
+                                                    aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header bg-warning p-3">
+                                                                <h5 class="modal-title" id="{{ $modalId }}Label">
+                                                                    Confirmation Required</h5>
+                                                                <button type="button" class="close" data-dismiss="modal"
+                                                                    aria-label="Close">
+                                                                    <span>&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body text-center">
+                                                                <h5>Are you sure you want to delete vessel wise count for
+                                                                    {{ $formattedDate }}?</h5>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-sm btn-secondary"
+                                                                    data-dismiss="modal">Cancel</button>
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-success confirmDeleteBtn"
+                                                                    data-form-id="{{ $formId }}">
+                                                                    Confirm
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endforeach
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -119,6 +202,47 @@
                     }
                 });
 
+            });
+
+            $('.deleteBtn').on('click', function() {
+                const modalId = $(this).data('modal-id');
+                $('#' + modalId).modal('show');
+            });
+
+            $('.confirmDeleteBtn').on('click', function() {
+                const formId = $(this).data('form-id');
+                const form = $('#' + formId);
+                const date = form.find('input[name="date"]').val();
+                const routeId = form.find('input[name="route_id"]').val();
+                const token = form.find('input[name="_token"]').val();
+
+                console.log(form);
+                $.ajax({
+                    url: "{{ route('vesselInfo.deleteByDateRoute') }}",
+                    method: 'DELETE',
+                    data: {
+                        _token: token,
+                        date: date,
+                        route_id: routeId
+                    },
+                    success: function(response) {
+                        demo.customShowNotification('success', response.success ||
+                            'Deleted successfully.');
+                        location
+                            .reload(); // Optionally replace with dynamic row removal for better UX
+                    },
+                    error: function(xhr) {
+                        const res = xhr.responseJSON;
+                        if (res?.error) {
+                            demo.customShowNotification('danger', res.error);
+                        }
+                        const errors = res?.errors || {};
+                        Object.values(errors).forEach(messages =>
+                            messages.forEach(msg => demo.customShowNotification('danger',
+                                msg))
+                        );
+                    }
+                });
             });
         });
 

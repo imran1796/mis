@@ -50,8 +50,8 @@
                             class="btn btn-success btn-sm w-100">
                             <i class="fa fa-download" aria-hidden="true"></i> (xlsx)
                         </a> --}}
-                        <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download"
-                            aria-hidden="true"></i> xls</button>
+                        <button class="btn btn-success btn-sm w-100" id="btnExcelJsExport" type="button"><i
+                                class="fa fa-download" aria-hidden="true"></i> xls</button>
                     </div>
 
                 </form>
@@ -69,10 +69,9 @@
                     <div class="card-body">
                         <table id="excelJsTable" class="tableFixHead table-bordered table2excel custom-table-report mb-3">
                             @if (request('from_date') && request('to_date'))
-                            <p class="reportRange" style="display: none;">
-                                {{ '(' . \Carbon\Carbon::parse(request('from_date'))->format('M y') . ' to ' . \Carbon\Carbon::parse(request('to_date'))->format('M y') . ')' }}
-                            </p>
-                            
+                                <p class="reportRange" style="display: none;">
+                                    {{ '(' . \Carbon\Carbon::parse(request('from_date'))->format('M y') . ' to ' . \Carbon\Carbon::parse(request('to_date'))->format('M y') . ')' }}
+                                </p>
                             @endif
                             <p class="reportTitle" style="display: none;" type="hidden">Market Competitors</p>
                             <thead>

@@ -216,6 +216,34 @@
                                 </div>
                             </div>
 
+                            <div class="col-lg-3 col-sm-6 col-md-3">
+                                <div class="card card-stats ">
+                                    <div class="card-body ">
+                                        <div class="row">
+                                            <div class="col-2">
+                                                <div class="icon-medium text-center icon-warning">
+                                                    <i class="nc-icon nc-paper-2 text-success"></i>
+                                                </div>
+                                            </div>
+                                            <div class="col-10 d-flex align-items-center ">
+                                                <div class="numbers align-content-center">
+                                                    <p class="card-category">Vessel Info Report</p>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="card-footer ">
+                                        <hr>
+                                        <div class="stats float-right">
+                                            <a target="_blank" href="{{ route('reports.vesselInfo') }}"
+                                                class="btn btn-sm btn-outline-success">View Report<i
+                                                    class="fa fa-arrow-right "></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
 
 
@@ -237,7 +265,7 @@
         });
         $(document).ready(function() {
 
-            $('#btnExport').click(function() {
+            $('#btnExcelJsExport').click(function() {
                 var heading_name = $("#heading_name").text();
                 $(".table2excel").table2excel({
                     exclude: ".noExl",

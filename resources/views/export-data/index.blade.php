@@ -48,7 +48,7 @@
 
                         <div class="pull-right">
                             {{-- @can('export-data.create') --}}
-                            <a class="btn btn-success" href="{{ route('export-data.create') }}">Create Export Data</a>
+                            {{-- <a class="btn btn-success" href="{{ route('export-data.create') }}">Create Export Data</a> --}}
                             {{-- @endcan --}}
                         </div>
                     </div>
@@ -86,6 +86,17 @@
                             @endforeach
                         </select>
 
+                    </div>
+
+                    <div class="col-sm-2 pr-0 mt-1 form-group">
+                        <label for="from_date" class="sr-only">From Date</label>
+                        <input placeholder="From Date" class="form-control form-control-sm datepicker" type="text"
+                            name="from_date" id="from_date" value="{{ request('from_date') }}">
+                    </div>
+                    <div class=" col-sm-2 pr-0 mt-1 form-group">
+                        <label for="to_date" class="sr-only">To Date</label>
+                        <input placeholder="To Date" class="form-control form-control-sm datepicker" type="text"
+                            name="to_date" id="to_date" value="{{ request('to_date') }}">
                     </div>
 
                     <div class="col-sm-2 pr-0 form-group">
@@ -127,23 +138,26 @@
                         </select>
                     </div>
 
-                    <div class="col-sm-2 pr-0 mt-1 form-group">
-                        <label for="from_date" class="sr-only">From Date</label>
-                        <input placeholder="From Date" class="form-control form-control-sm datepicker" type="text"
-                            name="from_date" id="from_date" value="{{ request('from_date') }}">
-                    </div>
-                    <div class=" col-sm-2 mt-1 form-group">
-                        <label for="to_date" class="sr-only">To Date</label>
-                        <input placeholder="To Date" class="form-control form-control-sm datepicker" type="text"
-                            name="to_date" id="to_date" value="{{ request('to_date') }}">
+                    <div class="col-sm-2 pr-0 form-group">
+                        <select data-live-search="true"
+                            class="form-control selectpicker form-control-sm search-select selectpicker" name="region[]"
+                            id="region" multiple title="Select Regions">
+                            <option value="">Select Regions</option>
+                            @foreach ($regions as $region)
+                                <option value="{{ $region }}"
+                                    {{ is_array(request('region')) && in_array($region, request('region')) ? 'selected' : '' }}>
+                                    {{ $region }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="col-sm-2 pr-0 mt-1">
                         <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
                     </div>
                     <div class="col-sm-2 pr-0 mt-1">
-                        <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download"
-                                aria-hidden="true"></i> xls</button>
+                        <button class="btn btn-success btn-sm w-100" id="btnExcelJsExport" type="button"><i
+                                class="fa fa-download" aria-hidden="true"></i> xlsx</button>
                     </div>
                 </form>
                 <div class="row mb-2">
@@ -294,21 +308,24 @@
                                 @if (request()->filled('commodity'))
                                     <tr>
                                         <th class="text-center" colspan="{{ $colspan }}">
-                                            Commodity: {{ count(request('commodity')) > 20 ? count(request('commodity')) . ' Commodities' : implode(', ', request('commodity')) }}
+                                            Commodity:
+                                            {{ count(request('commodity')) > 20 ? count(request('commodity')) . ' Commodities' : implode(', ', request('commodity')) }}
                                         </th>
                                     </tr>
                                 @endif
                                 @if (request()->filled('mlo'))
                                     <tr>
                                         <th class="text-center" colspan="{{ $colspan }}">
-                                            MLO: {{ count(request('mlo')) > 20 ? count(request('mlo')) . ' MLOs' : implode(', ', request('mlo')) }}
+                                            MLO:
+                                            {{ count(request('mlo')) > 20 ? count(request('mlo')) . ' MLOs' : implode(', ', request('mlo')) }}
                                         </th>
                                     </tr>
                                 @endif
                                 @if (request()->filled('pod'))
                                     <tr>
                                         <th class="text-center" colspan="{{ $colspan }}">
-                                            POD: {{ count(request('pod')) > 20 ? count(request('pod')) . ' PODs' : implode(', ', request('pod')) }}
+                                            POD:
+                                            {{ count(request('pod')) > 20 ? count(request('pod')) . ' PODs' : implode(', ', request('pod')) }}
                                         </th>
                                     </tr>
                                 @endif
@@ -473,7 +490,7 @@
             });
 
             // export to xls
-            // $('#btnExport').on('click', async function () {
+            // $('#btnExcelJsExport').on('click', async function () {
             //     const workbook = new ExcelJS.Workbook();
             //     const worksheet = workbook.addWorksheet("Sheet1");
 
@@ -529,7 +546,7 @@
             //     link.click();
             // });
 
-            // $('#btnExport').on('click', async function() {
+            // $('#btnExcelJsExport').on('click', async function() {
             //     const workbook = new ExcelJS.Workbook();
             //     const worksheet = workbook.addWorksheet("Export Report");
 
@@ -699,9 +716,9 @@
                 });
             }
 
-            $('#btnExport').on('click', async function() {
+            $('#btnExcelJsExport').on('click', async function() {
                 try {
-                    const reportTitle = $('.reportTitle').text().trim().replace(/\s+/g, '_'); 
+                    const reportTitle = $('.reportTitle').text().trim().replace(/\s+/g, '_');
                     const reportRange = $('.reportRange').text().trim().replace(/\s+/g, '_');
 
                     const workbook = new ExcelJS.Workbook();

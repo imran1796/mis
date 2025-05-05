@@ -36,12 +36,13 @@ class ExportDataController extends Controller
      */
     public function index(Request $request)
     {
-        $filters = $request->only(['from_date', 'to_date', 'commodity', 'mlo', 'pod', 'report_type']);
+        $filters = $request->only(['from_date', 'to_date', 'commodity', 'mlo', 'pod', 'region', 'report_type']);
         $exportDatas = $this->exportDataService->getAllExportData($filters);
         $commodities = $this->exportDataService->getUniqueExportData('commodity');
         $mlos = $this->exportDataService->getUniqueExportData('mlo');
         $pods = $this->exportDataService->getUniqueExportData('pod');
-        return view('export-data.index', compact('exportDatas', 'commodities', 'mlos', 'pods'));
+        $regions = $this->exportDataService->getUniqueExportData('trade');
+        return view('export-data.index', compact('exportDatas', 'commodities', 'mlos', 'pods', 'regions'));
     }
 
     // public function exportDataReport(Request){
@@ -55,7 +56,12 @@ class ExportDataController extends Controller
      */
     public function create()
     {
-        return view('export-data.create');
+        $exportDataMonthly = ExportData::select('date')
+            ->distinct()
+            ->orderByDesc('date')
+            ->paginate(5);
+
+        return view('export-data.create', compact('exportDataMonthly'));
     }
 
     /**
@@ -111,8 +117,33 @@ class ExportDataController extends Controller
      */
     public function destroy(ExportData $exportData)
     {
-        //
+        // dd($exportData);
     }
+
+    public function deleteByDate($date)
+    {
+        try {
+            // dd($date);
+            \DB::beginTransaction();
+
+            ExportData::whereDate('date', $date)->delete();
+
+            \DB::commit();
+
+            return response()->json([
+                'success' => 'Data deleted successfully for ' . \Carbon\Carbon::parse($date)->format('F Y')
+            ]);
+        } catch (\Exception $e) {
+            // dd($date);
+            \DB::rollBack();
+            \Log::error('ExportData Deletion Failed: ' . $e->getMessage());
+
+            return response()->json([
+                'error' => 'Failed to delete data. Please try again later.'
+            ], 500);
+        }
+    }
+
 
     public function exportVolByPort(Request $request)
     {

@@ -11,7 +11,12 @@
         <div class="modal-content">
             <form id="{{ $id }}Form" method="POST">
                 @csrf
-                @method('post')
+                @isset($method)
+                    @method($method)
+                @else
+                    @method('POST')
+                @endisset
+
                 <div class="modal-header">
                     <h5 class="modal-title" id="{{ $id }}Label">{{ $title }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">

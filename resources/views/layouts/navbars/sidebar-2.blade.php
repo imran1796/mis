@@ -59,49 +59,36 @@
                     </li>
                     {{-- @endcan --}}
 
-
-
-                    {{-- @can('company-list')
-                        <li class="nav-item @if ($activePage == 'company') active @endif">
-                            <a class="nav-link" href="{{ route('companies.index') }}">
-                                <i class="fa fa-building" aria-hidden="true"></i>
-                                {{ __('Company') }}
-                            </a>
-                        </li>
-                    @endcan
-
-                    @can('branch-list')
-                        <li class="nav-item @if ($activePage == 'branch') active @endif">
-                            <a class="nav-link" href="{{ route('branch.index') }}">
-                                <i class="fa fa-building" aria-hidden="true"></i>
-                                {{ __('Branch') }}
-                            </a>
-                        </li>
-                    @endcan --}}
-
-
-
-                    {{-- @can('principle-list')
-                        <li class="nav-item @if ($activePage == 'principle') active @endif">
-                            <a class="nav-link" href="{{ route('principles.index') }}">
-                                <i class="fa fa-briefcase" aria-hidden="true"></i>
-                                {{ __('Principle') }}
-                            </a>
-                        </li>
-                    @endcan --}}
-
                 </ul>
             </li>
             {{-- @endcan --}}
             {{-- @endcanany --}}
 
             {{-- @can('export-data') --}}
-            <li class="nav-item @if ($activePage == 'export-data') active @endif">
-                <a class="nav-link" href="{{ route('export-data.index') }}">
-                    <i class="fa-solid fa-receipt"></i>
-                    {{ __('Export Data Analysis') }}
-                </a>
+            <li class="">
+                <a href="#export-data" data-toggle="collapse"
+                    aria-expanded="{{ in_array($activePage, ['export-data']) ? 'true' : 'false' }}"
+                    class="dropdown-toggle">
+                    <i class="fas fa-bars"></i>
+                    Export Data</a>
+                <ul class="collapse list-unstyled {{ in_array($activePage, ['export-data']) ? 'show' : '' }}"
+                    id="export-data">
+                    <li class="nav-item @if ($activePage == 'export-data') active @endif">
+                        <a class="nav-link" href="{{ route('export-data.index') }}">
+                            <i class="fa-solid fa-receipt"></i>
+                            {{ __('Export Data') }}
+                        </a>
+                    </li>
+
+                    <li class="nav-item @if ($activePage == 'export-data-create') active @endif">
+                        <a class="nav-link" href="{{ route('export-data.create') }}">
+                            <i class="fas fa-user"></i>
+                            {{ __('Upload XLS') }}
+                        </a>
+                    </li>
+                </ul>
             </li>
+
             {{-- @endcan --}}
 
 
@@ -126,11 +113,10 @@
 
             <li class="">
                 <a href="#mlo" data-toggle="collapse"
-                    aria-expanded="{{ in_array($activePage, ['mlo']) ? 'true' : 'false' }}"
-                    class="dropdown-toggle">
+                    aria-expanded="{{ in_array($activePage, ['mlo']) ? 'true' : 'false' }}" class="dropdown-toggle">
                     <i class="fas fa-bars"></i>
                     MLO</a>
-                <ul class="collapse list-unstyled {{ in_array($activePage, ['mlo','mloWiseCount-index','mloWiseCount-create']) ? 'show' : '' }}"
+                <ul class="collapse list-unstyled {{ in_array($activePage, ['mlo', 'mloWiseCount-index', 'mloWiseCount-create']) ? 'show' : '' }}"
                     id="mlo">
 
                     <li class="nav-item @if ($activePage == 'mlo') active @endif">
@@ -158,11 +144,11 @@
 
             <li class="">
                 <a href="#vessel" data-toggle="collapse"
-                    aria-expanded="{{ in_array($activePage, ['vessel','vesselInfo-create','vesselInfo-index']) ? 'true' : 'false' }}"
+                    aria-expanded="{{ in_array($activePage, ['vessel', 'vesselInfo-create', 'vesselInfo-index']) ? 'true' : 'false' }}"
                     class="dropdown-toggle">
                     <i class="fas fa-bars"></i>
                     Vessel</a>
-                <ul class="collapse list-unstyled {{ in_array($activePage, ['vessel','vesselInfo-create','vesselInfo-index']) ? 'show' : '' }}"
+                <ul class="collapse list-unstyled {{ in_array($activePage, ['vessel', 'vesselInfo-create', 'vesselInfo-index']) ? 'show' : '' }}"
                     id="vessel">
 
                     <li class="nav-item @if ($activePage == 'vessel') active @endif">

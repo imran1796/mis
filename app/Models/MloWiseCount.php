@@ -24,4 +24,8 @@ class MloWiseCount extends Model
     {
         return $this->belongsTo(Mlo::class, 'mlo_code', 'mlo_code');
     }
+
+    public function route(){
+        return $this->belongsTo(Route::class,'route_id','id');
+    }
 }

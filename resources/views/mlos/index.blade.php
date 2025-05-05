@@ -22,10 +22,32 @@
                             <button class="btn btn-success" data-toggle="modal" data-target="#createMloModal">
                                 Add New MLO
                             </button>
-                                {{-- @endcan --}}
+                            {{-- @endcan --}}
                         </div>
                     </div>
                 </div>
+
+                <form class="row ">
+
+                    <div class="col-sm-2 pr-0 mt-1 form-group">
+                        <label for="from_date" class="sr-only">From Date</label>
+                        <input placeholder="From Date" class="form-control form-control-sm datepicker" type="text"
+                            name="from_date" id="from_date" value="{{ request('from_date') }}">
+                    </div>
+                    <div class=" col-sm-2 mt-1 form-group">
+                        <label for="to_date" class="sr-only">To Date</label>
+                        <input placeholder="To Date" class="form-control form-control-sm datepicker" type="text"
+                            name="to_date" id="to_date" value="{{ request('to_date') }}">
+                    </div>
+
+                    <div class="col-sm-2 pr-0 mt-1">
+                        <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
+                    </div>
+                    <!-- <div class="col-sm-2 pr-0 mt-1">
+                                                                                                    <button class="btn btn-success btn-sm w-100" id="btnExcelJsExport" type="button"><i class="fa fa-download"
+                                                                                                            aria-hidden="true"></i> xls</button>
+                                                                                                </div> -->
+                </form>
 
                 <div class="card bg-white">
                     <div class="card-header">
@@ -46,6 +68,7 @@
                                     <th>MLO Code</th>
                                     <th>MLO Details</th>
                                     <th>Effective To</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -55,7 +78,20 @@
                                         <td>{{ $mlo->line_belongs_to }}</td>
                                         <td>{{ $mlo->mlo_code }}</td>
                                         <td>{{ $mlo->mlo_details }}</td>
-                                        <td>{{ $mlo->effective_to??'' }}</td>
+                                        <td>{{ $mlo->effective_to ?? '' }}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-success editMloInfoBtn"
+                                                data-id="{{ $mlo->id }}"
+                                                data-line_belongs_to="{{ $mlo->line_belongs_to ?? '' }}"
+                                                data-mlo_code="{{ $mlo->mlo_code ?? '' }}"
+                                                data-mlo_details="{{ $mlo->mlo_details ?? '' }}"
+                                                data-effective_from="{{ $mlo->effective_from ?? '' }}"
+                                                data-effective_to="{{ $mlo->effective_to ?? '' }}"
+                                                data-target="#editMloModal" data-toggle="modal">
+                                                Edit
+                                            </button>
+                                        </td>
+
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -70,26 +106,69 @@
                         'size' => '',
                         'submitButton' => 'saveMloButton',
                     ])
-                        <div class="form-group">
-                            <label for="line_belongs_to"><strong>Line Belongs To:</strong></label>
-                            <input type="text" name="line_belongs_to" id="line_belongs_to"
-                                class="form-control form-control-sm" placeholder="Line Belongs To">
+                        <div class="form-group row">
+                            <div class="col-sm-3"><strong>Line Blngs To:</strong></div>
+                            <div class="col-sm-9">
+                                <input type="text" name="line_belongs_to" id="line_belongs_to"
+                                    class="form-control form-control-sm" placeholder="Line Belongs To">
+                            </div>
+
                         </div>
-                        <div class="form-group">
-                            <label for="mlo_code"><strong>Mlo Code:</strong></label>
-                            <input type="text" name="mlo_code" id="mlo_code" class="form-control form-control-sm"
-                                placeholder="MLO Code">
+                        <div class="form-group row">
+                            <div class="col-sm-3"><strong>Mlo Code:</strong></div>
+                            <div class="col-sm-9">
+                                <input type="text" name="mlo_code" id="mlo_code" class="form-control form-control-sm"
+                                    placeholder="MLO Code">
+                            </div>
+
                         </div>
-                        <div class="form-group">
-                            <label for="mlo_details"><strong>Mlo Details:</strong></label>
-                            <input type="text" name="mlo_details" id="mlo_details" class="form-control form-control-sm"
-                                placeholder="MLO Details">
+                        <div class="form-group row">
+                            <div class="col-sm-3"><strong>Mlo Details:</strong></div>
+                            <div class="col-sm-9">
+                                <input type="text" name="mlo_details" id="mlo_details" class="form-control form-control-sm"
+                                    placeholder="MLO Details">
+                            </div>
+
                         </div>
                         {{-- <div class="form-group">
                             <label for="effective_from"><strong>Effective From(option):</strong></label>
                             <input type="date" name="effective_from" id="effective_from" class="form-control form-control-sm"
                                 placeholder="Effective from">
                         </div> --}}
+                    @endcomponent
+
+                    @component('components.modal', [
+                        'id' => 'editMloModal',
+                        'title' => 'Edit New Mlo',
+                        'size' => '',
+                        'submitButton' => 'updateMloButton',
+                        'method' => 'PUT',
+                    ])
+                        <div class="form-group row">
+                            <div class="col-sm-3"><strong>Line Blngs To:</strong></div>
+                            <div class="col-sm-9"><input type="text" name="line_belongs_to" id="e_line_belongs_to"
+                                    class="form-control form-control-sm" placeholder="Line Belongs To"></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3"><strong>Mlo Code:</strong></div>
+                            <div class="col-sm-9"><input type="text" name="mlo_code" id="e_mlo_code"
+                                    class="form-control form-control-sm" placeholder="MLO Code"></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3"><strong>Mlo Details:</strong></div>
+                            <div class="col-sm-9"><input type="text" name="mlo_details" id="e_mlo_details"
+                                    class="form-control form-control-sm" placeholder="MLO Details"></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3"><strong>Effective From</strong></div>
+                            <div class="col-sm-9"><input type="date" name="effective_from" id="e_effective_from"
+                                    class="form-control form-control-sm datepicker" placeholder="Effective from"></div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3"><strong>Effective To</strong></div>
+                            <div class="col-sm-9"><input type="date" name="effective_to" id="e_effective_to"
+                                    class="form-control form-control-sm datepicker" placeholder="Effective to"></div>
+                        </div>
                     @endcomponent
                 </div>
             </div>
@@ -105,6 +184,26 @@
                 $(".tableFixHead tbody tr").filter(function() {
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
+            });
+
+            $(".datepicker").datepicker({
+                dateFormat: 'yy-mm-dd',
+                showButtonPanel: true,
+                currentText: "Today",
+
+                beforeShow: function(input, inst) {
+                    setTimeout(function() {
+                        var buttonPane = $(inst.dpDiv).find('.ui-datepicker-buttonpane');
+
+                        buttonPane.find('.ui-datepicker-current').off('click').on('click',
+                            function() {
+                                var today = new Date();
+                                $(input).datepicker('setDate', today);
+                                $.datepicker._hideDatepicker(input); //close after selecting
+                                $(input).blur(); //prevent auto-focus/reopen
+                            });
+                    }, 1);
+                }
             });
 
             $('#createMloModalForm').on('submit', function(e) {
@@ -140,6 +239,58 @@
                     }
                 });
             });
+
+            $('.editMloInfoBtn').on('click', function() {
+                var mloId = $(this).data('id');
+
+                $('#editMloModal').data('mlo-id', mloId);
+
+                $('#e_line_belongs_to').val($(this).data('line_belongs_to'));
+                $('#e_mlo_code').val($(this).data('mlo_code'));
+                $('#e_mlo_details').val($(this).data('mlo_details'));
+                $('#e_effective_from').val($(this).data('effective_from'));
+                $('#e_effective_to').val($(this).data('effective_to'));
+            });
+
+
+            $('#editMloModalForm').on('submit', function(e) {
+                e.preventDefault();
+
+                let mloId = $('#editMloModal').data('mlo-id');
+
+                let formData = new FormData(this);
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('mlos.update', ':mlo') }}'.replace(':mlo',
+                        mloId),
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    enctype: 'multipart/form-data',
+                    success: function(response) {
+                        $('#editMloModal').modal('hide');
+                        demo.customShowNotification('success', response.success);
+                        window.location
+                            .reload();
+                    },
+                    error: function(response) {
+                        if (response.responseJSON.error) {
+                            demo.customShowNotification('danger', response.responseJSON.error);
+                        }
+                        if (response.responseJSON.errors) {
+                            $.each(response.responseJSON.errors, function(field, messages) {
+                                messages.forEach(function(message) {
+                                    demo.customShowNotification('danger',
+                                        message);
+                                });
+                            });
+                        }
+                    }
+                });
+            });
+
         });
     </script>
 @endpush

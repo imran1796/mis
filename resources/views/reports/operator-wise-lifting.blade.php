@@ -46,7 +46,7 @@
                     </div>
 
                     <div class="col-sm-2 pr-0 mt-1">
-                        {{-- <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download"
+                        {{-- <button class="btn btn-success btn-sm w-100" id="btnExcelJsExport" type="button"><i class="fa fa-download"
                                 aria-hidden="true"></i> xls</button> --}}
                         <a href="{{ route('reports.operator-wise-lifting.download', ['from_date' => request()->get('from_date'), 'to_date' => request()->get('to_date'), 'route_id' => request()->get('route_id')]) }}"
                             class="btn btn-success btn-sm w-100">
@@ -68,7 +68,7 @@
                         {{-- end auto search --}}
                     </div>
                     <div class="card-body">
-                        <table class="tableFixHead table2excel table-bordered table2excel custom-table-report mb-3">
+                        <table class="tableFixHead table-bordered custom-table-report mb-3">
                             <thead>
                                 <tr>
                                     <th></th>
@@ -104,7 +104,7 @@
                         </table>
                     </div>
                     <div class="card-body">
-                        <table class="tableFixHead table2excel table-bordered table2excel custom-table-report mb-3">
+                        <table class="tableFixHead table-bordered custom-table-report mb-3">
                             <thead>
                                 <tr>
                                     <th rowspan="2">#</th>
@@ -190,7 +190,7 @@
                 }
             });
 
-            $('#btnExport').on('click', function() {
+            $('#btnExcelJsExport').on('click', function() {
                 // var heading_name = $("#heading_name").text();
                 // $(".table2excel").table2excel({
                 //     exclude: ".noExl",

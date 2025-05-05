@@ -50,8 +50,8 @@
                             class="btn btn-success btn-sm w-100">
                             <i class="fa fa-download" aria-hidden="true"></i> (xlsx)
                         </a> --}}
-                        <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download"
-                            aria-hidden="true"></i> xls</button>
+                        <button class="btn btn-success btn-sm w-100" id="btnExcelJsExport" type="button"><i
+                                class="fa fa-download" aria-hidden="true"></i> xls</button>
                     </div>
                 </form>
 
@@ -67,18 +67,23 @@
                     </div>
                     <div class="card-body">
                         <table id="excelJsTable" class="tableFixHead table-bordered table2excel custom-table-report mb-3">
-                            <p class="reportRange" style="display: none;" type="hidden">Date: {{ request('from_date') }} to {{ request('to_date') }}</p>
+                            <p class="reportRange" style="display: none;" type="hidden">Date: {{ request('from_date') }} to
+                                {{ request('to_date') }}</p>
                             <p class="reportTitle" style="display: none;" type="hidden">Mlo_Wise_Summary</p>
-                            <input class="reportRange" type="hidden" value="Date: {{ request('from_date') }} to {{ request('to_date') }}">
+                            <input class="reportRange" type="hidden"
+                                value="Date: {{ request('from_date') }} to {{ request('to_date') }}">
                             <input class="reportTitle" type="hidden" value="Mlo_Wise_Summary">
                             <thead>
                                 <tr>
                                     <th rowspan="3">MLO</th>
                                     <th rowspan="3">Line Belongs To</th>
                                     <th rowspan="3">Mlo Details</th>
-                                    @foreach (collect($results)->first()['permonth'] as $month => $d)
-                                        <th colspan="4">{{ $month }}</th>
-                                    @endforeach
+                                    @if (!empty($results))
+                                        @foreach (collect($results)->first()['permonth'] as $month => $d)
+                                            <th colspan="4">{{ $month }}</th>
+                                        @endforeach
+                                    @endif
+
                                     {{-- {{dd(collect($results))}} --}}
 
                                     {{-- <th colspan="4">foreach teus</th> --}}
@@ -86,18 +91,28 @@
                                     <th colspan="4">Average Teus</th>
                                 </tr>
                                 <tr>
-                                    <th colspan="2">Import</th>
-                                    <th colspan="2">Export</th>
+                                    @if (!empty($results))
+                                        @foreach (collect($results)->first()['permonth'] as $i)
+                                            <th colspan="2">Import</th>
+                                            <th colspan="2">Export</th>
+                                        @endforeach
+                                    @endif
+
                                     <th colspan="2">Import</th>
                                     <th colspan="2">Export</th>
                                     <th colspan="2">Import</th>
                                     <th colspan="2">Export</th>
                                 </tr>
                                 <tr>
-                                    <th>LDN</th>
-                                    <th>MTY</th>
-                                    <th>LDN</th>
-                                    <th>MTY</th>
+                                    @if (!empty($results))
+                                        @foreach (collect($results)->first()['permonth'] as $i)
+                                            <th>LDN</th>
+                                            <th>MTY</th>
+                                            <th>LDN</th>
+                                            <th>MTY</th>
+                                        @endforeach
+                                    @endif
+
                                     <th>LDN</th>
                                     <th>MTY</th>
                                     <th>LDN</th>
@@ -126,7 +141,7 @@
                                         <td>{{ $dt['totalImportMtyTeus'] }}</td>
                                         <td>{{ $dt['totalExportLdnTeus'] }}</td>
                                         <td>{{ $dt['totalExportMtyTeus'] }}</td>
-
+                                        
                                         <td>{{ $dt['totalImportLdnTeus'] / count($dt['permonth']) }}</td>
                                         <td>{{ $dt['totalImportMtyTeus'] / count($dt['permonth']) }}</td>
                                         <td>{{ $dt['totalExportLdnTeus'] / count($dt['permonth']) }}</td>
@@ -147,25 +162,7 @@
 @push('js')
     <script>
         $(document).ready(function() {
-            $(".datepicker").datepicker({
-                dateFormat: 'yy-mm-dd',
-                showButtonPanel: true,
-                currentText: "Today",
-
-                beforeShow: function(input, inst) {
-                    setTimeout(function() {
-                        var buttonPane = $(inst.dpDiv).find('.ui-datepicker-buttonpane');
-
-                        buttonPane.find('.ui-datepicker-current').off('click').on('click',
-                            function() {
-                                var today = new Date();
-                                $(input).datepicker('setDate', today);
-                                $.datepicker._hideDatepicker(input); //close after selecting
-                                $(input).blur(); //prevent auto-focus/reopen
-                            });
-                    }, 1);
-                }
-            });
+            initializeMonthYearPicker('.datepicker');
 
             $("#autosearch").on("keyup", function() {
                 var value = $(this).val().toLowerCase();
@@ -174,5 +171,42 @@
                 });
             });
         });
+
+        function initializeMonthYearPicker(selector) {
+            $(selector).datepicker({
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                dateFormat: 'M-yy',
+
+                onChangeMonthYear: function(year, month, inst) {
+                    $(this).datepicker('setDate', new Date(year, month - 1, 1));
+                },
+
+                onClose: function() {
+                    const iMonth = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                    const iYear = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+
+
+                    if (iMonth !== null && iYear !== null) {
+                        $(this).datepicker('setDate', new Date(iYear, iMonth, 1));
+                    }
+                },
+
+                beforeShow: function() {
+                    const selDate = $(this).val();
+                    if (selDate.length > 0) {
+                        const iYear = selDate.slice(-4);
+                        const iMonth = $.inArray(selDate.slice(0, -5), $(this).datepicker('option',
+                            'monthNames'));
+
+                        if (iMonth !== -1) {
+                            $(this).datepicker('option', 'defaultDate', new Date(iYear, iMonth, 1));
+                            $(this).datepicker('setDate', new Date(iYear, iMonth, 1));
+                        }
+                    }
+                }
+            });
+        }
     </script>
 @endpush

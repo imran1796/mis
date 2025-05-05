@@ -6,6 +6,7 @@ use App\Interfaces\MloInterface;
 use Illuminate\Support\Facades\Log;
 use App\Models\Mlo;
 use App\Models\MloWiseCount;
+use Carbon\Carbon;
 
 class MloRepository implements MloInterface
 {
@@ -14,33 +15,35 @@ class MloRepository implements MloInterface
         return Mlo::all();
     }
 
-    public function getAllMloWiseCount($filters = []){
+    public function getAllMloWiseCount($filters = [])
+    {
         if (empty($filters)) {
             return collect();
         }
 
-        $query = MloWiseCount::query();
+        $query = MloWiseCount::with('mlo');
         if (!empty($filters['from_date'])) {
-            $query->whereDate('date', '>=', $filters['from_date']);
+            $fromDate = Carbon::createFromFormat('d-M-Y', '01-' . $filters['from_date'])->startOfMonth();
+            $query->whereDate('date', '>=', $fromDate);
         }
 
         if (!empty($filters['to_date'])) {
-            $query->whereDate('date', '<=', $filters['to_date']);
+            $toDate = Carbon::createFromFormat('d-M-Y', '01-' . $filters['to_date'])->endOfMonth();
+            $query->whereDate('date', '<=', $toDate);
         }
 
         if (!empty($filters['mlo'])) {
             $query->whereIn('mlo_code', $filters['mlo']);
         }
 
-        if (!empty($filters['pod'])) {
-            $query->whereIn('route_id', $filters['pod']);
+        if (!empty($filters['route_id'])) {
+            $query->whereIn('route_id', $filters['route_id']);
         }
 
         if (!empty($filters['type'])) {
-            if($filters['type'] == 'all'){
-                $query->whereIn('type', ['IMPORT','EXPORT']);
-            }
-            else{
+            if ($filters['type'] == 'all') {
+                $query->whereIn('type', ['IMPORT', 'EXPORT']);
+            } else {
                 $query->where('type', $filters['type']);
             }
         }

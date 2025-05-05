@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\MLoWiseSummary;
 use App\Http\Requests\MloStoreRequest;
+use App\Http\Requests\MloUpdateRequest;
 use App\Http\Requests\MloWiseCountCreateRequest;
 use App\Models\MloWiseCount;
 use App\Models\Route;
@@ -47,6 +48,12 @@ class MloController extends Controller
         return $this->mloService->createMlo($mlo);
     }
 
+    public function update(MloUpdateRequest $request, $id)
+    {
+        $mlo = $request->validated();
+        return $this->mloService->updateMlo($id,$mlo);
+    }
+
     public function indexMloWiseCount(Request $request)
     {
         $filters = $request->only(['from_date', 'to_date', 'type', 'mlo', 'pod']);
@@ -59,7 +66,15 @@ class MloController extends Controller
     public function createMloWiseCount()
     {
         $routes = Route::all();
-        return view('mlo-wise-counts.create', compact('routes'));
+        $mloWisePerMonth = MloWiseCount::select('date', 'route_id')
+            ->with('route')
+            ->distinct()
+            ->orderByDesc('date')
+            ->get()->groupBy('date');
+            // ->get()->groupBy(['date', 'route.short_name']);
+        // dd($mloWisePerMonth->toArray());
+
+        return view('mlo-wise-counts.create', compact('routes', 'mloWisePerMonth'));
     }
 
     public function storeMloWiseCount(MloWiseCountCreateRequest $request)
@@ -67,71 +82,31 @@ class MloController extends Controller
         return $this->mloService->createMloWiseCount($request->validated());
     }
 
-    public function socOutboundMarketStrategy(Request $request)
+    public function deleteMloWiseCountByDateRoute(Request $request)
     {
-        $pods = Route::all();
-
-        return view('reports.soc-out-bound-market', compact('pods', 'data'));
+        $request->validate([
+            'date' => 'required|date',
+            'route_id' => 'required|integer|exists:routes,id',
+        ]);
+        return $this->mloService->deleteMloWiseCountByDateRoute($request);
     }
 
     public function mloWiseSummary(Request $request)
     {
+        $filters = $request->only(['from_date', 'to_date', 'route_id']);
         $pods = Route::all();
-        $mloWiseDatas = MloWiseCount::with('mlo')
-            ->get()->groupBy(['mlo_code', 'date']);
-
-        $results = [];
-        foreach ($mloWiseDatas as $mlo => $mloWiseData) {
-            // dd($mloWiseData->toArray());
-            $results[$mlo] = [
-                'totalImportLdnTeus' => 0,
-                'totalImportMtyTeus' => 0,
-                'totalExportLdnTeus' => 0,
-                'totalExportMtyTeus' => 0,
-                'mlo' => $mloWiseData->first()->first()->mlo->mlo_code??'',
-                'lineBelongsTo' => $mloWiseData->first()->first()->mlo->line_belongs_to??'',
-                'mloDetails' => $mloWiseData->first()->first()->mlo->mlo_details??'',
-            ];
-
-            foreach ($mloWiseData as $date => $data) {
-                $month = Carbon::parse($date)->format('M');
-
-                // Safe defaults
-                if (!isset($results[$mlo]['permonth'][$month])) {
-                    $results[$mlo]['permonth'][$month] = [
-                        'importLdnTeus' => 0,
-                        'importMtyTeus' => 0,
-                        'exportLdnTeus' => 0,
-                        'exportMtyTeus' => 0,
-                    ];
-                }
-
-                $import = $data[0] ?? null;
-                $export = $data[1] ?? null;
-
-                // TEU calculations
-                $importLaden = ($import->dc20 ?? 0) + ($import->r20 ?? 0) + ((($import->dc40 ?? 0) + ($import->dc45 ?? 0) + ($import->r40 ?? 0)) * 2);
-                $importEmpty = ($import->mty20 ?? 0) + (($import->mty40 ?? 0) * 2);
-
-                $exportLaden = ($export->dc20 ?? 0) + ($export->r20 ?? 0) + ((($export->dc40 ?? 0) + ($export->dc45 ?? 0) + ($export->r40 ?? 0)) * 2);
-                $exportEmpty = ($export->mty20 ?? 0) + (($export->mty40 ?? 0) * 2);
-
-                // Store monthly values
-                $results[$mlo]['permonth'][$month]['importLdnTeus'] += $importLaden;
-                $results[$mlo]['permonth'][$month]['importMtyTeus'] += $importEmpty;
-                $results[$mlo]['permonth'][$month]['exportLdnTeus'] += $exportLaden;
-                $results[$mlo]['permonth'][$month]['exportMtyTeus'] += $exportEmpty;
-
-                // Store totals
-                $results[$mlo]['totalImportLdnTeus'] += $importLaden;
-                $results[$mlo]['totalImportMtyTeus'] += $importEmpty;
-                $results[$mlo]['totalExportLdnTeus'] += $exportLaden;
-                $results[$mlo]['totalExportMtyTeus'] += $exportEmpty;
-            }
-        }
-        // dd($results);
+        $results = $this->mloService->mloWiseSummary($filters);
         return view('reports.mlo-wise-summary', compact('pods', 'results'));
 
         // return Excel::download(new MLoWiseSummary($data,$range), 'mloWiseSummary'.$range.'.xlsx');
+    }
+
+    public function socOutboundMarketStrategy(Request $request)
+    {
+        $filters = $request->only(['from_date', 'to_date', 'route_id']);
+        $pods = $this->mloService->getData('Route');
+        $datas = $this->mloService->socOutboundMarketStrategy($filters);
+
+        return view('reports.soc-outbound-market', compact('datas', 'pods'));
     }
 }

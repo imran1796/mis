@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class VesselInfoUpdateRequest extends FormRequest
+class VesselInfoStoreRequest extends FormRequest
 {
     public function authorize()
     {
@@ -14,7 +14,7 @@ class VesselInfoUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'sometimes|required|string|max:255',
+            '' => 'required|string|max:255',
         ];
     }
 }

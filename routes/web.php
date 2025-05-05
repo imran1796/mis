@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExportDataController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -28,9 +29,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Route::post('users/verify/{id}', [App\Http\Controllers\UserController::class, 'verifyUser'])->name('users.verify');
 
     Route::resource('export-data', \App\Http\Controllers\ExportDataController::class);
-    Route::group(['prefix' => 'export-data/report/'], function () {
-        Route::post('/port', [\App\Http\Controllers\ExportDataController::class, 'exportVolByPort'])->name('export-data.report.port');
-        Route::post('/region', [\App\Http\Controllers\ExportDataController::class, 'exportVolByRegion'])->name('export-data.report.region');
+    Route::group(['prefix' => 'export-data'], function () {
+        Route::delete('/delete/{date}', [\App\Http\Controllers\ExportDataController::class, 'deleteByDate'])->name('export-data.deleteByDate');
+        Route::post('/report/port', [\App\Http\Controllers\ExportDataController::class, 'exportVolByPort'])->name('export-data.report.port');
+        Route::post('/report/region', [\App\Http\Controllers\ExportDataController::class, 'exportVolByRegion'])->name('export-data.report.region');
     });
     
     Route::resource('mlos', App\Http\Controllers\MloController::class);
@@ -39,6 +41,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/create', [\App\Http\Controllers\MloController::class, 'createMloWiseCount'])->name('mloWiseCount.create');
         Route::post('/store', [\App\Http\Controllers\MloController::class, 'storeMloWiseCount'])->name('mloWiseCount.store');
         Route::get('/report/summary', [\App\Http\Controllers\MloController::class, 'reportMloWiseSummary'])->name('mloWiseCount.report.summary');
+        Route::delete('/delete', [\App\Http\Controllers\MloController::class, 'deleteMloWiseCountByDateRoute'])->name('mloWiseCount.deleteByDateRoute');
 
     });
     
@@ -48,6 +51,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/create', [\App\Http\Controllers\VesselController::class, 'createVesselInfo'])->name('vesselInfo.create');
         Route::post('/store', [\App\Http\Controllers\VesselController::class, 'storeVesselInfo'])->name('vesselInfo.store');
         Route::post('/update', [\App\Http\Controllers\VesselController::class, 'updateVesselInfo'])->name('vesselInfo.update');
+        Route::delete('/delete', [\App\Http\Controllers\VesselController::class, 'deletVesselInfoByDateRoute'])->name('vesselInfo.deleteByDateRoute');
     });
 
     Route::group(['prefix' => 'reports'], function () {
@@ -60,9 +64,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('/vessel-turn-around-time', [\App\Http\Controllers\VesselController::class, 'vesselTurnAroundTime'])->name('reports.vessel-turn-around');
         Route::get('/market-competitors', [\App\Http\Controllers\VesselController::class, 'marketCompetitors'])->name('reports.market-competitors');
-        Route::get('/soc-outbound-market-strategy', [\App\Http\Controllers\VesselController::class, 'socOutboundMarketStrategy'])->name('reports.soc-outbound-market');
+        Route::get('/soc-outbound-market-strategy', [\App\Http\Controllers\MloController::class, 'socOutboundMarketStrategy'])->name('reports.soc-outbound-market');
         Route::get('/mlo-wise-summary', [\App\Http\Controllers\MloController::class, 'mloWiseSummary'])->name('reports.mlo-wise-summary');
 
+        Route::get('/vessel-info', [\App\Http\Controllers\VesselController::class, 'vesselInfoReport'])->name('reports.vesselInfo');
     });
 
 

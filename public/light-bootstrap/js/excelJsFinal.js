@@ -88,7 +88,7 @@ function processHtmlTableToExcelJs(table, worksheet) {
     });
 }
 
-$('#btnExport').on('click', async function() {
+$('#btnExcelJsExport').on('click', async function() {
     try {
         const reportTitle = $('.reportTitle').text().trim().replace(/\s+/g, '_'); 
         const reportRange = $('.reportRange').text().trim().replace(/\s+/g, '_');

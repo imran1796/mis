@@ -6,11 +6,11 @@
 ])
 
 @section('content')
-<style>
-    .ui-timepicker-container {
-    z-index: 9999 !important; 
-  }
-</style>
+    <style>
+        .ui-timepicker-container {
+            z-index: 9999 !important;
+        }
+    </style>
     <div class="content">
         <div class="container-fluid">
             <div class="section-image">
@@ -26,14 +26,20 @@
 
                 <form class="row ">
 
-                    <div class="col-sm-2 pr-0 mt-1 form-group">
+                    {{-- <div class="col-sm-2 pr-0 mt-1 form-group">
                         <label for="from_date" class="sr-only">From Date</label>
                         <input placeholder="From Date" class="form-control form-control-sm datepicker" type="text"
+                            name="from_date" id="from_date" value="{{ request('from_date') }}">
+                    </div> --}}
+
+                    <div class="col-sm-2 pr-0 mt-1 form-group">
+                        <label for="from_date" class="sr-only">From Date</label>
+                        <input placeholder="From Date" class="form-control form-control-sm monthpicker" type="text"
                             name="from_date" id="from_date" value="{{ request('from_date') }}">
                     </div>
                     <div class=" col-sm-2 mt-1 form-group">
                         <label for="to_date" class="sr-only">To Date</label>
-                        <input placeholder="To Date" class="form-control form-control-sm datepicker" type="text"
+                        <input placeholder="To Date" class="form-control form-control-sm monthpicker" type="text"
                             name="to_date" id="to_date" value="{{ request('to_date') }}">
                     </div>
 
@@ -41,9 +47,9 @@
                         <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
                     </div>
                     <!-- <div class="col-sm-2 pr-0 mt-1">
-                                                                                        <button class="btn btn-success btn-sm w-100" id="btnExport" type="button"><i class="fa fa-download"
-                                                                                                aria-hidden="true"></i> xls</button>
-                                                                                    </div> -->
+                                                                                                <button class="btn btn-success btn-sm w-100" id="btnExcelJsExport" type="button"><i class="fa fa-download"
+                                                                                                        aria-hidden="true"></i> xls</button>
+                                                                                            </div> -->
                 </form>
 
                 <div class="card bg-white">
@@ -215,6 +221,8 @@
                 });
             });
 
+            initializeMonthYearPicker('.monthpicker');
+
             $(".datepicker").datepicker({
                 dateFormat: 'yy-mm-dd',
                 showButtonPanel: true,
@@ -238,7 +246,7 @@
             $('.timepicker').timepicker({
                 timeFormat: 'HH:mm:ss',
                 showSeconds: true,
-                showMeridian: false, 
+                showMeridian: false,
                 defaultTime: false
             });
 
@@ -290,5 +298,44 @@
                 });
             });
         });
+
+        function initializeMonthYearPicker(selector) {
+            $(selector).datepicker({
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                dateFormat: 'M-yy',
+
+                onChangeMonthYear: function(year, month, inst) {
+                    $(this).datepicker('setDate', new Date(year, month - 1, 1));
+                },
+
+                onClose: function() {
+                    const iMonth = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                    const iYear = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                    const dateExist = $('.datepicker').val();
+                    // // const tDateExist = $('.tdatepicker').val();
+                    // console.log(dateExist);
+
+                    if (iMonth !== null && iYear !== null && dateExist != '') {
+                        $(this).datepicker('setDate', new Date(iYear, iMonth, 1));
+                    }
+                },
+
+                beforeShow: function() {
+                    const selDate = $(this).val();
+                    if (selDate.length > 0) {
+                        const iYear = selDate.slice(-4);
+                        const iMonth = $.inArray(selDate.slice(0, -5), $(this).datepicker('option',
+                            'monthNames'));
+
+                        if (iMonth !== -1) {
+                            $(this).datepicker('option', 'defaultDate', new Date(iYear, iMonth, 1));
+                            $(this).datepicker('setDate', new Date(iYear, iMonth, 1));
+                        }
+                    }
+                }
+            });
+        }
     </script>
 @endpush
