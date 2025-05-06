@@ -49,7 +49,6 @@ class VesselInfoService
         try {
             foreach (array_slice($rows, 3) as $index => $row) {
                 if (strtoupper(trim($row[0] ?? '')) === 'GRAND TOTAL') break;
-                // dd($row[0]);
                 if (empty($row[0])) {
                     continue;
                 }
@@ -445,7 +444,6 @@ class VesselInfoService
 
     public function vesselInfoReport($request)
     {
-        //route(1/2/3)|ctn_size(dc20,mty40...)|ctn_type(mty/ldn)|shipment_type(import/export)
         $filters = $request->only([
             'from_date',
             'to_date',
@@ -456,10 +454,11 @@ class VesselInfoService
             'report_type'
         ]);
 
-        if (empty($filters)) {
+        if (empty(array_filter($filters))) {
             return collect();
         }
 
+        // Normalize dates
         if (!empty($filters['from_date'])) {
             $filters['from_date'] = Carbon::parse($filters['from_date'])->startOfMonth();
         }
@@ -468,223 +467,234 @@ class VesselInfoService
             $filters['to_date'] = Carbon::parse($filters['to_date'])->endOfMonth();
         }
 
-
         $data = $this->vesselInfoRepository->getAllVesselInfos($filters);
         if ($data->isEmpty()) {
             return collect();
         }
 
         $grouped = match ($filters['report_type'] ?? 'operator-wise') {
-            'operator-route-wise' => $data->groupBy(['operator','route.short_name']),
-            'route-wise' => $data->groupBy('route.short_name'),
+            'operator-route-wise' => $data->groupBy(['operator', 'route.short_name']),
+            'route-wise'          => $data->groupBy('route.short_name'),
             'operator-wise' => $data->groupBy('operator'),
             default => $data->groupBy('operator'),
         };
 
-        $formatted = $this->formatOperatorWiseSummary($data->groupBy('operator'), $filters['shipment_type'] ?? ['export', 'import']);
-        
-        return $formatted;
-    }
-
-    //shipmentTypes : Export/Impoort
-    // public function formatOperatorWiseSummary($data, array $shipmentTypes,): array
-    // {
-    //     $totalTeusByType = [];
-    //     $ttlCountByFilteredSize = []; //$filters[ctn_size] = dc20,r40,dc45 (etc./can be multiple)
-    //     foreach ($shipmentTypes as $type) {
-    //         $totalTeusByType[$type] = 0;
-    //     }
-
-    //     //complete teus count
-    //     foreach ($data as $operator => $vessels) {
-    //         foreach ($vessels as $vessel) {
-    //             foreach ($vessel->importExportCounts as $count) {
-    //                 $type = $count['type'] ?? null; //import / export
-    //                 if (!isset($totalTeusByType[$type])) continue;
-
-    //                 $teu = ContainerCountHelper::calculateTeu((object) $count);
-    //                 $totalTeusByType[$type] += $teu['total'];
-    //             }
-    //         }
-    //     }
-
-    //     //each operator's teus count
-    //     //$dataByOperator: Operator's all vessels | shipmentType(export,import) | totalTeus: [exportTeus, importTeus]
-    //     return $data->map(function ($dataByOperator) use ($shipmentTypes, $totalTeusByType) {
-    //         $summary = [];
-
-    //         // dd($dataByOperator, $shipmentTypes, $totalTeusByType);
-    //         foreach ($shipmentTypes as $type) {
-    //             $summary[$type] = $this->getEmptySummary(); //pupulate with sizes by type
-    //         }
-
-    //         //operator x's each vessels
-    //         foreach ($dataByOperator as $vessel) {
-    //             foreach ($vessel->importExportCounts as $count) {
-    //                 $type = $count['type'] ?? null; //export/import
-    //                 if (!isset($summary[$type])) continue;
-
-    //                 // $dc20 => 0
-    //                 foreach ($summary[$type] as $key => $val) {
-    //                     $summary[$type][$key] += (int) ($count[$key] ?? 0);
-    //                 }
-    //             }
-    //         }
-
-    //         // dd($summary);
-    //         //export/import
-    //         foreach ($shipmentTypes as $type) {
-    //             $teuData = ContainerCountHelper::calculateTeu((object) $summary[$type]);
-    //             $boxData = ContainerCountHelper::calculateBox((object) $summary[$type]);
-
-    //             $summary[$type]['teus'] = $teuData['total'];
-    //             $summary[$type]['unit'] = $boxData['total'];
-
-    //             // Here's the updated TEU% based on global total of the same type
-    //             $summary[$type]['teus_p'] = ContainerCountHelper::percent(
-    //                 $teuData['total'],
-    //                 $totalTeusByType[$type] > 0 ? $totalTeusByType[$type] : 1
-    //             );
-    //         }
-
-    //         // dd($summary);
-
-    //         return $summary;
-    //     })->toArray();
-    // }
-private function getEmptySummary(): array
-    {
-        return [
-            'dc20' => 0,
-            'dc40' => 0,
-            'dc45' => 0,
-            'r20' => 0,
-            'r40' => 0,
-            'mty20' => 0,
-            'mty40' => 0,
-            'unit' => 0,
-            'teus' => 0,
-            'teus_p' => 0,
-        ];
-    }
-    public function formatOperatorWiseSummary($data, array $shipmentTypes): array
-    {
-        // Step 1: Setup global counters
-        $globalTeusByType = [];
-        $globalTotals = [
-            'teus' => [],
-            'all_ctn' => 0,
-            'empty_ctn' => 0,
-            'laden_ctn' => 0,
-        ];
-
-        foreach ($shipmentTypes as $type) {
-            $globalTeusByType[$type] = 0;
-            $globalTotals['teus'][$type] = 0;
+        if ($filters['report_type'] == 'operator-route-wise') {
+            // return $this->operatorRouteWise($grouped);
+            return collect();
+        } else if ($filters['report_type'] == 'route-wise') {
+            // return $this->routeWise($grouped);
+            return collect();
         }
 
-        // Step 2: Calculate global totals
-        foreach ($data as $dataByOperator) {
-            foreach ($dataByOperator as $vessel) {
+        // dd($grouped->first()->toArray());
+
+        $shipmentTypes = $filters['shipment_type'] ?? ['export', 'import'];
+        $filteredCtnSizes = $filters['ctn_size'] ?? [];
+
+        [$formatted, $totalTeus] = $this->formatOperatorWiseSummary($grouped, $shipmentTypes, $filteredCtnSizes);
+        uasort($formatted, function ($a, $b) use ($shipmentTypes) {
+            return $b[$shipmentTypes[0]]['teus'] <=> $a[$shipmentTypes[0]]['teus'];
+        });
+
+        // dd($formatted,$totalTeus);
+        return [$formatted, $totalTeus];
+    }
+
+    public function formatOperatorWiseSummary($data, array $shipmentTypes, array $filteredCtnSizes): array
+    {
+        $totalTeusByType = [
+            'export' => ['empty' => 0, 'laden' => 0],
+            'import' => ['empty' => 0, 'laden' => 0],
+        ];
+
+        $totalTeus = 0;
+
+        // total teus calculation
+        foreach ($data as $operator => $vessels) {
+            foreach ($vessels as $vessel) {
                 foreach ($vessel->importExportCounts as $count) {
                     $type = $count['type'] ?? null;
-                    if (!isset($globalTeusByType[$type])) continue;
+                    if (!in_array($type, $shipmentTypes)) continue;
 
                     $teu = ContainerCountHelper::calculateTeu((object) $count);
-                    $globalTeusByType[$type] += $teu['total'];
-                    $globalTotals['teus'][$type] += $teu['total'];
-
-                    // All container fields
-                    $ctnTypes = ['dc20', 'dc40', 'dc45', 'r20', 'r40', 'mty20', 'mty40'];
-                    foreach ($ctnTypes as $field) {
-                        $globalTotals['all_ctn'] += (int) ($count[$field] ?? 0);
-                    }
-
-                    // Empty containers
-                    $globalTotals['empty_ctn'] += (int) ($count['mty20'] ?? 0);
-                    $globalTotals['empty_ctn'] += (int) ($count['mty40'] ?? 0);
-
-                    // Laden containers
-                    $ladenFields = ['dc20', 'dc40', 'dc45', 'r20', 'r40'];
-                    foreach ($ladenFields as $f) {
-                        $globalTotals['laden_ctn'] += (int) ($count[$f] ?? 0);
-                    }
+                    $totalTeusByType[$type]['empty'] += $teu['empty'];
+                    $totalTeusByType[$type]['laden'] += $teu['laden'];
                 }
             }
         }
 
-        // Step 3: Per operator summary
-        return $data->map(function ($dataByOperator) use ($shipmentTypes, $globalTeusByType, $globalTotals) {
+        // 2. Operator Summary
+        $summaries = $data->mapWithKeys(function ($vessels, $operator) use (
+            $shipmentTypes,
+            $filteredCtnSizes,
+            $totalTeusByType,
+            &$totalTeus
+        ) {
             $summary = [];
 
             foreach ($shipmentTypes as $type) {
-                $summary[$type] = $this->getEmptySummary();
+                $summary[$type] = $this->initializeSummary($filteredCtnSizes);
             }
 
-            foreach ($dataByOperator as $vessel) {
+            foreach ($vessels as $vessel) {
                 foreach ($vessel->importExportCounts as $count) {
                     $type = $count['type'] ?? null;
-                    if (!isset($summary[$type])) continue;
+                    if (!in_array($type, $shipmentTypes)) continue;
 
-                    foreach ($summary[$type] as $key => $val) {
-                        $summary[$type][$key] += (int) ($count[$key] ?? 0);
+                    foreach (array_keys($summary[$type]) as $key) {
+                        if (isset($count[$key])) {
+                            $summary[$type][$key] += (int)$count[$key];
+                        }
                     }
                 }
             }
+            // dd($summary);
 
+            //tue/unit/% calculation
             foreach ($shipmentTypes as $type) {
                 $teuData = ContainerCountHelper::calculateTeu((object) $summary[$type]);
                 $boxData = ContainerCountHelper::calculateBox((object) $summary[$type]);
 
+                // dd($teuData,$summary[$type]);
                 $summary[$type]['teus'] = $teuData['total'];
                 $summary[$type]['unit'] = $boxData['total'];
+                $totalTeus += $teuData['total'];
 
-                // TEU%
-                $summary[$type]['teus_p'] = ContainerCountHelper::percent(
-                    $teuData['total'],
-                    $globalTeusByType[$type] ?: 1
-                );
-
-                // MTY + LDN %
-                $currentTotalCtn = array_sum([
-                    $summary[$type]['dc20'],
-                    $summary[$type]['dc40'],
-                    $summary[$type]['dc45'],
-                    $summary[$type]['r20'],
-                    $summary[$type]['r40'],
-                    $summary[$type]['mty20'],
-                    $summary[$type]['mty40'],
+                $ladenTeuCtn = array_sum([
+                    $summary[$type]['dc20'] ?? 0,
+                    ($summary[$type]['dc40'] ?? 0) * 2,
+                    ($summary[$type]['dc45'] ?? 0) * 2,
+                    $summary[$type]['r20'] ?? 0,
+                    ($summary[$type]['r40'] ?? 0) * 2
                 ]);
-                $summary[$type]['mty_ldn_p'] = ContainerCountHelper::percent(
-                    $currentTotalCtn,
-                    $globalTotals['all_ctn'] ?: 1
-                );
+                $emptyTeuCtn = array_sum([
+                    $summary[$type]['mty20'] ?? 0,
+                    ($summary[$type]['mty40'] ?? 0) * 2
+                ]);
 
-                // Empty/Laden %
-                $filter = request('ctn_type');
-                if ($filter === 'empty') {
-                    $currentEmpty = $summary[$type]['mty20'] + $summary[$type]['mty40'];
-                    $summary[$type]['ctn_type_p'] = ContainerCountHelper::percent(
-                        $currentEmpty,
-                        $globalTotals['all_ctn'] ?: 1
-                    );
-                } elseif ($filter === 'laden') {
-                    $currentLaden = $summary[$type]['dc20'] + $summary[$type]['dc40'] +
-                        $summary[$type]['dc45'] + $summary[$type]['r20'] + $summary[$type]['r40'];
-                    $summary[$type]['ctn_type_p'] = ContainerCountHelper::percent(
-                        $currentLaden,
-                        $globalTotals['all_ctn'] ?: 1
-                    );
-                } else {
-                    $summary[$type]['ctn_type_p'] = 0;
-                }
+                $totalTypeTeu = $totalTeusByType[$type]['laden'] + $totalTeusByType[$type]['empty'];
+
+                $summary[$type]['ladenTotal'] = $totalTypeTeu > 0
+                    ? round(($ladenTeuCtn / $totalTypeTeu) * 100, 2) : 0;
+                $summary[$type]['ladenLaden'] = $totalTeusByType[$type]['laden'] > 0
+                    ? round(($ladenTeuCtn / $totalTeusByType[$type]['laden']) * 100, 2) : 0;
+                $summary[$type]['emptyTotal'] = $totalTypeTeu > 0
+                    ? round(($emptyTeuCtn / $totalTypeTeu) * 100, 2) : 0;
+                $summary[$type]['emptyEmpty'] = $totalTeusByType[$type]['empty'] > 0
+                    ? round(($emptyTeuCtn / $totalTeusByType[$type]['empty']) * 100, 2) : 0;
             }
 
-            return $summary;
-        })->toArray();
+            return [$operator => $summary];
+        });
+
+        return [$summaries->toArray(), $totalTeus];
     }
 
+    private function initializeSummary(array $filteredCtnSizes): array
+    {
+        $defaults = ['dc20', 'dc40', 'dc45', 'r20', 'r40', 'mty20', 'mty40'];
+        $sizes = array_filter($defaults, fn($sz) => empty($filteredCtnSizes) || in_array($sz, $filteredCtnSizes));
+        $summary = [];
 
+        foreach ($sizes as $sz) {
+            $summary[$sz] = 0;
+        }
 
-    
+        return array_merge($summary, [
+            'unit' => 0,
+            'teus' => 0,
+            'teus_p' => 0,
+            'ladenTotal' => 0,
+            'ladenLaden' => 0,
+            'emptyTotal' => 0,
+            'emptyEmpty' => 0,
+        ]);
+    }
+
+    private function operatorRouteWise($data)
+    {
+        // dd($data->toArray());
+        $formatted = [
+            'import' => [
+                'dc20' => 0,
+                'dc40' => 0,
+                'dc45' => 0,
+                'r20' => 0,
+                'r40' => 0,
+                'mty20' => 0,
+                'mty40' => 0,
+                'unit' => 0,
+                'teus' => 0,
+            ],
+            'export' => [
+                'dc20' => 0,
+                'dc40' => 0,
+                'dc45' => 0,
+                'r20' => 0,
+                'r40' => 0,
+                'mty20' => 0,
+                'mty40' => 0,
+                'unit' => 0,
+                'teus' => 0,
+            ]
+
+        ];
+
+        // dd($data->toArray());
+        foreach ($data as $operator => $route) {
+            foreach ($route as $r => $i) {
+                foreach ($i as $rt) {
+                    // dd($rt->toArray());
+                    $formatted[$operator][$r]['import']['unit'] += ContainerCountHelper::calculateBox($rt->importExportCounts[0])['total'];
+                    $formatted[$operator][$r]['import']['teus'] += ContainerCountHelper::calculateTeu($rt->importExportCounts[0])['total'];
+                    $formatted[$operator][$r]['export']['unit'] += ContainerCountHelper::calculateBox($rt->importExportCounts[1])['total'];
+                    $formatted[$operator][$r]['export']['teus'] += ContainerCountHelper::calculateTeu($rt->importExportCounts[1])['total'];
+                }
+                // dd($rt->toArray());
+            }
+        }
+        // dd($formatted);
+        $formatted;
+    }
+
+    private function routeWise($data)
+    {
+        $formatted = [
+            'import' => [
+                'dc20' => 0,
+                'dc40' => 0,
+                'dc45' => 0,
+                'r20' => 0,
+                'r40' => 0,
+                'mty20' => 0,
+                'mty40' => 0,
+                'unit' => 0,
+                'teus' => 0,
+            ],
+            'export' => [
+                'dc20' => 0,
+                'dc40' => 0,
+                'dc45' => 0,
+                'r20' => 0,
+                'r40' => 0,
+                'mty20' => 0,
+                'mty40' => 0,
+                'unit' => 0,
+                'teus' => 0,
+            ]
+
+        ];
+        foreach ($data as $key=>$route) {
+            // dd($route->toArray());
+            foreach ($route as $dt) {
+                $formatted[$key]['import']['unit'] += ContainerCountHelper::calculateBox($dt->importExportCounts[0])['total'];
+                $formatted[$key]['import']['teus'] += ContainerCountHelper::calculateTeu($dt->importExportCounts[0])['total'];
+                $formatted[$key]['export']['unit'] += ContainerCountHelper::calculateBox($dt->importExportCounts[1])['total'];
+                $formatted[$key]['export']['teus'] += ContainerCountHelper::calculateTeu($dt->importExportCounts[1])['total'];
+            }
+        }
+        // dd($formatted);
+        return $formatted;
+    }
 }

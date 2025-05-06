@@ -63,19 +63,22 @@
                     {{-- Shipment Type --}}
                     <div class="col-sm-2 pr-0  form-group">
                         <select name="shipment_type[]" class="form-control form-control-sm selectpicker"
-                            title="Export/Import" multiple>
+                            title="Export/Import">
                             @foreach (['export', 'import'] as $type)
-                                <option value="{{ $type }}"
+                                {{-- <option value="{{ $type }}"
                                     {{ collect(request('shipment_type'))->contains($type) ? 'selected' : '' }}>
                                     {{ strtoupper($type) }}
-                                </option>
+                                </option> --}}
+                                <option value="{{ $type }}" selected>{{ strtoupper($type) }}</option>
+                                {{-- <option value="{{ $type }}">{{ strtoupper($type) }}</option> --}}
                             @endforeach
                         </select>
                     </div>
 
-                    {{-- Contianer Type --}}
+                    {{-- Container Type --}}
                     <div class="col-sm-2 form-group">
-                        <select name="ctn_type" class="form-control form-control-sm selectpicker" title="Mty/Ldn">
+                        <select id="ctnTypeSelect" name="ctn_type" class="form-control form-control-sm selectpicker"
+                            title="Mty/Ldn">
                             @foreach (['empty', 'laden'] as $type)
                                 <option value="{{ $type }}" {{ request('ctn_type') == $type ? 'selected' : '' }}>
                                     {{ strtoupper($type) }}
@@ -85,17 +88,19 @@
                     </div>
 
                     {{-- Container Size --}}
-                    <div class="col-sm-2  form-group">
-                        <select name="ctn_size[]" class="form-control form-control-sm selectpicker" title="CTN Size"
-                            multiple>
+                    <div class="col-sm-2 form-group">
+                        <select id="ctnSizeSelect" name="ctn_size[]" class="form-control form-control-sm selectpicker"
+                            title="CTN Size" multiple>
                             @foreach (['dc20', 'dc40', 'dc45', 'r20', 'r40', 'mty20', 'mty40'] as $type)
                                 <option value="{{ $type }}"
+                                    data-ctn-type="{{ in_array($type, ['mty20', 'mty40']) ? 'empty' : 'laden' }}"
                                     {{ collect(request('ctn_size'))->contains($type) ? 'selected' : '' }}>
                                     {{ strtoupper($type) }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
+
 
 
 
@@ -130,7 +135,6 @@
                     </div>
                     <div class="card-body">
                         @php
-
                             $routes = [1 => 'Singapore', 2 => 'Colombo', 3 => 'Kolkata'];
                             $containerTypes = [
                                 'dc20' => 'DC20',
@@ -164,7 +168,7 @@
                             @endphp
                             <thead>
                                 <tr>
-                                    <th colspan="{{ 7 + count($requestedContainerTypes) }}" class="text-center">
+                                    <th colspan="{{ 8 + count($requestedContainerTypes) }}" class="text-center">
                                         <h6 class="m-0 reportTitle text-center" style="font-size: 18px">
                                             <strong>
                                                 {{ request()->filled('report_type')
@@ -175,12 +179,12 @@
                                     </th>
                                 </tr>
                                 <tr>
-                                    <th colspan="{{ 7 + count($requestedContainerTypes) }}" class="pt-0">
+                                    <th colspan="{{ 8 + count($requestedContainerTypes) }}" class="pt-0">
                                         <h6 class="text-center">{{ $routeText }}</h6>
                                     </th>
                                 </tr>
                                 <tr>
-                                    {{-- <th>#</th> --}}
+                                    <th>#</th>
                                     <th>Operator</th>
                                     <th>Type</th>
                                     @foreach ($requestedContainerTypes as $type)
@@ -189,63 +193,76 @@
                                     <th>Unit</th>
                                     <th>TEU</th>
                                     <th>TEU%</th>
-                                    <th>MTY+LDN%</th>
-                                    <th>{{ request('ctn_type') . '%' ?? 'MTY/LDN%' }}</th>
+                                    <th>{{ request('ctn_type') }}/ttl%</th>
+                                    <th>{{ request('ctn_type') . '/ttl' . request('ctn_type') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($data as $operator => $rows)
-                                    @php
-                                        $rowspan = count($rows);
-                                        $first = true;
-                                        $i=0;
-                                    @endphp
-                                    @foreach ($rows as $type => $count)
-                                        <tr>
-                                            {{-- <td>{{$i+=1}}</td> --}}
-                                            @if ($first)
-                                                <td rowspan="{{ $rowspan }}">{{ $operator }}</td>
-                                                @php $first = false; @endphp
-                                            @endif
+                                @php
+                                    $i = 0;
+                                @endphp
+                                @if (isset($data[0]))
+                                    @foreach ($data[0] as $operator => $rows)
+                                        @php
+                                            $rowspan = count($rows);
+                                            $first = true;
 
-                                            <td>{{ ucfirst($type) }}</td>
-                                            @foreach ($requestedContainerTypes as $type)
-                                                <td>{{ $count[$type] }}</td>
-                                            @endforeach
+                                        @endphp
+                                        @foreach ($rows as $type => $count)
+                                            <tr>
+                                                <td>{{ $i += 1 }}</td>
+                                                @if ($first)
+                                                    <td rowspan="{{ $rowspan }}">{{ $operator }}</td>
+                                                    @php $first = false; @endphp
+                                                @endif
 
-                                            <td>{{ $count['unit'] }}</td>
-                                            <td>{{ $count['teus'] }}</td>
-                                            <td>{{ $count['teus_p']??'' }}</td>
-                                            <td>{{ $count['mty_ldn_p']??'' }}</td>
-                                            <td>{{ $count['ctn_type_p']??'' }}</td>
-                                        </tr>
+                                                <td>{{ ucfirst($type) }}</td>
+                                                @foreach ($requestedContainerTypes as $type)
+                                                    <td>{{ $count[$type] }}</td>
+                                                @endforeach
+
+                                                <td>{{ $count['unit'] }}</td>
+                                                <td>{{ $count['teus'] }}</td>
+                                                <td>{{ round(($count['teus'] / $data[1]) * 100, 2) }}</td>
+                                                <td>
+                                                    {{ request('ctn_type') == 'laden' ? $count['ladenTotal'] : $count['emptyTotal'] }}
+                                                </td>
+                                                <td>
+                                                    {{ request('ctn_type') == 'laden' ? $count['ladenLaden'] : $count['emptyEmpty'] }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                     @endforeach
-                                @endforeach
+                                @endif
+
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th colspan="2">Total</th>
+                                    <th colspan="3">Total</th>
                                     @foreach ($requestedContainerTypes as $type)
                                         <th>
-                                            {{ collect($data)->flatten(1)->sum(function ($item) use ($type) {
-                                                return $item[$type] ?? 0;
-                                            }) }}
+                                            @if (isset($data[0]))
+                                                {{ collect($data[0])->flatten(1)->sum(function ($item) use ($type) {
+                                                    return $item[$type] ?? 0;
+                                                }) }}
+                                            @endif
+                                            
                                         </th>
                                     @endforeach
                                     <th>
-                                        {{ collect($data)->flatten(1)->sum('unit') }}
+                                        {{ collect($data[0]??collect())->flatten(1)->sum('unit') }}
                                     </th>
                                     <th>
-                                        {{ collect($data)->flatten(1)->sum('teus') }}
+                                        {{ collect($data[0]??collect())->flatten(1)->sum('teus') }}
                                     </th>
                                     <th>
-                                        {{ round(collect($data)->flatten(1)->sum('teus_p'), 2) }}
+
                                     </th>
                                     <th>
-                                        {{ round(collect($data)->flatten(1)->sum('mty_ldn_p'), 2) }}
+                                        {{-- {{ request('ctn_type') == 'laden' ? $count['ladenTotal'] : $count['emptyTotal'] }} --}}
                                     </th>
                                     <th>
-                                        {{ round(collect($data)->flatten(1)->sum('ctn_type_p'), 2) }}
+                                        {{-- {{ request('ctn_type') == 'laden' ? $count['ladenLaden'] : $count['emptyEmpty'] }} --}}
                                     </th>
                                 </tr>
                             </tfoot>
@@ -302,6 +319,31 @@
                     return 1 == e ? "{0} item selected" : "{0} items selected"
                 },
                 selectedTextFormat: 'count'
+            });
+
+            const $ctnType = $('#ctnTypeSelect');
+            const $ctnSize = $('#ctnSizeSelect');
+
+            function filterContainerSizes() {
+                const selectedType = $ctnType.val();
+
+                $ctnSize.find('option').each(function() {
+                    const $option = $(this);
+                    const optionType = $option.data('ctn-type');
+
+                    if (!selectedType || optionType === selectedType) {
+                        $option.show();
+                    } else {
+                        $option.prop('selected', false).hide();
+                    }
+                });
+
+                $ctnSize.selectpicker('refresh'); // Required for Bootstrap Select
+            }
+            filterContainerSizes();
+
+            $ctnType.on('change', function() {
+                filterContainerSizes();
             });
 
         });
