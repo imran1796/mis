@@ -17,7 +17,7 @@ class RouteSeeder extends Seeder
         $data = [
             ['name' => 'Singapore', 'short_name' => 'SIN', 'code' => 'SGSIN'],
             ['name' => 'Colombo', 'short_name' => 'CBO', 'code' => 'LKCMB'],
-            ['name' => 'Kolkata', 'short_name' => 'KOL', 'code' => 'INCCU'],
+            ['name' => 'Kolkata', 'short_name' => 'CCU', 'code' => 'INCCU'],
         ];
 
         Route::insert($data);
