@@ -6,13 +6,18 @@
 ])
 
 @section('content')
+<style>
+    .ui-datepicker-calendar {
+        display: none;
+    }
+</style>
     <div class="content">
         <div class="container-fluid">
             <div class="section-image">
                 <div class="row mb-2">
                     <div class="col-lg-12 margin-tb">
                         <div class="pull-left">
-                            <h2>Mlo Wise Summary</h2>
+                            <h2>MLO NVOCC Summary</h2>
                         </div>
 
                         <div class="pull-right">
@@ -75,9 +80,9 @@
                             <input class="reportTitle" type="hidden" value="Mlo_Wise_Summary">
                             <thead>
                                 <tr>
-                                    <th rowspan="3">MLO</th>
+                                    <th rowspan="3">MLO Code</th>
                                     <th rowspan="3">Line Belongs To</th>
-                                    <th rowspan="3">Mlo Details</th>
+                                    <th rowspan="3">MLO Details</th>
                                     @if (!empty($results))
                                         @foreach (collect($results)->first()['permonth'] as $month => $d)
                                             <th colspan="4">{{ $month }}</th>

@@ -6,6 +6,12 @@
 ])
 
 @section('content')
+    <style>
+        .ui-datepicker-calendar {
+            display: none;
+        }
+    </style>
+
     <div class="content">
         <div class="container-fluid">
             <div class="section-image">
@@ -113,25 +119,26 @@
 @push('js')
     <script>
         $(document).ready(function() {
-            $(".datepicker").datepicker({
-                dateFormat: 'yy-mm-dd',
-                showButtonPanel: true,
-                currentText: "Today",
+            // $(".datepicker").datepicker({
+            //     dateFormat: 'yy-mm-dd',
+            //     showButtonPanel: true,
+            //     currentText: "Today",
 
-                beforeShow: function(input, inst) {
-                    setTimeout(function() {
-                        var buttonPane = $(inst.dpDiv).find('.ui-datepicker-buttonpane');
+            //     beforeShow: function(input, inst) {
+            //         setTimeout(function() {
+            //             var buttonPane = $(inst.dpDiv).find('.ui-datepicker-buttonpane');
 
-                        buttonPane.find('.ui-datepicker-current').off('click').on('click',
-                            function() {
-                                var today = new Date();
-                                $(input).datepicker('setDate', today);
-                                $.datepicker._hideDatepicker(input); //close after selecting
-                                $(input).blur(); //prevent auto-focus/reopen
-                            });
-                    }, 1);
-                }
-            });
+            //             buttonPane.find('.ui-datepicker-current').off('click').on('click',
+            //                 function() {
+            //                     var today = new Date();
+            //                     $(input).datepicker('setDate', today);
+            //                     $.datepicker._hideDatepicker(input); //close after selecting
+            //                     $(input).blur(); //prevent auto-focus/reopen
+            //                 });
+            //         }, 1);
+            //     }
+            // });
+            initializeMonthYearPicker('.datepicker');
 
             $("#autosearch").on("keyup", function() {
                 var value = $(this).val().toLowerCase();
@@ -140,5 +147,42 @@
                 });
             });
         });
+
+        function initializeMonthYearPicker(selector) {
+            $(selector).datepicker({
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                dateFormat: 'M-yy',
+
+                onChangeMonthYear: function(year, month, inst) {
+                    $(this).datepicker('setDate', new Date(year, month - 1, 1));
+                },
+
+                onClose: function() {
+                    const iMonth = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                    const iYear = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+
+
+                    if (iMonth !== null && iYear !== null) {
+                        $(this).datepicker('setDate', new Date(iYear, iMonth, 1));
+                    }
+                },
+
+                beforeShow: function() {
+                    const selDate = $(this).val();
+                    if (selDate.length > 0) {
+                        const iYear = selDate.slice(-4);
+                        const iMonth = $.inArray(selDate.slice(0, -5), $(this).datepicker('option',
+                            'monthNames'));
+
+                        if (iMonth !== -1) {
+                            $(this).datepicker('option', 'defaultDate', new Date(iYear, iMonth, 1));
+                            $(this).datepicker('setDate', new Date(iYear, iMonth, 1));
+                        }
+                    }
+                }
+            });
+        }
     </script>
 @endpush

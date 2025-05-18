@@ -6,6 +6,12 @@
 ])
 
 @section('content')
+    <style>
+        .ui-datepicker-calendar {
+            display: none;
+        }
+    </style>
+
     <div class="content">
         <div class="container-fluid">
             <div class="section-image">
@@ -100,10 +106,10 @@
                                     @endforeach
                                     <th>SIN</th>
                                     <th>CBO</th>
-                                    <th>CGP</th>
+                                    <th>CCU</th>
                                     <th>SIN</th>
                                     <th>CBO</th>
-                                    <th>CGP</th>
+                                    <th>CCU</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -170,15 +176,15 @@
                                         {{-- Calls --}}
                                         <td>{{ $data['calls']['SIN'] }}</td>
                                         <td>{{ $data['calls']['CBO'] }}</td>
-                                        <td>{{ $data['calls']['CGP'] }}</td>
-                                        <td><strong>{{ $data['calls']['SIN'] + $data['calls']['CBO'] + $data['calls']['CGP'] }}</strong>
+                                        <td>{{ $data['calls']['CCU'] }}</td>
+                                        <td><strong>{{ $data['calls']['SIN'] + $data['calls']['CBO'] + $data['calls']['CCU'] }}</strong>
                                         </td>
 
                                         {{-- Vessels --}}
                                         <td>{{ $data['vessels_count']['SIN'] }}</td>
                                         <td>{{ $data['vessels_count']['CBO'] }}</td>
-                                        <td>{{ $data['vessels_count']['CGP'] }}</td>
-                                        <td><strong>{{ $data['vessels_count']['SIN'] + $data['vessels_count']['CBO'] + $data['vessels_count']['CGP'] }}</strong>
+                                        <td>{{ $data['vessels_count']['CCU'] }}</td>
+                                        <td><strong>{{ $data['vessels_count']['SIN'] + $data['vessels_count']['CBO'] + $data['vessels_count']['CCU'] }}</strong>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -201,25 +207,26 @@
     <script src="{{ asset('light-bootstrap/js/jquery.table2excel.min.js') }}"></script>
     <script>
         $(document).ready(function() {
-            $(".datepicker").datepicker({
-                dateFormat: 'yy-mm-dd',
-                showButtonPanel: true,
-                currentText: "Today",
+            // $(".datepicker").datepicker({
+            //     dateFormat: 'yy-mm-dd',
+            //     showButtonPanel: true,
+            //     currentText: "Today",
 
-                beforeShow: function(input, inst) {
-                    setTimeout(function() {
-                        var buttonPane = $(inst.dpDiv).find('.ui-datepicker-buttonpane');
+            //     beforeShow: function(input, inst) {
+            //         setTimeout(function() {
+            //             var buttonPane = $(inst.dpDiv).find('.ui-datepicker-buttonpane');
 
-                        buttonPane.find('.ui-datepicker-current').off('click').on('click',
-                            function() {
-                                var today = new Date();
-                                $(input).datepicker('setDate', today);
-                                $.datepicker._hideDatepicker(input); //close after selecting
-                                $(input).blur(); //prevent auto-focus/reopen
-                            });
-                    }, 1);
-                }
-            });
+            //             buttonPane.find('.ui-datepicker-current').off('click').on('click',
+            //                 function() {
+            //                     var today = new Date();
+            //                     $(input).datepicker('setDate', today);
+            //                     $.datepicker._hideDatepicker(input); //close after selecting
+            //                     $(input).blur(); //prevent auto-focus/reopen
+            //                 });
+            //         }, 1);
+            //     }
+            // });
+            initializeMonthYearPicker('.datepicker');
 
             $('#btnExcelJsExport').on('click', function() {
                 var row1 = $('<tr class="text-center">').append(
@@ -291,6 +298,43 @@
             });
 
             $tfoot.html('').append($totalRow).append($averageRow);
+        }
+
+        function initializeMonthYearPicker(selector) {
+            $(selector).datepicker({
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                dateFormat: 'M-yy',
+
+                onChangeMonthYear: function(year, month, inst) {
+                    $(this).datepicker('setDate', new Date(year, month - 1, 1));
+                },
+
+                onClose: function() {
+                    const iMonth = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                    const iYear = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+
+
+                    if (iMonth !== null && iYear !== null) {
+                        $(this).datepicker('setDate', new Date(iYear, iMonth, 1));
+                    }
+                },
+
+                beforeShow: function() {
+                    const selDate = $(this).val();
+                    if (selDate.length > 0) {
+                        const iYear = selDate.slice(-4);
+                        const iMonth = $.inArray(selDate.slice(0, -5), $(this).datepicker('option',
+                            'monthNames'));
+
+                        if (iMonth !== -1) {
+                            $(this).datepicker('option', 'defaultDate', new Date(iYear, iMonth, 1));
+                            $(this).datepicker('setDate', new Date(iYear, iMonth, 1));
+                        }
+                    }
+                }
+            });
         }
     </script>
 @endpush

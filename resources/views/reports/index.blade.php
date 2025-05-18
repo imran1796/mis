@@ -143,7 +143,7 @@
                                             </div>
                                             <div class="col-10 d-flex align-items-center ">
                                                 <div class="numbers align-content-center">
-                                                    <p class="card-category">MlO Wise Summary</p>
+                                                    <p class="card-category">MLO NVOCC Summary</p>
                                                 </div>
                                             </div>
 

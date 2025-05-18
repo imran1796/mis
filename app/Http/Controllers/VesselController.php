@@ -214,14 +214,8 @@ class VesselController extends Controller
 
     public function vesselInfoReport(Request $request)
     {
-
-
         $routes = Route::all();
-
         $data = $this->vesselInfoService->vesselInfoReport($request);
-
-        // dd($data);
-
 
         return view('reports.vessel-info', compact('data', 'routes'));
     }

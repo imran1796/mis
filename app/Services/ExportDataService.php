@@ -26,6 +26,9 @@ class ExportDataService
         if (!empty($filters['to_date'])) {
             $filters['to_date'] = Carbon::createFromFormat('M-Y', $filters['to_date'])->startOfMonth();
         }
+        if(!isset($filters['report_type'])){
+            return [collect(),collect()];
+        }
 
         $data =  $this->exportDataRepository->getAllExportData($filters);
         $summary = $this->exportDataSummary($data);

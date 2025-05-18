@@ -213,21 +213,21 @@
                                     </tr>
                                     <tr class="text-center bg-light">
                                         <th>Unit</th>
-                                        <td>{{ $exportDatas[1]['20ft'] }}</td>
-                                        <td>{{ $exportDatas[1]['40ft'] }}</td>
-                                        <td>{{ $exportDatas[1]['45ft'] }}</td>
-                                        <td>{{ $exportDatas[1]['20R'] }}</td>
-                                        <td>{{ $exportDatas[1]['40R'] }}</td>
-                                        <td>{{ $exportDatas[1]['total_unit'] }}</td>
+                                        <td>{{ $exportDatas[1]['20ft']??0 }}</td>
+                                        <td>{{ $exportDatas[1]['40ft']??0 }}</td>
+                                        <td>{{ $exportDatas[1]['45ft']??0 }}</td>
+                                        <td>{{ $exportDatas[1]['20R']??0 }}</td>
+                                        <td>{{ $exportDatas[1]['40R']??0 }}</td>
+                                        <td>{{ $exportDatas[1]['total_unit']??0 }}</td>
                                     </tr>
                                     <tr class="text-center">
                                         <th>Teus</th>
-                                        <td>{{ $exportDatas[1]['20ft'] }}</td>
-                                        <td>{{ $exportDatas[1]['40ft'] * 2 }}</td>
-                                        <td>{{ $exportDatas[1]['45ft'] * 2 }}</td>
-                                        <td>{{ $exportDatas[1]['20R'] }}</td>
-                                        <td>{{ $exportDatas[1]['40R'] * 2 }}</td>
-                                        <td>{{ $exportDatas[1]['total_teus'] }}</td>
+                                        <td>{{ ($exportDatas[1]['20ft']??0) }}</td>
+                                        <td>{{ ($exportDatas[1]['40ft']??0) * 2 }}</td>
+                                        <td>{{ ($exportDatas[1]['45ft']??0) * 2 }}</td>
+                                        <td>{{ ($exportDatas[1]['20R']??0) }}</td>
+                                        <td>{{ ($exportDatas[1]['40R']??0) * 2 }}</td>
+                                        <td>{{ ($exportDatas[1]['total_teus']??0) }}</td>
                                     </tr>
 
                                 </table>
@@ -236,11 +236,11 @@
                                 <table class="table-bordered custom-table-report table-sm">
                                     <tr class="text-center">
                                         <td>Total Commodity</td>
-                                        <td>{{ $exportDatas[1]['total_commodity'] }}</td>
+                                        <td>{{ $exportDatas[1]['total_commodity']??0 }}</td>
                                     </tr>
                                     <tr class="text-center bg-light">
                                         <td>Total POD</td>
-                                        <td>{{ $exportDatas[1]['total_pod'] }}</td>
+                                        <td>{{ $exportDatas[1]['total_pod']??0 }}</td>
                                     </tr>
                                 </table>
                             </div>
@@ -308,24 +308,21 @@
                                 @if (request()->filled('commodity'))
                                     <tr>
                                         <th class="text-center" colspan="{{ $colspan }}">
-                                            Commodity:
-                                            {{ count(request('commodity')) > 20 ? count(request('commodity')) . ' Commodities' : implode(', ', request('commodity')) }}
+                                            Commodity: {{ count(request('commodity')) > 20 ? count(request('commodity')) . ' Commodities' : implode(', ', request('commodity')) }}
                                         </th>
                                     </tr>
                                 @endif
                                 @if (request()->filled('mlo'))
                                     <tr>
                                         <th class="text-center" colspan="{{ $colspan }}">
-                                            MLO:
-                                            {{ count(request('mlo')) > 20 ? count(request('mlo')) . ' MLOs' : implode(', ', request('mlo')) }}
+                                            MLO: {{ count(request('mlo')) > 20 ? count(request('mlo')) . ' MLOs' : implode(', ', request('mlo')) }}
                                         </th>
                                     </tr>
                                 @endif
                                 @if (request()->filled('pod'))
                                     <tr>
                                         <th class="text-center" colspan="{{ $colspan }}">
-                                            POD:
-                                            {{ count(request('pod')) > 20 ? count(request('pod')) . ' PODs' : implode(', ', request('pod')) }}
+                                            POD: {{ count(request('pod')) > 20 ? count(request('pod')) . ' PODs' : implode(', ', request('pod')) }}
                                         </th>
                                     </tr>
                                 @endif
@@ -446,11 +443,11 @@
                                 @else
                                     <tr>
                                         <th class="text-center" colspan="4">Total</th>
-                                        <th>{{ $exportDatas[0]->sum('20ft') }}</th>
-                                        <th>{{ $exportDatas[0]->sum('40ft') }}</th>
-                                        <th>{{ $exportDatas[0]->sum('45ft') }}</th>
-                                        <th>{{ $exportDatas[0]->sum('20R') }}</th>
-                                        <th>{{ $exportDatas[0]->sum('40R') }}</th>
+                                        <th>{{ $exportDatas[0]->sum('20ft')??0 }}</th>
+                                        <th>{{ $exportDatas[0]->sum('40ft')??0 }}</th>
+                                        <th>{{ $exportDatas[0]->sum('45ft')??0 }}</th>
+                                        <th>{{ $exportDatas[0]->sum('20R') ??0}}</th>
+                                        <th>{{ $exportDatas[0]->sum('40R') ??0}}</th>
                                         <th colspan="2"></th>
                                     </tr>
                                 @endif
@@ -637,131 +634,131 @@
             }
 
             // Process thead, tbody, and tfoot
-            function processHtmlTableToExcelJs(table, worksheet) {
-                const cellMap = {}; // Track occupied cells (row,col)
-                let currentRowIndex = 1;
+            // function processHtmlTableToExcelJs(table, worksheet) {
+            //     const cellMap = {}; // Track occupied cells (row,col)
+            //     let currentRowIndex = 1;
 
-                const sections = ['thead', 'tbody', 'tfoot'];
+            //     const sections = ['thead', 'tbody', 'tfoot'];
 
-                sections.forEach(section => {
-                    const rows = table.querySelectorAll(`${section} tr`);
+            //     sections.forEach(section => {
+            //         const rows = table.querySelectorAll(`${section} tr`);
 
-                    rows.forEach((row) => {
-                        const cells = Array.from(row.children);
-                        let currentColIndex = 1;
+            //         rows.forEach((row) => {
+            //             const cells = Array.from(row.children);
+            //             let currentColIndex = 1;
 
-                        const rowData = []; // for normal cells
+            //             const rowData = []; // for normal cells
 
-                        cells.forEach((cell) => {
-                            // Skip already occupied cells (because of rowspan/colspan)
-                            while (cellMap[`${currentRowIndex},${currentColIndex}`]) {
-                                currentColIndex++;
-                            }
+            //             cells.forEach((cell) => {
+            //                 // Skip already occupied cells (because of rowspan/colspan)
+            //                 while (cellMap[`${currentRowIndex},${currentColIndex}`]) {
+            //                     currentColIndex++;
+            //                 }
 
-                            const colspan = parseInt(cell.getAttribute("colspan") || 1);
-                            const rowspan = parseInt(cell.getAttribute("rowspan") || 1);
+            //                 const colspan = parseInt(cell.getAttribute("colspan") || 1);
+            //                 const rowspan = parseInt(cell.getAttribute("rowspan") || 1);
 
-                            const startCol = currentColIndex;
-                            const endCol = currentColIndex + colspan - 1;
-                            const startRow = currentRowIndex;
-                            const endRow = currentRowIndex + rowspan - 1;
+            //                 const startCol = currentColIndex;
+            //                 const endCol = currentColIndex + colspan - 1;
+            //                 const startRow = currentRowIndex;
+            //                 const endRow = currentRowIndex + rowspan - 1;
 
-                            // Merge cells if colspan or rowspan > 1
-                            if (colspan > 1 || rowspan > 1) {
-                                const startCell = columnNumberToName(startCol) + startRow;
-                                const endCell = columnNumberToName(endCol) + endRow;
-                                worksheet.mergeCells(`${startCell}:${endCell}`);
-                            }
+            //                 // Merge cells if colspan or rowspan > 1
+            //                 if (colspan > 1 || rowspan > 1) {
+            //                     const startCell = columnNumberToName(startCol) + startRow;
+            //                     const endCell = columnNumberToName(endCol) + endRow;
+            //                     worksheet.mergeCells(`${startCell}:${endCell}`);
+            //                 }
 
-                            const excelCell = worksheet.getCell(columnNumberToName(
-                                startCol) + startRow);
-                            excelCell.value = cell.textContent.trim();
-                            excelCell.alignment = {
-                                vertical: 'middle',
-                                horizontal: 'center',
-                                wrapText: true
-                            };
-                            excelCell.border = {
-                                top: {
-                                    style: 'thin'
-                                },
-                                left: {
-                                    style: 'thin'
-                                },
-                                bottom: {
-                                    style: 'thin'
-                                },
-                                right: {
-                                    style: 'thin'
-                                }
-                            };
-                            if (section !== 'tbody') {
-                                excelCell.font = {
-                                    bold: true
-                                };
-                            }
+            //                 const excelCell = worksheet.getCell(columnNumberToName(
+            //                     startCol) + startRow);
+            //                 excelCell.value = cell.textContent.trim();
+            //                 excelCell.alignment = {
+            //                     vertical: 'middle',
+            //                     horizontal: 'center',
+            //                     wrapText: true
+            //                 };
+            //                 excelCell.border = {
+            //                     top: {
+            //                         style: 'thin'
+            //                     },
+            //                     left: {
+            //                         style: 'thin'
+            //                     },
+            //                     bottom: {
+            //                         style: 'thin'
+            //                     },
+            //                     right: {
+            //                         style: 'thin'
+            //                     }
+            //                 };
+            //                 if (section !== 'tbody') {
+            //                     excelCell.font = {
+            //                         bold: true
+            //                     };
+            //                 }
 
-                            // Mark occupied cells
-                            for (let r = startRow; r <= endRow; r++) {
-                                for (let c = startCol; c <= endCol; c++) {
-                                    cellMap[`${r},${c}`] = true;
-                                }
-                            }
+            //                 // Mark occupied cells
+            //                 for (let r = startRow; r <= endRow; r++) {
+            //                     for (let c = startCol; c <= endCol; c++) {
+            //                         cellMap[`${r},${c}`] = true;
+            //                     }
+            //                 }
 
-                            currentColIndex += colspan;
-                        });
+            //                 currentColIndex += colspan;
+            //             });
 
-                        currentRowIndex++;
-                    });
-                });
-            }
+            //             currentRowIndex++;
+            //         });
+            //     });
+            // }
 
-            $('#btnExcelJsExport').on('click', async function() {
-                try {
-                    const reportTitle = $('.reportTitle').text().trim().replace(/\s+/g, '_');
-                    const reportRange = $('.reportRange').text().trim().replace(/\s+/g, '_');
+            // $('#btnExcelJsExport').on('click', async function() {
+            //     try {
+            //         const reportTitle = $('.reportTitle').text().trim().replace(/\s+/g, '_');
+            //         const reportRange = $('.reportRange').text().trim().replace(/\s+/g, '_');
 
-                    const workbook = new ExcelJS.Workbook();
-                    const worksheet = workbook.addWorksheet("Export Report");
+            //         const workbook = new ExcelJS.Workbook();
+            //         const worksheet = workbook.addWorksheet("Export Report");
 
-                    const table = document.getElementById("excelJsTable");
+            //         const table = document.getElementById("excelJsTable");
 
-                    if (!table) {
-                        throw new Error("Table not found");
-                    }
+            //         if (!table) {
+            //             throw new Error("Table not found");
+            //         }
 
-                    processHtmlTableToExcelJs(table, worksheet);
+            //         processHtmlTableToExcelJs(table, worksheet);
 
-                    // Auto-fit columns width (with max width limit)
-                    worksheet.columns.forEach((column) => {
-                        let maxLength = 0;
-                        column.eachCell({
-                            includeEmpty: true
-                        }, (cell) => {
-                            const value = cell.value ? cell.value.toString() : "";
-                            maxLength = Math.max(maxLength, value.length);
-                        });
-                        column.width = Math.min(maxLength + 2, 15);
-                    });
+            //         // Auto-fit columns width (with max width limit)
+            //         worksheet.columns.forEach((column) => {
+            //             let maxLength = 0;
+            //             column.eachCell({
+            //                 includeEmpty: true
+            //             }, (cell) => {
+            //                 const value = cell.value ? cell.value.toString() : "";
+            //                 maxLength = Math.max(maxLength, value.length);
+            //             });
+            //             column.width = Math.min(maxLength + 2, 15);
+            //         });
 
-                    // Download Excel
-                    const buffer = await workbook.xlsx.writeBuffer();
-                    const blob = new Blob([buffer], {
-                        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    });
+            //         // Download Excel
+            //         const buffer = await workbook.xlsx.writeBuffer();
+            //         const blob = new Blob([buffer], {
+            //             type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            //         });
 
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.download = `${reportTitle}_${reportRange}.xlsx`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+            //         const link = document.createElement('a');
+            //         link.href = URL.createObjectURL(blob);
+            //         link.download = `${reportTitle}_${reportRange}.xlsx`;
+            //         document.body.appendChild(link);
+            //         link.click();
+            //         document.body.removeChild(link);
 
-                } catch (error) {
-                    console.error("Export failed:", error);
-                    alert("Failed to export Excel: " + error.message);
-                }
-            });
+            //     } catch (error) {
+            //         console.error("Export failed:", error);
+            //         alert("Failed to export Excel: " + error.message);
+            //     }
+            // });
 
 
             $('.select-row').on('change', function() {
@@ -859,11 +856,12 @@
         $('.selectpicker').selectpicker({
             actionsBox: true,
             deselectAllText: 'Deselect All',
-            selectAllText: 'Select All',
             countSelectedText: function(e, t) {
                 return 1 == e ? "{0} item selected" : "{0} items selected"
             },
             selectedTextFormat: 'count'
-        });
+        }).on('loaded.bs.select', function() {
+            $(this).parent().find('.bs-select-all').hide();
+        });;
     </script>
 @endpush

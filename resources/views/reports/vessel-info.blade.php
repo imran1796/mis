@@ -1,5 +1,5 @@
 @extends('layouts.app', [
-    'activePage' => 'vesselInfo-index',
+    'activePage' => 'reports',
     'title' => 'GLA Admin',
     'navName' => 'Vessel Info',
     'activeButton' => 'laravel',
@@ -9,6 +9,10 @@
     <style>
         .ui-timepicker-container {
             z-index: 9999 !important;
+        }
+
+        .ui-datepicker-calendar {
+            display: none;
         }
     </style>
     <div class="content">
@@ -63,24 +67,23 @@
                     {{-- Shipment Type --}}
                     <div class="col-sm-2 pr-0  form-group">
                         <select name="shipment_type[]" class="form-control form-control-sm selectpicker"
-                            title="Export/Import">
+                            title="Export/Import" multiple>
                             @foreach (['export', 'import'] as $type)
-                                {{-- <option value="{{ $type }}"
+                                <option value="{{ $type }}"
                                     {{ collect(request('shipment_type'))->contains($type) ? 'selected' : '' }}>
                                     {{ strtoupper($type) }}
-                                </option> --}}
-                                <option value="{{ $type }}" selected>{{ strtoupper($type) }}</option>
-                                {{-- <option value="{{ $type }}">{{ strtoupper($type) }}</option> --}}
+                                </option>
                             @endforeach
                         </select>
                     </div>
 
                     {{-- Container Type --}}
                     <div class="col-sm-2 form-group">
-                        <select id="ctnTypeSelect" name="ctn_type" class="form-control form-control-sm selectpicker"
-                            title="Mty/Ldn">
+                        <select id="ctnTypeSelect" name="ctn_type[]" class="form-control form-control-sm selectpicker"
+                            title="Mty/Ldn" multiple>
                             @foreach (['empty', 'laden'] as $type)
-                                <option value="{{ $type }}" {{ request('ctn_type') == $type ? 'selected' : '' }}>
+                                <option value="{{ $type }}"
+                                    {{ collect(request('ctn_type'))->contains($type) ? 'selected' : '' }}>
                                     {{ strtoupper($type) }}
                                 </option>
                             @endforeach
@@ -100,8 +103,6 @@
                             @endforeach
                         </select>
                     </div>
-
-
 
 
                     {{-- Search Button --}}
@@ -135,40 +136,36 @@
                     </div>
                     <div class="card-body">
                         @php
-                            $routes = [1 => 'Singapore', 2 => 'Colombo', 3 => 'Kolkata'];
-                            $containerTypes = [
-                                'dc20' => 'DC20',
-                                'dc40' => 'DC40',
-                                'dc45' => 'DC45',
-                                'r20' => 'R40',
-                                'r40' => 'R40',
-                                'mty20' => 'MTY20',
-                                'mty40' => 'MTY40',
+                            $ctnSizes = ['dc20', 'dc40', 'dc45', 'r20', 'r40', 'mty20', 'mty40'];
+                            $headersCtnSizes = array_intersect($ctnSizes, request('ctn_size', $ctnSizes));
+                            $headersUnitTeusP = ['unit', 'teus'];
+                            $headersExtra = [
+                                'teus%',
+                                // implode(',', request('ctn_type')) . '/mty+ldnttl%',
+                                implode(',', request('ctn_type') ?? []) .
+                                '/' .
+                                implode(',', request('ctn_type') ?? []) .
+                                'ttl%',
                             ];
-                            $shipmentTypes = ['export' => 'Export', 'import' => 'Import'];
-
-                            $requestedRoutes = request()->filled('route_id')
-                                ? (array) request('route_id')
-                                : array_keys($routes);
-                            $requestedShipmentTypes = request()->filled('shipment_type')
-                                ? array_intersect(array_keys($shipmentTypes), (array) request('shipment_type'))
-                                : array_keys($shipmentTypes);
-                            $requestedContainerTypes = request()->filled('ctn_size')
-                                ? array_intersect(array_keys($containerTypes), (array) request('ctn_size'))
-                                : array_keys($containerTypes);
-
+                            $headers = array_merge($headersCtnSizes, $headersUnitTeusP, $headersExtra);
+                            $headersCtnUTP = array_merge($headersCtnSizes, $headersUnitTeusP);
+                            $types = request('shipment_type', ['export', 'import']);
+                            $reportType = request('report_type');
+                            $selectedRouteIds = request('route_id', [1, 2, 3]);
+                            $selectedRoutes = collect($routes)->whereIn('id', $selectedRouteIds);
+                            $shortNames = $selectedRoutes->pluck('short_name')->implode(', ');
+                            $colspan = match ($reportType) {
+                                'operator-route-wise' => 3,
+                                'operator-wise', 'route-wise' => 2,
+                                default => 1,
+                            };
                         @endphp
 
                         <table id="excelJsTable"
-                            class="tableFixHead table-bordered table2excel custom-table-report mb-3 table">
-                            @php
-                                $routeText =
-                                    'Route: ' .
-                                    collect($requestedRoutes)->map(fn($r) => $routes[$r] ?? $r)->implode(', ');
-                            @endphp
-                            <thead>
+                            class="tableFixHead table-bordered table2excel custom-table-report mb-3 table-sm">
+                            <thead class="bg-gray-200">
                                 <tr>
-                                    <th colspan="{{ 8 + count($requestedContainerTypes) }}" class="text-center">
+                                    <th colspan="{{ $colspan + count($headers) }}" class="text-center">
                                         <h6 class="m-0 reportTitle text-center" style="font-size: 18px">
                                             <strong>
                                                 {{ request()->filled('report_type')
@@ -178,97 +175,136 @@
                                         </h6>
                                     </th>
                                 </tr>
+                                @if ($shortNames)
+                                    <tr>
+                                        <th colspan="{{ $colspan + count($headers) }}" class="pt-0">
+                                            <h6 class="text-center">{{ 'Route: ' . $shortNames }}</h6>
+                                        </th>
+                                    </tr>
+                                @endif
+
                                 <tr>
-                                    <th colspan="{{ 8 + count($requestedContainerTypes) }}" class="pt-0">
-                                        <h6 class="text-center">{{ $routeText }}</h6>
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Operator</th>
+                                    @if ($reportType === 'operator-route-wise')
+                                        <th>Operator</th>
+                                        <th>Route</th>
+                                    @elseif($reportType === 'operator-wise')
+                                        <th>Operator</th>
+                                    @elseif($reportType === 'route-wise')
+                                        <th>Route</th>
+                                    @endif
                                     <th>Type</th>
-                                    @foreach ($requestedContainerTypes as $type)
-                                        <th>{{ $containerTypes[$type] }}</th>
+                                    @foreach ($headers as $h)
+                                        <th class="text-right">{{ strtoupper($h) }}</th>
                                     @endforeach
-                                    <th>Unit</th>
-                                    <th>TEU</th>
-                                    <th>TEU%</th>
-                                    <th>{{ request('ctn_type') }}/ttl%</th>
-                                    <th>{{ request('ctn_type') . '/ttl' . request('ctn_type') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @php
-                                    $i = 0;
-                                @endphp
+                                {{-- {{dd($data)}} --}}
                                 @if (isset($data[0]))
-                                    @foreach ($data[0] as $operator => $rows)
-                                        @php
-                                            $rowspan = count($rows);
-                                            $first = true;
+                                    @foreach ($data[0] as $key1 => $value1)
+                                        @if ($reportType === 'operator-route-wise')
+                                            {{-- operator=>route=>type=> actual data --}}
+                                            @php $routeCount = count($value1); @endphp
+                                            @foreach ($value1 as $route => $typeData)
+                                                @foreach ($types as $i => $type)
+                                                    <tr>
+                                                        @if ($loop->parent->first && $i === 0)
+                                                            <td rowspan="{{ $routeCount * count($types) }}">
+                                                                {{ $key1 }}</td>
+                                                        @endif
+                                                        @if ($i === 0)
+                                                            <td rowspan="{{ count($types) }}">{{ $route }}</td>
+                                                        @endif
+                                                        <td>{{ strtoupper($type) }}</td>
+                                                        @foreach ($headersCtnUTP as $h)
+                                                            <td class="text-right">
+                                                                {{ number_format($typeData[$type][$h] ?? 0) }}</td>
+                                                        @endforeach
+                                                        <td class="text-right">
+                                                            {{ round(($typeData[$type]['teus'] / $data[1]) * 100, 2) }}
+                                                        </td>
+                                                        <td class="text-center">
+                                                            {{-- @php
+                                                                $ctnTypes = (array) request('ctn_type');
+                                                            @endphp
 
-                                        @endphp
-                                        @foreach ($rows as $type => $count)
-                                            <tr>
-                                                <td>{{ $i += 1 }}</td>
-                                                @if ($first)
-                                                    <td rowspan="{{ $rowspan }}">{{ $operator }}</td>
-                                                    @php $first = false; @endphp
-                                                @endif
-
-                                                <td>{{ ucfirst($type) }}</td>
-                                                @foreach ($requestedContainerTypes as $type)
-                                                    <td>{{ $count[$type] }}</td>
+                                                            @if (in_array('laden', $ctnTypes) && in_array('empty', $ctnTypes))
+                                                                -
+                                                            @elseif (in_array('laden', $ctnTypes))
+                                                                {{ $value1[$type]['ladenLaden'] }}
+                                                            @elseif (in_array('empty', $ctnTypes))
+                                                                {{ $value1[$type]['emptyEmpty'] }}
+                                                            @endif --}}
+                                                            -
+                                                        </td>
+                                                    </tr>
                                                 @endforeach
+                                            @endforeach
+                                        @else
+                                            @foreach ($types as $i => $type)
+                                                {{-- export/import --}}
+                                                <tr>
+                                                    @if ($i === 0)
+                                                        <td rowspan="{{ count($types) }}">{{ $key1 }}</td>
+                                                    @endif
+                                                    <td>{{ strtoupper($type) }}</td>
+                                                    @foreach ($headersCtnUTP as $h)
+                                                        <td class="text-right">{{ number_format($value1[$type][$h] ?? 0) }}
+                                                        </td>
+                                                    @endforeach
+                                                    <td class="text-right">
+                                                        {{-- value1[export or import] --}}
+                                                        {{ round(($value1[$type]['teus'] / $data[1]) * 100, 2) }}</td>
+                                                    {{-- <td class="text-right">
+                                                        {{ request('ctn_type') == 'laden' ? $value1[$type]['ladenTotal'] : $value1[$type]['emptyTotal'] }}
+                                                    </td> --}}
+                                                    <td class="text-right">
+                                                        @php
+                                                            $ctnTypes = (array) request('ctn_type');
+                                                        @endphp
 
-                                                <td>{{ $count['unit'] }}</td>
-                                                <td>{{ $count['teus'] }}</td>
-                                                <td>{{ round(($count['teus'] / $data[1]) * 100, 2) }}</td>
-                                                <td>
-                                                    {{ request('ctn_type') == 'laden' ? $count['ladenTotal'] : $count['emptyTotal'] }}
-                                                </td>
-                                                <td>
-                                                    {{ request('ctn_type') == 'laden' ? $count['ladenLaden'] : $count['emptyEmpty'] }}
-                                                </td>
-                                            </tr>
-                                        @endforeach
+                                                        @if (in_array('laden', $ctnTypes) && in_array('empty', $ctnTypes))
+                                                            -
+                                                        @elseif (in_array('laden', $ctnTypes))
+                                                            {{ $value1[$type]['ladenLaden'] }}
+                                                        @elseif (in_array('empty', $ctnTypes))
+                                                            {{ $value1[$type]['emptyEmpty'] }}
+                                                        @endif
+
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
                                     @endforeach
                                 @endif
-
                             </tbody>
-                            <tfoot>
+                            <tfoot class="bg-gray-100 font-semibold">
                                 <tr>
-                                    <th colspan="3">Total</th>
-                                    @foreach ($requestedContainerTypes as $type)
-                                        <th>
+                                    <td class="text-center" colspan="{{ $colspan }}">Total</td>
+                                    @foreach ($headersCtnSizes as $type)
+                                        <th class="text-right">
                                             @if (isset($data[0]))
                                                 {{ collect($data[0])->flatten(1)->sum(function ($item) use ($type) {
-                                                    return $item[$type] ?? 0;
-                                                }) }}
+                                                        return $item[$type] ?? 0;
+                                                    }) }}
                                             @endif
-                                            
                                         </th>
                                     @endforeach
-                                    <th>
-                                        {{ collect($data[0]??collect())->flatten(1)->sum('unit') }}
+                                    <th class="text-right">
+                                        {{ collect($data[0] ?? collect())->flatten(1)->sum('unit') }}
                                     </th>
-                                    <th>
-                                        {{ collect($data[0]??collect())->flatten(1)->sum('teus') }}
+                                    <th class="text-right">
+                                        {{ collect($data[0] ?? collect())->flatten(1)->sum('teus') }}
                                     </th>
-                                    <th>
-
-                                    </th>
-                                    <th>
-                                        {{-- {{ request('ctn_type') == 'laden' ? $count['ladenTotal'] : $count['emptyTotal'] }} --}}
-                                    </th>
-                                    <th>
-                                        {{-- {{ request('ctn_type') == 'laden' ? $count['ladenLaden'] : $count['emptyEmpty'] }} --}}
-                                    </th>
+                                    <th class="text-right">100</th>
+                                    {{-- <th></th> --}}
+                                    <th></th>
                                 </tr>
                             </tfoot>
-
-
                         </table>
+
+
+
 
                     </div>
 
@@ -291,26 +327,6 @@
 
             initializeMonthYearPicker('.monthpicker');
 
-            $(".datepicker").datepicker({
-                dateFormat: 'yy-mm-dd',
-                showButtonPanel: true,
-                currentText: "Today",
-
-                beforeShow: function(input, inst) {
-                    setTimeout(function() {
-                        var buttonPane = $(inst.dpDiv).find('.ui-datepicker-buttonpane');
-
-                        buttonPane.find('.ui-datepicker-current').off('click').on('click',
-                            function() {
-                                var today = new Date();
-                                $(input).datepicker('setDate', today);
-                                $.datepicker._hideDatepicker(input); //close after selecting
-                                $(input).blur(); //prevent auto-focus/reopen
-                            });
-                    }, 1);
-                }
-            });
-
             $('.selectpicker').selectpicker({
                 actionsBox: true,
                 deselectAllText: 'Deselect All',
@@ -321,30 +337,34 @@
                 selectedTextFormat: 'count'
             });
 
-            const $ctnType = $('#ctnTypeSelect');
-            const $ctnSize = $('#ctnSizeSelect');
+            function filterCtnSizes() {
+                const selectedTypes = $('#ctnTypeSelect').val();
+                const $ctnSizeSelect = $('#ctnSizeSelect');
 
-            function filterContainerSizes() {
-                const selectedType = $ctnType.val();
+                $ctnSizeSelect.find('option').each(function() {
+                    const ctnType = $(this).data('ctn-type');
+                    const shouldShow =
+                        selectedTypes && selectedTypes.length > 0 ?
+                        selectedTypes.includes(ctnType) :
+                        true;
 
-                $ctnSize.find('option').each(function() {
-                    const $option = $(this);
-                    const optionType = $option.data('ctn-type');
-
-                    if (!selectedType || optionType === selectedType) {
-                        $option.show();
-                    } else {
-                        $option.prop('selected', false).hide();
-                    }
+                    $(this).prop('hidden', !shouldShow);
                 });
 
-                $ctnSize.selectpicker('refresh'); // Required for Bootstrap Select
+                if (selectedTypes && selectedTypes.length > 0) {
+                    const toSelect = $ctnSizeSelect.find('option').filter(':not([hidden])').map(function() {
+                        return this.value;
+                    }).get();
+                    $ctnSizeSelect.val(toSelect);
+                } else {
+                    $ctnSizeSelect.val([]);
+                }
+                $ctnSizeSelect.selectpicker('refresh');
             }
-            filterContainerSizes();
+            $('#ctnTypeSelect').on('changed.bs.select', filterCtnSizes);
 
-            $ctnType.on('change', function() {
-                filterContainerSizes();
-            });
+            filterCtnSizes();
+
 
         });
 
