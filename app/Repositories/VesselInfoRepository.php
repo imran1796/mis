@@ -15,7 +15,7 @@ class VesselInfoRepository implements VesselInfoInterface
         $query = VesselInfos::with([
             'vessel',
             'route',
-            'importExportCounts' 
+            'importExportCounts'
             // => function ($q) use ($filters) {
             //     $baseColumns = ['id', 'vessel_info_id', 'type'];
 
@@ -44,6 +44,10 @@ class VesselInfoRepository implements VesselInfoInterface
         if (!empty($filters['to_date'])) {
             $toDate = Carbon::parse($filters['to_date'])->endOfMonth();
             $query->whereDate('date', '<=', $toDate);
+        }
+
+        if(!empty($filters['operators'])){
+            $query->whereIn('operator', $filters['operators']);
         }
 
         return $query->get();
@@ -91,5 +95,27 @@ class VesselInfoRepository implements VesselInfoInterface
     public function createImportExportCount(array $data)
     {
         return ImportExportCount::create($data);
-    } 
+    }
+
+    public function updateVesselInfoTime(array $data)
+    {
+        try {
+            $vesselName = trim(strtoupper($data['vessel_name']));
+            VesselInfos::whereDate('date', Carbon::parse($data['date'])->toDateString())
+            ->where('arrival_date', Carbon::parse($data['eta'])->toDateString())
+            ->whereHas('vessel', function ($query) use ($vesselName) {
+                $query->whereRaw('TRIM(UPPER(vessel_name)) = ?', [$vesselName]);
+            })
+                ->update([
+                    'arrival_time' => Carbon::parse($data['eta'])->format('H:i:s'),
+                    'berth_time' => Carbon::parse($data['berth_time'])->format('H:i:s'),
+                    'sail_time' => Carbon::parse($data['sail_time'])->format('H:i:s'),
+                ]);
+        } catch (\Throwable $th) {
+            Log::error('Failed to update vessel times', [
+                'error' => $th->getMessage(),
+                'data' => $data,
+            ]);
+        }
+    }
 }

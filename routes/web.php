@@ -54,6 +54,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/delete', [\App\Http\Controllers\VesselController::class, 'deletVesselInfoByDateRoute'])->name('vesselInfo.deleteByDateRoute');
     });
 
+    Route::group(['prefix' => 'vessel-turn-around'], function () {
+        Route::get('/', [\App\Http\Controllers\VesselController::class, 'indexVesselTurnAround'])->name('vesselTurnAround.index');
+        Route::get('/create', [\App\Http\Controllers\VesselController::class, 'createVesselTurnAround'])->name('vesselTurnAround.create');
+        Route::post('/store', [\App\Http\Controllers\VesselController::class, 'storeVesselTurnAround'])->name('vesselTurnAround.store');
+        Route::post('/update', [\App\Http\Controllers\VesselController::class, 'updateVesselTurnAround'])->name('vesselTurnAround.update');
+        Route::delete('/delete', [\App\Http\Controllers\VesselController::class, 'deletVesselTurnAroundByDate'])->name('vesselTurnAround.deleteByDate');
+    });
+
     Route::group(['prefix' => 'reports'], function () {
         Route::get('/index', [\App\Http\Controllers\VesselController::class, 'indexReport'])->name('reports.index');
         Route::get('/operator-wise-lifting', [\App\Http\Controllers\VesselController::class, 'operatorWiseLifting'])->name('reports.operator-wise-lifting');

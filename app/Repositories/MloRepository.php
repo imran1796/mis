@@ -32,8 +32,8 @@ class MloRepository implements MloInterface
             $query->whereDate('date', '<=', $toDate);
         }
 
-        if (!empty($filters['mlo'])) {
-            $query->whereIn('mlo_code', $filters['mlo']);
+        if (!empty($filters['mlos'])) {
+            $query->whereIn('mlo_code', $filters['mlos']);
         }
 
         if (!empty($filters['route_id'])) {

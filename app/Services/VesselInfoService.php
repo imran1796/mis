@@ -250,7 +250,7 @@ class VesselInfoService
         $datas = [];
         $vessels = $this->vesselInfoRepository->getAllVesselInfos($filters)->groupBy('date');
 
-        foreach ($vessels as $month => $vslGroup) {
+        foreach ($vessels->sortKeys() as $month => $vslGroup) {
             foreach ($vslGroup as $v) {
                 $monthKey = \Carbon\Carbon::parse($v->date)->format('M-y');
 
@@ -298,13 +298,22 @@ class VesselInfoService
 
         $results = $vessels->map(function ($v, $i) {
             // Default to midnight if time is null
+            // $arrival = $v->arrival_date ? Carbon::parse($v->arrival_date . ' ' . ($v->arrival_time ?? '00:00:00')) : null;
+            // $berth = $v->berth_date ? Carbon::parse($v->berth_date . ' ' . ($v->berth_time ?? '00:00:00')) : null;
+            // $sail = $v->sail_date ? Carbon::parse($v->sail_date . ' ' . ($v->sail_time ?? '00:00:00')) : null;
+
+            // $oaStay = ($arrival && $berth) ? $arrival->diffInHours($berth) : null;
+            // $berthStay = ($berth && $sail) ? $berth->diffInHours($sail) : null;
+            // $turnAroundTime = ($oaStay ?? 0) + ($berthStay ?? 0);
+
             $arrival = $v->arrival_date ? Carbon::parse($v->arrival_date . ' ' . ($v->arrival_time ?? '00:00:00')) : null;
             $berth = $v->berth_date ? Carbon::parse($v->berth_date . ' ' . ($v->berth_time ?? '00:00:00')) : null;
             $sail = $v->sail_date ? Carbon::parse($v->sail_date . ' ' . ($v->sail_time ?? '00:00:00')) : null;
 
-            $oaStay = ($arrival && $berth) ? $arrival->diffInHours($berth) : null;
-            $berthStay = ($berth && $sail) ? $berth->diffInHours($sail) : null;
+            $oaStay = ($arrival && $berth) ? round($arrival->diffInHours($berth)) : null;
+            $berthStay = ($berth && $sail) ? round($berth->diffInHours($sail)) : null;
             $turnAroundTime = ($oaStay ?? 0) + ($berthStay ?? 0);
+
 
             $import = $v->importExportCounts->firstWhere('type', 'import');
             $export = $v->importExportCounts->firstWhere('type', 'export');
@@ -594,6 +603,8 @@ class VesselInfoService
                         ? round(($emptyTeuCtn / $totalTypeTeu) * 100, 2) : 0;
                     $summary[$type]['emptyEmpty'] = $totalTeusByType[$type]['empty'] > 0
                         ? round(($emptyTeuCtn / $totalTeusByType[$type]['empty']) * 100, 2) : 0;
+                    $summary[$type]['ttlExisting'] = $totalTypeTeu > 0
+                        ? round((($emptyTeuCtn + $ladenTeuCtn) / $totalTypeTeu) * 100, 2) : 0;
                 }
 
                 return [$routeKey => $summary];
@@ -626,6 +637,12 @@ class VesselInfoService
             'ladenLaden' => 0,
             'emptyTotal' => 0,
             'emptyEmpty' => 0,
+            'ttlExisting' => 0
         ]);
+    }
+
+    public function updateVesselInfoTime(array $data)
+    {
+        return $this->vesselInfoRepository->updateVesselInfoTime($data);
     }
 }

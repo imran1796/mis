@@ -174,7 +174,7 @@ class MloService
 
         $results = [];
         foreach ($mloWiseDatas as $mlo => $mloWiseData) {
-            
+
             $results[$mlo] = [
                 'totalImportLdnTeus' => 0,
                 'totalImportMtyTeus' => 0,
@@ -186,7 +186,7 @@ class MloService
                 'totalMonth' => count($mloWiseData),
             ];
 
-            foreach ($mloWiseData as $date => $data) {
+            foreach ($mloWiseData as $date => $datas) {
                 $month = Carbon::parse($date)->format('M');
 
                 if (!isset($results[$mlo]['permonth'][$month])) {
@@ -197,28 +197,45 @@ class MloService
                         'exportMtyTeus' => 0,
                     ];
                 }
+                foreach ($datas as $data) {
+                    if ($data->type == 'import') {
+                        $importLaden = ($data->dc20 ?? 0) + ($data->r20 ?? 0) + ((($data->dc40 ?? 0) + ($data->dc45 ?? 0) + ($data->r40 ?? 0)) * 2);
+                        $importEmpty = ($data->mty20 ?? 0) + (($data->mty40 ?? 0) * 2);
+                        $results[$mlo]['permonth'][$month]['importLdnTeus'] += $importLaden;
+                        $results[$mlo]['permonth'][$month]['importMtyTeus'] += $importEmpty;
+                        $results[$mlo]['totalImportLdnTeus'] += $importLaden;
+                        $results[$mlo]['totalImportMtyTeus'] += $importEmpty;
+                    } else {
+                        $exportLaden = ($data->dc20 ?? 0) + ($data->r20 ?? 0) + ((($data->dc40 ?? 0) + ($data->dc45 ?? 0) + ($data->r40 ?? 0)) * 2);
+                        $exportEmpty = ($data->mty20 ?? 0) + (($data->mty40 ?? 0) * 2);
+                        $results[$mlo]['permonth'][$month]['exportLdnTeus'] += $exportLaden;
+                        $results[$mlo]['permonth'][$month]['exportMtyTeus'] += $exportEmpty;
+                        $results[$mlo]['totalExportLdnTeus'] += $exportLaden;
+                        $results[$mlo]['totalExportMtyTeus'] += $exportEmpty;
+                    }
+                }
 
-                $import = $data[0] ?? null;
-                $export = $data[1] ?? null;
+                // $import = $data[0] ?? null;
+                // $export = $data[1] ?? null;
 
                 // TEU calculations
-                $importLaden = ($import->dc20 ?? 0) + ($import->r20 ?? 0) + ((($import->dc40 ?? 0) + ($import->dc45 ?? 0) + ($import->r40 ?? 0)) * 2);
-                $importEmpty = ($import->mty20 ?? 0) + (($import->mty40 ?? 0) * 2);
+                // $importLaden = ($import->dc20 ?? 0) + ($import->r20 ?? 0) + ((($import->dc40 ?? 0) + ($import->dc45 ?? 0) + ($import->r40 ?? 0)) * 2);
+                // $importEmpty = ($import->mty20 ?? 0) + (($import->mty40 ?? 0) * 2);
 
-                $exportLaden = ($export->dc20 ?? 0) + ($export->r20 ?? 0) + ((($export->dc40 ?? 0) + ($export->dc45 ?? 0) + ($export->r40 ?? 0)) * 2);
-                $exportEmpty = ($export->mty20 ?? 0) + (($export->mty40 ?? 0) * 2);
+                // $exportLaden = ($export->dc20 ?? 0) + ($export->r20 ?? 0) + ((($export->dc40 ?? 0) + ($export->dc45 ?? 0) + ($export->r40 ?? 0)) * 2);
+                // $exportEmpty = ($export->mty20 ?? 0) + (($export->mty40 ?? 0) * 2);
 
                 // Store monthly values
-                $results[$mlo]['permonth'][$month]['importLdnTeus'] += $importLaden;
-                $results[$mlo]['permonth'][$month]['importMtyTeus'] += $importEmpty;
-                $results[$mlo]['permonth'][$month]['exportLdnTeus'] += $exportLaden;
-                $results[$mlo]['permonth'][$month]['exportMtyTeus'] += $exportEmpty;
+                // $results[$mlo]['permonth'][$month]['importLdnTeus'] += $importLaden;
+                // $results[$mlo]['permonth'][$month]['importMtyTeus'] += $importEmpty;
+                // $results[$mlo]['permonth'][$month]['exportLdnTeus'] += $exportLaden;
+                // $results[$mlo]['permonth'][$month]['exportMtyTeus'] += $exportEmpty;
 
                 // Store totals
-                $results[$mlo]['totalImportLdnTeus'] += $importLaden;
-                $results[$mlo]['totalImportMtyTeus'] += $importEmpty;
-                $results[$mlo]['totalExportLdnTeus'] += $exportLaden;
-                $results[$mlo]['totalExportMtyTeus'] += $exportEmpty;
+                // $results[$mlo]['totalImportLdnTeus'] += $importLaden;
+                // $results[$mlo]['totalImportMtyTeus'] += $importEmpty;
+                // $results[$mlo]['totalExportLdnTeus'] += $exportLaden;
+                // $results[$mlo]['totalExportMtyTeus'] += $exportEmpty;
             }
         }
         return $results;

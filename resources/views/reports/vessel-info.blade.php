@@ -97,7 +97,7 @@
                             @foreach (['dc20', 'dc40', 'dc45', 'r20', 'r40', 'mty20', 'mty40'] as $type)
                                 <option value="{{ $type }}"
                                     data-ctn-type="{{ in_array($type, ['mty20', 'mty40']) ? 'empty' : 'laden' }}"
-                                    {{ collect(request('ctn_size'))->contains($type) ? 'selected' : '' }}>
+                                    {{ request('ctn_size') != null ? (in_array($type, request('ctn_size')) ? 'selected' : '') : '' }}>
                                     {{ strtoupper($type) }}
                                 </option>
                             @endforeach
@@ -141,11 +141,12 @@
                             $headersUnitTeusP = ['unit', 'teus'];
                             $headersExtra = [
                                 'teus%',
-                                // implode(',', request('ctn_type')) . '/mty+ldnttl%',
-                                implode(',', request('ctn_type') ?? []) .
-                                '/' .
-                                implode(',', request('ctn_type') ?? []) .
-                                'ttl%',
+                                count(array_intersect(['empty', 'laden'], (array) request('ctn_type'))) === 2 ||
+                                empty(request('ctn_type'))
+                                    ? 'existing/ttl%'
+                                    : (request('ctn_type')[0] === 'empty'
+                                        ? 'empty/ttlMTY%'
+                                        : 'laden/ttlLDN%'),
                             ];
                             $headers = array_merge($headersCtnSizes, $headersUnitTeusP, $headersExtra);
                             $headersCtnUTP = array_merge($headersCtnSizes, $headersUnitTeusP);
@@ -157,7 +158,7 @@
                             $colspan = match ($reportType) {
                                 'operator-route-wise' => 3,
                                 'operator-wise', 'route-wise' => 2,
-                                default => 1,
+                                default => 2,
                             };
                         @endphp
 
@@ -191,6 +192,8 @@
                                         <th>Operator</th>
                                     @elseif($reportType === 'route-wise')
                                         <th>Route</th>
+                                    @else
+                                        <th>Operator</th>
                                     @endif
                                     <th>Type</th>
                                     @foreach ($headers as $h)
@@ -199,7 +202,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {{-- {{dd($data)}} --}}
+                                {{-- SKN => SIN/CBO => export/IMPORT => data --}}
                                 @if (isset($data[0]))
                                     @foreach ($data[0] as $key1 => $value1)
                                         @if ($reportType === 'operator-route-wise')
@@ -216,6 +219,8 @@
                                                             <td rowspan="{{ count($types) }}">{{ $route }}</td>
                                                         @endif
                                                         <td>{{ strtoupper($type) }}</td>
+
+                                                        {{-- titles --}}
                                                         @foreach ($headersCtnUTP as $h)
                                                             <td class="text-right">
                                                                 {{ number_format($typeData[$type][$h] ?? 0) }}</td>
@@ -224,18 +229,19 @@
                                                             {{ round(($typeData[$type]['teus'] / $data[1]) * 100, 2) }}
                                                         </td>
                                                         <td class="text-center">
-                                                            {{-- @php
+                                                            @php
                                                                 $ctnTypes = (array) request('ctn_type');
                                                             @endphp
 
                                                             @if (in_array('laden', $ctnTypes) && in_array('empty', $ctnTypes))
-                                                                -
+                                                                {{ $typeData[$type]['ttlExisting'] }}
                                                             @elseif (in_array('laden', $ctnTypes))
-                                                                {{ $value1[$type]['ladenLaden'] }}
+                                                                {{ $typeData[$type]['ladenLaden'] }}
                                                             @elseif (in_array('empty', $ctnTypes))
-                                                                {{ $value1[$type]['emptyEmpty'] }}
-                                                            @endif --}}
-                                                            -
+                                                                {{ $typeData[$type]['emptyEmpty'] }}
+                                                            @else
+                                                                {{ $typeData[$type]['ttlExisting'] }}
+                                                            @endif
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -264,11 +270,13 @@
                                                         @endphp
 
                                                         @if (in_array('laden', $ctnTypes) && in_array('empty', $ctnTypes))
-                                                            -
+                                                            {{ $value1[$type]['ttlExisting'] }}
                                                         @elseif (in_array('laden', $ctnTypes))
                                                             {{ $value1[$type]['ladenLaden'] }}
                                                         @elseif (in_array('empty', $ctnTypes))
                                                             {{ $value1[$type]['emptyEmpty'] }}
+                                                        @else
+                                                            {{ $value1[$type]['ttlExisting'] }}
                                                         @endif
 
                                                     </td>
@@ -280,21 +288,38 @@
                             </tbody>
                             <tfoot class="bg-gray-100 font-semibold">
                                 <tr>
+                                    {{-- {{ dd(collect($data[0])->flatten(2)) }} --}}
                                     <td class="text-center" colspan="{{ $colspan }}">Total</td>
                                     @foreach ($headersCtnSizes as $type)
                                         <th class="text-right">
                                             @if (isset($data[0]))
-                                                {{ collect($data[0])->flatten(1)->sum(function ($item) use ($type) {
-                                                        return $item[$type] ?? 0;
-                                                    }) }}
+                                                @if ($reportType === 'operator-route-wise')
+                                                    {{ collect($data[0])->flatten(2)->sum(function ($item) use ($type) {
+                                                            return $item[$type] ?? 0;
+                                                        }) }}
+                                                @else
+                                                    {{ collect($data[0])->flatten(1)->sum(function ($item) use ($type) {
+                                                            return $item[$type] ?? 0;
+                                                        }) }}
+                                                @endif
                                             @endif
                                         </th>
                                     @endforeach
                                     <th class="text-right">
-                                        {{ collect($data[0] ?? collect())->flatten(1)->sum('unit') }}
+                                        @if ($reportType === 'operator-route-wise')
+                                            {{ collect($data[0] ?? collect())->flatten(2)->sum('unit') }}
+                                        @else
+                                            {{ collect($data[0] ?? collect())->flatten(1)->sum('unit') }}
+                                        @endif
+                                        {{-- {{ collect($data[0] ?? collect())->flatten(1)->sum('unit') }} --}}
                                     </th>
                                     <th class="text-right">
-                                        {{ collect($data[0] ?? collect())->flatten(1)->sum('teus') }}
+                                        @if ($reportType === 'operator-route-wise')
+                                            {{ collect($data[0] ?? collect())->flatten(2)->sum('teus') }}
+                                        @else
+                                            {{ collect($data[0] ?? collect())->flatten(1)->sum('teus') }}
+                                        @endif
+                                        {{-- {{ collect($data[0] ?? collect())->flatten(1)->sum('teus') }} --}}
                                     </th>
                                     <th class="text-right">100</th>
                                     {{-- <th></th> --}}
@@ -302,9 +327,6 @@
                                 </tr>
                             </tfoot>
                         </table>
-
-
-
 
                     </div>
 
@@ -338,11 +360,11 @@
             });
 
             function filterCtnSizes() {
-                const selectedTypes = $('#ctnTypeSelect').val();
+                const selectedTypes = $('#ctnTypeSelect').val(); //laden/empty
                 const $ctnSizeSelect = $('#ctnSizeSelect');
 
                 $ctnSizeSelect.find('option').each(function() {
-                    const ctnType = $(this).data('ctn-type');
+                    const ctnType = $(this).data('ctn-type'); //mty/laden
                     const shouldShow =
                         selectedTypes && selectedTypes.length > 0 ?
                         selectedTypes.includes(ctnType) :

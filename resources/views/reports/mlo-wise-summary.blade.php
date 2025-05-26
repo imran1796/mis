@@ -6,11 +6,11 @@
 ])
 
 @section('content')
-<style>
-    .ui-datepicker-calendar {
-        display: none;
-    }
-</style>
+    <style>
+        .ui-datepicker-calendar {
+            display: none;
+        }
+    </style>
     <div class="content">
         <div class="container-fluid">
             <div class="section-image">
@@ -27,10 +27,93 @@
                 </div>
 
                 <form class="row px-3 mb-2">
+                    @php
+                        $mlos = [
+                            'ALC',
+                            'ALL',
+                            'ANL',
+                            'APL',
+                            'ARL',
+                            'BCS',
+                            'BLPL',
+                            'BLS',
+                            'BTC',
+                            'CLN',
+                            'CMA',
+                            'COSCO',
+                            'CSI',
+                            'EGH',
+                            'EGL',
+                            'EMA',
+                            'EMC',
+                            'EMS',
+                            'EMU',
+                            'FSC',
+                            'GAP',
+                            'GLG',
+                            'GSL',
+                            'HEUNGA',
+                            'HL',
+                            'HMM',
+                            'IM',
+                            'INL',
+                            'KCS',
+                            'KMTC',
+                            'LCN',
+                            'LEL',
+                            'LSC',
+                            'MAXI',
+                            'MCC',
+                            'MLG',
+                            'MLS',
+                            'MSC',
+                            'MSL',
+                            'NGS',
+                            'ONE',
+                            'OOCL',
+                            'OUL',
+                            'PIL',
+                            'PLO',
+                            'PRC',
+                            'QCML',
+                            'RXL',
+                            'SAF',
+                            'SAMU',
+                            'SAS',
+                            'SCC',
+                            'SCI',
+                            'SETH',
+                            'SITARA',
+                            'SKN',
+                            'SPI',
+                            'TIZ',
+                            'TPS',
+                            'TSM',
+                            'TVS',
+                            'UCL',
+                            'VMP',
+                            'VSC',
+                            'VSL',
+                            'WHL',
+                            'YML',
+                        ];
+                    @endphp
                     <div class="col-md-2 px-1 form-group">
-                        <select id="pod" name="route_id[]" class="form-control form-control-sm selectpicker" multiple>
+                        <select id="pod" name="route_id[]" class="form-control form-control-sm selectpicker" multiple
+                            title="Select Route">
                             @foreach ($pods as $pod)
-                                <option value="{{ $pod->id }}">{{ $pod->name }}</option>
+                                <option value="{{ $pod->id }}"
+                                    {{ in_array($pod->id, (array) request('route_id')) ? 'selected' : '' }}>
+                                    {{ $pod->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-2 px-1 form-group">
+                        <select data-live-search="true" data-actions-box="true" id="mlo" name="mlos[]"
+                            class="form-control form-control-sm search-select selectpicker" multiple>
+                            @foreach ($mlos as $mlo)
+                                <option value="{{ $mlo }}" selected>{{ $mlo }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -71,37 +154,76 @@
                         {{-- end auto search --}}
                     </div>
                     <div class="card-body">
-                        <table id="excelJsTable" class="tableFixHead table-bordered table2excel custom-table-report mb-3">
-                            <p class="reportRange" style="display: none;" type="hidden">Date: {{ request('from_date') }} to
-                                {{ request('to_date') }}</p>
+                        @php
+                            $selectedRouteIds = request('route_id', [1, 2, 3]);
+                            $selectedRoutes = collect($pods)->whereIn('id', $selectedRouteIds);
+                            $shortNames = $selectedRoutes->pluck('short_name')->implode(', ');
+                            $perMonthCount = count(collect($results)->first()['permonth'] ?? []);
+                            $colspan = $perMonthCount * 4 + 12;
+
+                            $allMonths = collect($results)
+                                ->flatMap(fn($dt) => array_keys($dt['permonth']))
+                                ->unique()
+                                ->sortBy(fn($m) => \Carbon\Carbon::parse($m)->month)
+                                ->values();
+                        @endphp
+                        <table id="excelJsTable" class="tableFixHead table-bordered custom-table-report mb-3">
+                            <p class="reportRange" style="display: none;" type="hidden">Date: {{ request('from_date') }} to {{ request('to_date') }}</p>
                             <p class="reportTitle" style="display: none;" type="hidden">Mlo_Wise_Summary</p>
                             <input class="reportRange" type="hidden"
                                 value="Date: {{ request('from_date') }} to {{ request('to_date') }}">
                             <input class="reportTitle" type="hidden" value="Mlo_Wise_Summary">
                             <thead>
                                 <tr>
+                                    <th colspan="{{ $colspan }}" style="font-size: 18px" class="text-center">MLO NVOCC
+                                        SUMMARY</th>
+                                </tr>
+
+                                @if (request()->filled('from_date') && request()->filled('to_date'))
+                                    <tr>
+                                        <th colspan="{{ $colspan }}" class="text-center reportRange">
+                                            <h6 class="text-center"> Date: {{ request('from_date') }} to
+                                                {{ request('to_date') }}</h6>
+                                        </th>
+                                    </tr>
+                                @endif
+
+                                @if ($shortNames)
+                                    <tr>
+                                        <th colspan="{{ $colspan }}" class="pt-0">
+                                            <h6 class="text-center">{{ 'Route: ' . $shortNames }}</h6>
+                                        </th>
+                                    </tr>
+                                @endif
+
+                                <tr>
+                                    <th rowspan="3">#SL</th>
                                     <th rowspan="3">MLO Code</th>
                                     <th rowspan="3">Line Belongs To</th>
                                     <th rowspan="3">MLO Details</th>
-                                    @if (!empty($results))
+                                    {{-- @if (!empty($results))
                                         @foreach (collect($results)->first()['permonth'] as $month => $d)
                                             <th colspan="4">{{ $month }}</th>
                                         @endforeach
-                                    @endif
+                                    @endif --}}
+                                    @foreach ($allMonths as $month)
+                                        <th colspan="4" class="text-center">{{ $month }}</th>
+                                    @endforeach
 
-                                    {{-- {{dd(collect($results))}} --}}
-
-                                    {{-- <th colspan="4">foreach teus</th> --}}
                                     <th colspan="4">Total Teus</th>
                                     <th colspan="4">Average Teus</th>
                                 </tr>
                                 <tr>
-                                    @if (!empty($results))
+                                    {{-- @if (!empty($results))
                                         @foreach (collect($results)->first()['permonth'] as $i)
                                             <th colspan="2">Import</th>
                                             <th colspan="2">Export</th>
                                         @endforeach
-                                    @endif
+                                    @endif --}}
+                                    @foreach ($allMonths as $month)
+                                        <th colspan="2">Import</th>
+                                        <th colspan="2">Export</th>
+                                    @endforeach
 
                                     <th colspan="2">Import</th>
                                     <th colspan="2">Export</th>
@@ -109,14 +231,21 @@
                                     <th colspan="2">Export</th>
                                 </tr>
                                 <tr>
-                                    @if (!empty($results))
+                                    {{-- @if (!empty($results))
                                         @foreach (collect($results)->first()['permonth'] as $i)
                                             <th>LDN</th>
                                             <th>MTY</th>
                                             <th>LDN</th>
                                             <th>MTY</th>
                                         @endforeach
-                                    @endif
+                                    @endif --}}
+
+                                    @foreach ($allMonths as $month)
+                                        <th>LDN</th>
+                                        <th>MTY</th>
+                                        <th>LDN</th>
+                                        <th>MTY</th>
+                                    @endforeach
 
                                     <th>LDN</th>
                                     <th>MTY</th>
@@ -132,25 +261,41 @@
                             <tbody>
                                 @foreach ($results as $mlo => $dt)
                                     <tr>
+                                        <td>{{ $loop->iteration }}</td>
                                         <td>{{ $mlo }}</td>
                                         <td>{{ $dt['lineBelongsTo'] }}</td>
                                         <td>{{ $dt['mloDetails'] }}</td>
 
-                                        @foreach ($dt['permonth'] as $month => $t)
+                                        {{-- @foreach ($dt['permonth'] as $month => $t)
                                             <td>{{ $t['importLdnTeus'] }}</td>
                                             <td>{{ $t['importMtyTeus'] }}</td>
                                             <td>{{ $t['exportLdnTeus'] }}</td>
                                             <td>{{ $t['exportMtyTeus'] }}</td>
+                                        @endforeach --}}
+                                        @foreach ($allMonths as $month)
+                                            @php
+                                                $data = $dt['permonth'][$month] ?? [
+                                                    'importLdnTeus' => 0,
+                                                    'importMtyTeus' => 0,
+                                                    'exportLdnTeus' => 0,
+                                                    'exportMtyTeus' => 0,
+                                                ];
+                                            @endphp
+                                            <td>{{ $data['importLdnTeus'] }}</td>
+                                            <td>{{ $data['importMtyTeus'] }}</td>
+                                            <td>{{ $data['exportLdnTeus'] }}</td>
+                                            <td>{{ $data['exportMtyTeus'] }}</td>
                                         @endforeach
+
                                         <td>{{ $dt['totalImportLdnTeus'] }}</td>
                                         <td>{{ $dt['totalImportMtyTeus'] }}</td>
                                         <td>{{ $dt['totalExportLdnTeus'] }}</td>
                                         <td>{{ $dt['totalExportMtyTeus'] }}</td>
-                                        
-                                        <td>{{ $dt['totalImportLdnTeus'] / count($dt['permonth']) }}</td>
-                                        <td>{{ $dt['totalImportMtyTeus'] / count($dt['permonth']) }}</td>
-                                        <td>{{ $dt['totalExportLdnTeus'] / count($dt['permonth']) }}</td>
-                                        <td>{{ $dt['totalExportMtyTeus'] / count($dt['permonth']) }}</td>
+
+                                        <td>{{ round($dt['totalImportLdnTeus'] / count($dt['permonth'])) }}</td>
+                                        <td>{{ round($dt['totalImportMtyTeus'] / count($dt['permonth'])) }}</td>
+                                        <td>{{ round($dt['totalExportLdnTeus'] / count($dt['permonth'])) }}</td>
+                                        <td>{{ round($dt['totalExportMtyTeus'] / count($dt['permonth'])) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -174,6 +319,18 @@
                 $(".tableFixHead tbody tr").filter(function() {
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
+            });
+
+            $('.selectpicker').selectpicker({
+                actionsBox: true,
+                deselectAllText: 'Deselect All',
+                countSelectedText: (numSelected) =>
+                    numSelected === 1 ? "{0} item selected" : "{0} items selected",
+                selectedTextFormat: 'count > 3'
+            });
+
+            $('.selectpicker').on('loaded.bs.select', function() {
+                $(this).parent().find('.bs-select-all').hide();
             });
         });
 

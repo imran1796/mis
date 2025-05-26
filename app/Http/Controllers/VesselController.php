@@ -8,14 +8,17 @@ use App\Http\Requests\ImportExportCountCreateRequest;
 use App\Http\Requests\VesselInfoCreateRequest;
 use App\Http\Requests\VesselInfoUpdateRequest;
 use App\Http\Requests\VesselStoreRequest;
+use App\Http\Requests\VesselTurnAroundStoreRequest;
 use App\Http\Requests\VesselUpdateRequest;
 use App\Models\ImportExportCount;
 use App\Models\Mlo;
 use App\Models\MloWiseCount;
 use App\Models\Route;
 use App\Models\VesselInfos;
+use App\Models\VesselTurnAround;
 use App\Services\VesselInfoService;
 use App\Services\VesselService;
+use App\Services\VesselTurnAroundService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -23,12 +26,13 @@ use SebastianBergmann\CodeCoverage\Report\Xml\Totals;
 
 class VesselController extends Controller
 {
-    protected $vesselService, $vesselInfoService;
+    protected $vesselService, $vesselInfoService, $vesselTurnAroundService;
 
-    public function __construct(VesselService $vesselService, VesselInfoService $vesselInfoService)
+    public function __construct(VesselService $vesselService, VesselInfoService $vesselInfoService, VesselTurnAroundService $vesselTurnAroundService)
     {
         $this->vesselService = $vesselService;
         $this->vesselInfoService = $vesselInfoService;
+        $this->vesselTurnAroundService = $vesselTurnAroundService;
 
         // $this->middleware('permission:vessel-list|vessel-create|vessel-edit|vessel-delete', ['only' => ['index', 'show']]);
         // $this->middleware('permission:vessel-create', ['only' => ['create', 'store']]);
@@ -205,7 +209,7 @@ class VesselController extends Controller
 
     public function marketCompetitors(Request $request)
     {
-        $filters = $request->only(['from_date', 'to_date', 'route_id']);
+        $filters = $request->only(['from_date', 'to_date', 'route_id', 'operators']);
         $pods = $this->vesselInfoService->getData('Route');
         $datas = $this->vesselInfoService->marketCompetitors($filters);
 
@@ -218,5 +222,37 @@ class VesselController extends Controller
         $data = $this->vesselInfoService->vesselInfoReport($request);
 
         return view('reports.vessel-info', compact('data', 'routes'));
+    }
+
+
+    /*
+        Vessel Turn Around
+    */
+    public function indexVesselTurnAround(Request $request)
+    {
+        $filters = $request->only(['from_date', 'to_date']);
+
+        $data = $this->vesselTurnAroundService->getAllVesselTurnArounds($filters);
+        return view('vessel-turn-arounds.index', compact('data'));
+    }
+
+    public function createVesselTurnAround()
+    {
+        $routes = Route::all();
+        $turnAroundByMonth = VesselTurnAround::select('date')
+            ->distinct()
+            ->orderByDesc('date')
+            ->get()
+            ->groupBy('date');
+        return view('vessel-turn-arounds.create', compact('routes', 'turnAroundByMonth'));
+    }
+
+    public function storeVesselTurnAround(VesselTurnAroundStoreRequest $request)
+    {
+        return $this->vesselTurnAroundService->createVesselTurnAround($request->validated());
+    } 
+
+    public function deletVesselTurnAroundByDate(Request $request){
+        return VesselTurnAround::whereDate('date', $request->date)->delete();
     }
 }

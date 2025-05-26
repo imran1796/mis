@@ -93,8 +93,9 @@ class MloController extends Controller
 
     public function mloWiseSummary(Request $request)
     {
-        $filters = $request->only(['from_date', 'to_date', 'route_id']);
+        $filters = $request->only(['from_date', 'to_date', 'route_id', 'mlos']);
         $pods = Route::all();
+
         $results = $this->mloService->mloWiseSummary($filters);
         return view('reports.mlo-wise-summary', compact('pods', 'results'));
 

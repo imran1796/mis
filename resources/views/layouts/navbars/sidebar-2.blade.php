@@ -174,6 +174,31 @@
                 </ul>
             </li>
 
+            <li class="">
+                <a href="#vesselTurnAround" data-toggle="collapse"
+                    aria-expanded="{{ in_array($activePage, ['vesselTurnAround-create', 'vesselTurnAround-index']) ? 'true' : 'false' }}"
+                    class="dropdown-toggle">
+                    <i class="fas fa-bars"></i>
+                    VSL Turn Around</a>
+                <ul class="collapse list-unstyled {{ in_array($activePage, ['vesselTurnAround-create', 'vesselTurnAround-index']) ? 'show' : '' }}"
+                    id="vesselTurnAround">
+
+                    <li class="nav-item @if ($activePage == 'vesselTurnAround-index') active @endif">
+                        <a class="nav-link" href="{{ route('vesselTurnAround.index') }}">
+                            <i class="fas fa-user"></i>
+                            {{ __('Vessel TA') }}
+                        </a>
+                    </li>
+
+                    <li class="nav-item @if ($activePage == 'vesselTurnAround-create') active @endif">
+                        <a class="nav-link" href="{{ route('vesselTurnAround.create') }}">
+                            <i class="fas fa-user"></i>
+                            {{ __('Upload XLS') }}
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
             <li class="nav-item @if ($activePage == 'reports') active @endif">
                 <a class="nav-link" href="{{ route('reports.index') }}">
                     <i class="fas fa-user"></i>

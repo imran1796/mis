@@ -75,6 +75,22 @@
                         {{-- end auto search --}}
                     </div>
                     <div class="card-body">
+                        @php
+                            $teuCols = [
+                                '20',
+                                '40',
+                                '45',
+                                '20R',
+                                '40R',
+                                'MTY20',
+                                'MTY40',
+                                'LDN Teus',
+                                'MTY Teus',
+                                'Total',
+                            ];
+                            $allRoutes = [1 => 'SIN', 2 => 'CBO', 3 => 'CCU'];
+                            $routes = array_intersect_key($allRoutes, array_flip((array) request('route_id', [])));
+                        @endphp
                         <table id="excelJsTable" class="tableFixHead table-bordered table2excel custom-table-report mb-3">
                             @if (request('from_date') && request('to_date'))
                                 <p class="reportRange" style="display: none;">
@@ -85,31 +101,38 @@
                             <thead>
 
                                 <tr>
-                                    <th colspan="29" class="text-center" style="font-size: 17px">SOC In/Out Bound Report
+                                    <th colspan="{{ 23 + count($routes)*2 }}" class="text-center" style="font-size: 17px">SOC In/Out Bound Report
                                     </th>
                                 </tr>
                                 <tr>
                                     <th rowspan="2">Month</th>
-                                    <th colspan="10">Import</th>
-                                    <th colspan="10">Export</th>
-                                    <th colspan="3">Total Call</th>
+                                    <th colspan="{{ count($teuCols) }}">Import</th>
+                                    <th colspan="{{ count($teuCols) }}">Export</th>
+                                    <th colspan="{{ count($routes) }}">Total Call</th>
                                     <th rowspan="2">Total</th>
-                                    <th colspan="3">Total Vessel</th>
+                                    <th colspan="{{ count($routes) }}">Total Vessel</th>
                                     <th rowspan="2">Total</th>
                                 </tr>
                                 <tr>
-                                    @foreach (['20', '40', '45', '20R', '40R', 'MTY20', 'MTY40', 'LDN Teus', 'MTY Teus', 'Total'] as $col)
+                                    {{-- Import TEUs --}}
+                                    @foreach($teuCols as $col)
                                         <th>{{ $col }}</th>
                                     @endforeach
-                                    @foreach (['20', '40', '45', '20R', '40R', 'MTY20', 'MTY40', 'LDN Teus', 'MTY Teus', 'Total'] as $col)
+                                
+                                    {{-- Export TEUs --}}
+                                    @foreach($teuCols as $col)
                                         <th>{{ $col }}</th>
                                     @endforeach
-                                    <th>SIN</th>
-                                    <th>CBO</th>
-                                    <th>CCU</th>
-                                    <th>SIN</th>
-                                    <th>CBO</th>
-                                    <th>CCU</th>
+                                
+                                    {{-- Total Call by Route --}}
+                                    @foreach($routes as $name)
+                                        <th>{{ $name }}</th>
+                                    @endforeach
+                                
+                                    {{-- Total Vessel by Route --}}
+                                    @foreach($routes as $name)
+                                        <th>{{ $name }}</th>
+                                    @endforeach
                                 </tr>
                             </thead>
                             <tbody>
@@ -174,16 +197,17 @@
                                         <td><strong>{{ $exportTotal }}</strong></td>
 
                                         {{-- Calls --}}
-                                        <td>{{ $data['calls']['SIN'] }}</td>
-                                        <td>{{ $data['calls']['CBO'] }}</td>
-                                        <td>{{ $data['calls']['CCU'] }}</td>
+                                        @foreach (array_intersect_key([1 => 'SIN', 2 => 'CBO', 3 => 'CCU'], array_flip((array) request()->route_id)) as $route)
+                                            <td>{{ $data['calls'][$route] ?? 0 }}</td>
+                                        @endforeach
+
                                         <td><strong>{{ $data['calls']['SIN'] + $data['calls']['CBO'] + $data['calls']['CCU'] }}</strong>
                                         </td>
 
                                         {{-- Vessels --}}
-                                        <td>{{ $data['vessels_count']['SIN'] }}</td>
-                                        <td>{{ $data['vessels_count']['CBO'] }}</td>
-                                        <td>{{ $data['vessels_count']['CCU'] }}</td>
+                                        @foreach (array_intersect_key([1 => 'SIN', 2 => 'CBO', 3 => 'CCU'], array_flip((array) request()->route_id)) as $route)
+                                            <td>{{ $data['vessels_count'][$route] ?? 0 }}</td>
+                                        @endforeach
                                         <td><strong>{{ $data['vessels_count']['SIN'] + $data['vessels_count']['CBO'] + $data['vessels_count']['CCU'] }}</strong>
                                         </td>
                                     </tr>
@@ -228,36 +252,36 @@
             // });
             initializeMonthYearPicker('.datepicker');
 
-            $('#btnExcelJsExport').on('click', function() {
-                var row1 = $('<tr class="text-center">').append(
-                    '<td colspan="29">Sinokor Merchant Marine Co., Ltd.</td>');
-                var row2 = $('<tr class="text-center">').append(
-                    '<td colspan="29">Globe Link Associates Ltd.</td>');
-                var row3 = $('<tr class="text-center">').append('<td colspan="29"></td>');
-                $('thead').prepend(row1, row2, row3);
+            // $('#btnExcelJsExport').on('click', function() {
+            //     var row1 = $('<tr class="text-center">').append(
+            //         '<td colspan="29">Sinokor Merchant Marine Co., Ltd.</td>');
+            //     var row2 = $('<tr class="text-center">').append(
+            //         '<td colspan="29">Globe Link Associates Ltd.</td>');
+            //     var row3 = $('<tr class="text-center">').append('<td colspan="29"></td>');
+            //     $('thead').prepend(row1, row2, row3);
 
-                var heading_name = 'SOC IN/OUT Bound';
-                $(".table2excel").table2excel({
-                    exclude: ".noExl",
-                    name: heading_name,
-                    filename: heading_name,
-                    fileext: ".xls",
-                    exclude_img: true,
-                    exclude_links: true,
-                    exclude_inputs: true,
-                    excel: {
-                        beforeSave: function() {
-                            var sheet = this.sheet;
-                            sheet.rowHeight(0, sheet.rowCount(),
-                                30);
-                        }
-                    }
+            //     var heading_name = 'SOC IN/OUT Bound';
+            //     $(".table2excel").table2excel({
+            //         exclude: ".noExl",
+            //         name: heading_name,
+            //         filename: heading_name,
+            //         fileext: ".xls",
+            //         exclude_img: true,
+            //         exclude_links: true,
+            //         exclude_inputs: true,
+            //         excel: {
+            //             beforeSave: function() {
+            //                 var sheet = this.sheet;
+            //                 sheet.rowHeight(0, sheet.rowCount(),
+            //                     30);
+            //             }
+            //         }
 
-                });
-                row1.remove();
-                row2.remove();
-                row3.remove();
-            });
+            //     });
+            //     row1.remove();
+            //     row2.remove();
+            //     row3.remove();
+            // });
 
             $("#autosearch").on("keyup", function() {
                 var value = $(this).val().toLowerCase();

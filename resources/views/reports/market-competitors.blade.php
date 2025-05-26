@@ -28,6 +28,9 @@
                 </div>
 
                 <form class="row px-3 mb-2">
+                    @php
+                        $specifiedOperator = ['MCC','XPF','PIL','SOL','COSCO','OOCL', 'SKN','SNK','YML','SCC','HMM','ONE','HRL','APL','MSC'];
+                    @endphp
                     <div class="col-md-2 px-1 form-group">
                         <select id="pod" name="route_id[]" class="form-control form-control-sm selectpicker" multiple>
                             @foreach ($pods as $pod)
@@ -45,6 +48,15 @@
                         <label for="to_date" class="sr-only">To Date</label>
                         <input placeholder="To Date" class="form-control form-control-sm datepicker" type="text"
                             name="to_date" id="to_date" value="{{ request('to_date') }}">
+                    </div>
+                    
+                    <div class="col-md-2 px-1 form-group">
+                        <select data-live-search="true" data-actions-box="true" id="operator" name="operators[]"
+                            class="form-control form-control-sm search-select selectpicker" multiple>
+                            @foreach ($specifiedOperator as $opt)
+                                <option value="{{ $opt }}" selected>{{ $opt }}</option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="col-md-2 px-1 mt-1">
@@ -109,8 +121,8 @@
                                         <td>{{ $item['local_agent'] }}</td>
                                         <td>{{ $item['numOfVsl'] }}</td>
                                         <td>{{ $item['numOfCall'] }}</td>
-                                        <td>{{ $item['effectiveCapacity'] }}</td>
-                                        <td>{{ $item['effCapPerWeek'] }}</td>
+                                        <td>{{ round($item['effectiveCapacity']) }}</td>
+                                        <td>{{ round($item['effCapPerWeek']) }}</td>
                                         <td>{{ $item['slotPartner'] }}</td>
                                         <td>{{ $item['slotBuyer'] }}</td>
                                         <td>{{ $item['import%'] }}</td>
@@ -161,6 +173,18 @@
                 $(".tableFixHead tbody tr").filter(function() {
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
+            });
+
+            $('.selectpicker').selectpicker({
+                actionsBox: true,
+                deselectAllText: 'Deselect All',
+                countSelectedText: (numSelected) =>
+                    numSelected === 1 ? "{0} item selected" : "{0} items selected",
+                selectedTextFormat: 'count > 3'
+            });
+
+            $('.selectpicker').on('loaded.bs.select', function() {
+                $(this).parent().find('.bs-select-all').hide();
             });
         });
 

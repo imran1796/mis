@@ -201,29 +201,29 @@ class {$name}StoreRequest extends FormRequest
         File::put($storeRequestPath, $storeRequestTemplate);
         $this->info("Store Request created at {$storeRequestPath}");
 
-        $updateRequestPath = app_path("Http/Requests/{$name}UpdateRequest.php");
-        $updateRequestTemplate = "<?php
+//         $updateRequestPath = app_path("Http/Requests/{$name}UpdateRequest.php");
+//         $updateRequestTemplate = "<?php
 
-namespace App\Http\Requests;
+// namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+// use Illuminate\Foundation\Http\FormRequest;
 
-class {$name}UpdateRequest extends FormRequest
-{
-    public function authorize()
-    {
-        return true;
-    }
+// class {$name}UpdateRequest extends FormRequest
+// {
+//     public function authorize()
+//     {
+//         return true;
+//     }
 
-    public function rules()
-    {
-        return [
-            'name' => 'sometimes|required|string|max:255',
-        ];
-    }
-}
-";
-        File::put($updateRequestPath, $updateRequestTemplate);
-        $this->info("Update Request created at {$updateRequestPath}");
+//     public function rules()
+//     {
+//         return [
+//             'name' => 'sometimes|required|string|max:255',
+//         ];
+//     }
+// }
+// ";
+//         File::put($updateRequestPath, $updateRequestTemplate);
+//         $this->info("Update Request created at {$updateRequestPath}");
     }
 }

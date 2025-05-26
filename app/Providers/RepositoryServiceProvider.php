@@ -10,6 +10,7 @@ use App\Interfaces\RouteInterface;
 use App\Interfaces\UserInterface;
 use App\Interfaces\VesselInfoInterface;
 use App\Interfaces\VesselInterface;
+use App\Interfaces\VesselTurnAroundInterface;
 use App\Repositories\RouteRepository;
 use App\Repositories\ExportDataRepository;
 use App\Repositories\MloRepository;
@@ -18,6 +19,7 @@ use App\Repositories\RoleRepository;
 use App\Repositories\UserRepository;
 use App\Repositories\VesselInfoRepository;
 use App\Repositories\VesselRepository;
+use App\Repositories\VesselTurnAroundRepository;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -35,6 +37,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(VesselInfoInterface::class, VesselInfoRepository::class);
         $this->app->bind(MloInterface::class, MloRepository::class);
         $this->app->bind(RouteInterface::class, RouteRepository::class);
+        $this->app->bind(VesselTurnAroundInterface::class, VesselTurnAroundRepository::class);
     }
 
     /**
