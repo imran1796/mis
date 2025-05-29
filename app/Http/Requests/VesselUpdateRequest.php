@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class VesselUpdateRequest extends FormRequest
 {
@@ -14,7 +15,31 @@ class VesselUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'sometimes|required|string|max:255',
+            'vessel_name' => [
+                'required',
+                'string',
+                Rule::unique('vessels')->where(function ($query) {
+                    return $query->where('imo_no', $this->imo_no);
+                })->ignore($this->route('vessel')), // or $this->id if passed differently
+            ],
+            'length_overall' => [
+                'required',
+                'numeric',
+                'between:0,999999.99'
+            ],
+            'crane_status' => [
+                'required',
+                Rule::in(['G', 'GL']),
+            ],
+            'nominal_capacity' => [
+                'required',
+                'integer',
+                'min:0',
+            ],
+            'imo_no' => [
+                'required',
+                'numeric',
+            ],
         ];
     }
 }

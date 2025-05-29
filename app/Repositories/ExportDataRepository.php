@@ -71,11 +71,14 @@ class ExportDataRepository implements ExportDataInterface
         }
     }
 
-    public function getUniqueExportData($column_name)
+    public function getUniqueExportData($column_name, $value=null)
     {
         return ExportData::query()
             ->select($column_name)
             ->distinct()
+            ->when($value, function ($query) use ($column_name, $value) {
+                return $query->whereYear($column_name, $value);
+            })
             ->pluck($column_name);
     }
 }

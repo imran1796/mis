@@ -23,21 +23,21 @@ class VesselStoreRequest extends FormRequest
                 }),
             ],
             'length_overall' => [
-                'nullable',
+                'required',
                 'numeric',
                 'between:0,999999.99'
             ],
             'crane_status' => [
-                'nullable',
+                'required',
                 Rule::in(['G', 'GL']),
             ],
             'nominal_capacity' => [
-                'nullable',
+                'required',
                 'integer',
                 'min:0',
             ],
             'imo_no' => [
-                'nullable',
+                'required',
                 'numeric',
             ],
         ];

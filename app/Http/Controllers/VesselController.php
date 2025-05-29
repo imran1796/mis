@@ -34,10 +34,19 @@ class VesselController extends Controller
         $this->vesselInfoService = $vesselInfoService;
         $this->vesselTurnAroundService = $vesselTurnAroundService;
 
-        // $this->middleware('permission:vessel-list|vessel-create|vessel-edit|vessel-delete', ['only' => ['index', 'show']]);
-        // $this->middleware('permission:vessel-create', ['only' => ['create', 'store']]);
-        // $this->middleware('permission:vessel-edit', ['only' => ['edit', 'update']]);
-        // $this->middleware('permission:vessel-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:vessel-list', ['only' => ['index', 'show']]);
+        $this->middleware('permission:vessel-create', ['only' => ['create', 'store' ,'update', 'edit']]);
+        $this->middleware('permission:vessel-delete', ['only' => ['destroy']]);
+
+        $this->middleware('permission:operatorData-list', ['only' => ['indexVesselInfo']]);
+        $this->middleware('permission:operatorData-create', ['only' => ['createVesselInfo', 'storeVesselInfo', 'updateVesselInfo']]);
+        $this->middleware('permission:operatorData-delete', ['only' => ['deletVesselInfoByDateRoute']]);
+
+        $this->middleware('permission:reports', ['only' => ['indexReport']]);
+
+        $this->middleware('permission:turnAround-list', ['only' => ['indexVesselTurnAround']]);
+        $this->middleware('permission:turnAround-create', ['only' => ['createVesselTurnAround', 'storeVesselTurnAround']]);
+        $this->middleware('permission:turnAround-delete', ['only' => ['deletVesselTurnAroundByDate']]);
     }
 
     public function index()
@@ -57,26 +66,42 @@ class VesselController extends Controller
         return $this->vesselService->createVessel($vessel);
     }
 
-    public function indexVesselInfo(Request $request)
-    {
-        $filters = $request->only(['from_date', 'to_date']);
-
-        $data = $this->vesselInfoService->getAllVesselWiseData($filters);
-        return view('vessel-infos.index', compact('data'));
+    public function update(VesselUpdateRequest $request){
+        // dd($request->all());
+        $vessel = $request->validated();
+        return $this->vesselService->updateVessel($vessel);
     }
+    
+    public function delete(){}
 
-    public function createVesselInfo()
-    {
-        $routes = Route::all();
+    public function getAllVesselWisePerMonthData(Request $request){
+        $filters = $request->only(['date', 'route_id']);
         $vesselWisePerMonth = VesselInfos::select('date', 'route_id')
             ->with('route', 'importExportCounts')
-            ->distinct()
+            ->distinct('date')
             ->orderByDesc('date')
+            ->whereIn('route_id',$filters['route_id'])
+            ->when(!empty($filters['date']), function ($q) use ($filters) {
+                $q->whereDate('date', Carbon::parse($filters['date'])->startOfMonth());
+            })
             ->get()
-            // ->groupBy(['date','route.short_name']);
             ->groupBy('date');
-        // dd($vesselWiseData->toArray());
-        return view('vessel-infos.create', compact('routes', 'vesselWisePerMonth'));
+
+        return response()->json($vesselWisePerMonth);
+    }
+
+    public function indexVesselInfo(Request $request)
+    {
+        $filters = $request->only(['from_date', 'to_date', 'route_id']);
+        $pods = Route::all();
+        $data = $this->vesselInfoService->getAllVesselWiseData($filters);
+        return view('vessel-infos.index', compact('data','pods'));
+    }
+
+    public function createVesselInfo(Request $request)
+    {
+        $routes = Route::all();
+        return view('vessel-infos.create', compact('routes'));
     }
 
     public function storeVesselInfo(VesselInfoCreateRequest $request)
@@ -219,9 +244,10 @@ class VesselController extends Controller
     public function vesselInfoReport(Request $request)
     {
         $routes = Route::all();
+        $operators = $this->vesselInfoService->getAllUniqueOperators();
         $data = $this->vesselInfoService->vesselInfoReport($request);
 
-        return view('reports.vessel-info', compact('data', 'routes'));
+        return view('reports.vessel-info', compact('data', 'routes', 'operators'));
     }
 
 
@@ -236,15 +262,28 @@ class VesselController extends Controller
         return view('vessel-turn-arounds.index', compact('data'));
     }
 
+    public function getAllVesselTurnAroundPerMonth(Request $request){
+        $filters = $request->only(['year']);
+        $vesselTurnAroundPerMonth = VesselTurnAround::query()
+        ->select('date')
+        ->distinct()
+        ->when($filters['year'], function ($query) use ($filters) {
+            return $query->whereYear('date', $filters['year']);
+        })
+        ->pluck('date');
+
+        return response()->json($vesselTurnAroundPerMonth);
+    }
+
     public function createVesselTurnAround()
     {
         $routes = Route::all();
-        $turnAroundByMonth = VesselTurnAround::select('date')
-            ->distinct()
-            ->orderByDesc('date')
-            ->get()
-            ->groupBy('date');
-        return view('vessel-turn-arounds.create', compact('routes', 'turnAroundByMonth'));
+        // $turnAroundByMonth = VesselTurnAround::select('date')
+        //     ->distinct()
+        //     ->orderByDesc('date')
+        //     ->get()
+        //     ->groupBy('date');
+        return view('vessel-turn-arounds.create', compact('routes'));
     }
 
     public function storeVesselTurnAround(VesselTurnAroundStoreRequest $request)

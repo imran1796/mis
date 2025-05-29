@@ -152,8 +152,7 @@ class VesselInfoService
         return $this->vesselInfoRepository->getAllVesselInfos($filters);
     }
 
-    public function getAllUniqueOperators()
-    {
+    public function getAllUniqueOperators(){
         return $this->vesselInfoRepository->getAllUniqueOperators();
     }
 
@@ -491,7 +490,7 @@ class VesselInfoService
             'operator-route-wise' => $data->groupBy(['operator', 'route.short_name']),
             'route-wise'          => $data->groupBy('route.short_name'),
             'operator-wise' => $data->groupBy('operator'),
-            'vessel-wise' => $data->groupBy(['operator', 'vessel.vessel_name']),
+            'vessel-wise' => $data->groupBy('operator'),
             default => $data->groupBy('operator'),
         };
 
@@ -535,15 +534,7 @@ class VesselInfoService
 
         // 1. Calculate total teus for % calculations
         foreach ($data as $operator => $group) {
-            // $vessels = $hasRouteGrouping ? $group->flatten(1) : $group;
-            if ($hasRouteGrouping) {
-                $vessels =  $group->flatten(1);
-            } else if ($isVesselWise) {
-                $vessels =  $group->flatten(1);
-            } else {
-                $vessels = $group;
-            }
-
+            $vessels = $hasRouteGrouping ? $group->flatten(1) : $group;
             foreach ($vessels as $vessel) {
                 foreach ($vessel->importExportCounts as $count) {
                     $type = $count['type'] ?? null;
@@ -559,24 +550,12 @@ class VesselInfoService
         // 2. Build summary
         $summaries = $data->mapWithKeys(function ($group, $operator) use (
             $hasRouteGrouping,
-            $isVesselWise,
             $shipmentTypes,
             $filteredCtnSizes,
             $totalTeusByType,
             &$totalTeus
         ) {
-            // $innerMap = $hasRouteGrouping ? $group : collect(['default' => $group]);
-            if ($hasRouteGrouping) {
-                $innerMap = $group;
-            } else if ($isVesselWise) {
-                $innerMap = $group;
-            } else {
-                $innerMap = collect(['default' => $group]);
-            }
-
-            // if($operator=='SKN'){
-            // dd($operator,$innerMap->toArray());
-            // }
+            $innerMap = $hasRouteGrouping ? $group : collect(['default' => $group]);
 
             $routeSummary = $innerMap->mapWithKeys(function ($vsl, $routeKey) use (
                 $shipmentTypes,
@@ -640,11 +619,7 @@ class VesselInfoService
                 return [$routeKey => $summary];
             });
 
-            return [
-                $operator => ($hasRouteGrouping || $isVesselWise)
-                    ? $routeSummary
-                    : $routeSummary->first()
-            ];
+            return [$operator => $hasRouteGrouping ? $routeSummary : $routeSummary->first()];
         });
 
         return [$summaries->toArray(), $totalTeus];

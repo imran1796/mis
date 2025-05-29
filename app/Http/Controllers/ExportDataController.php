@@ -18,14 +18,27 @@ class ExportDataController extends Controller
     {
         $this->exportDataService = $exportDataService;
 
-        // $this->middleware(
-        //     'permission:export-data',
-        //     ['only' => [
-        //         'index',
-        //         'create',
-        //         'store',
-        //     ]]
-        // );
+        $this->middleware(
+            'permission:exportData-list',
+            ['only' => [
+                'index',
+            ]]
+        );
+
+        $this->middleware(
+            'permission:exportData-create',
+            ['only' => [
+                'create',
+                'store',
+            ]]
+        );
+
+        $this->middleware(
+            'permission:exportData-delete',
+            ['only' => [
+                'deleteByDate',
+            ]]
+        );
 
     }
 
@@ -60,8 +73,11 @@ class ExportDataController extends Controller
             ->distinct()
             ->orderByDesc('date')
             ->paginate(5);
-
         return view('export-data.create', compact('exportDataMonthly'));
+    }
+
+    public function getUniqueMonths(Request $request){
+        return $this->exportDataService->getUniqueExportData('date', $request->year);
     }
 
     /**
@@ -73,51 +89,6 @@ class ExportDataController extends Controller
     public function store(Request $request)
     {
         return $this->exportDataService->createExportData($request);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\ExportData  $exportData
-     * @return \Illuminate\Http\Response
-     */
-    public function show(ExportData $exportData)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\ExportData  $exportData
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(ExportData $exportData)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\ExportData  $exportData
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, ExportData $exportData)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\ExportData  $exportData
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(ExportData $exportData)
-    {
-        // dd($exportData);
     }
 
     public function deleteByDate($date)

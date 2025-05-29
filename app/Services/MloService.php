@@ -198,55 +198,55 @@ class MloService
                     ];
                 }
                 foreach ($datas as $data) {
+                    $ldnTeu = ($data->dc20 ?? 0) + ($data->r20 ?? 0) + ((($data->dc40 ?? 0) + ($data->dc45 ?? 0) + ($data->r40 ?? 0)) * 2);
+                    $mtyTeu = ($data->mty20 ?? 0) + (($data->mty40 ?? 0) * 2);
                     if ($data->type == 'import') {
-                        $importLaden = ($data->dc20 ?? 0) + ($data->r20 ?? 0) + ((($data->dc40 ?? 0) + ($data->dc45 ?? 0) + ($data->r40 ?? 0)) * 2);
-                        $importEmpty = ($data->mty20 ?? 0) + (($data->mty40 ?? 0) * 2);
-                        $results[$mlo]['permonth'][$month]['importLdnTeus'] += $importLaden;
-                        $results[$mlo]['permonth'][$month]['importMtyTeus'] += $importEmpty;
-                        $results[$mlo]['totalImportLdnTeus'] += $importLaden;
-                        $results[$mlo]['totalImportMtyTeus'] += $importEmpty;
+                        // $importLaden = ($data->dc20 ?? 0) + ($data->r20 ?? 0) + ((($data->dc40 ?? 0) + ($data->dc45 ?? 0) + ($data->r40 ?? 0)) * 2);
+                        // $importEmpty = ($data->mty20 ?? 0) + (($data->mty40 ?? 0) * 2);
+                        $results[$mlo]['permonth'][$month]['importLdnTeus'] += $ldnTeu;
+                        $results[$mlo]['permonth'][$month]['importMtyTeus'] += $mtyTeu;
+                        $results[$mlo]['totalImportLdnTeus'] += $ldnTeu;
+                        $results[$mlo]['totalImportMtyTeus'] += $mtyTeu;
                     } else {
-                        $exportLaden = ($data->dc20 ?? 0) + ($data->r20 ?? 0) + ((($data->dc40 ?? 0) + ($data->dc45 ?? 0) + ($data->r40 ?? 0)) * 2);
-                        $exportEmpty = ($data->mty20 ?? 0) + (($data->mty40 ?? 0) * 2);
-                        $results[$mlo]['permonth'][$month]['exportLdnTeus'] += $exportLaden;
-                        $results[$mlo]['permonth'][$month]['exportMtyTeus'] += $exportEmpty;
-                        $results[$mlo]['totalExportLdnTeus'] += $exportLaden;
-                        $results[$mlo]['totalExportMtyTeus'] += $exportEmpty;
+                        // $exportLaden = ($data->dc20 ?? 0) + ($data->r20 ?? 0) + ((($data->dc40 ?? 0) + ($data->dc45 ?? 0) + ($data->r40 ?? 0)) * 2);
+                        // $exportEmpty = ($data->mty20 ?? 0) + (($data->mty40 ?? 0) * 2);
+                        $results[$mlo]['permonth'][$month]['exportLdnTeus'] += $ldnTeu;
+                        $results[$mlo]['permonth'][$month]['exportMtyTeus'] += $mtyTeu;
+                        $results[$mlo]['totalExportLdnTeus'] += $ldnTeu;
+                        $results[$mlo]['totalExportMtyTeus'] += $mtyTeu;
                     }
                 }
-
-                // $import = $data[0] ?? null;
-                // $export = $data[1] ?? null;
-
-                // TEU calculations
-                // $importLaden = ($import->dc20 ?? 0) + ($import->r20 ?? 0) + ((($import->dc40 ?? 0) + ($import->dc45 ?? 0) + ($import->r40 ?? 0)) * 2);
-                // $importEmpty = ($import->mty20 ?? 0) + (($import->mty40 ?? 0) * 2);
-
-                // $exportLaden = ($export->dc20 ?? 0) + ($export->r20 ?? 0) + ((($export->dc40 ?? 0) + ($export->dc45 ?? 0) + ($export->r40 ?? 0)) * 2);
-                // $exportEmpty = ($export->mty20 ?? 0) + (($export->mty40 ?? 0) * 2);
-
-                // Store monthly values
-                // $results[$mlo]['permonth'][$month]['importLdnTeus'] += $importLaden;
-                // $results[$mlo]['permonth'][$month]['importMtyTeus'] += $importEmpty;
-                // $results[$mlo]['permonth'][$month]['exportLdnTeus'] += $exportLaden;
-                // $results[$mlo]['permonth'][$month]['exportMtyTeus'] += $exportEmpty;
-
-                // Store totals
-                // $results[$mlo]['totalImportLdnTeus'] += $importLaden;
-                // $results[$mlo]['totalImportMtyTeus'] += $importEmpty;
-                // $results[$mlo]['totalExportLdnTeus'] += $exportLaden;
-                // $results[$mlo]['totalExportMtyTeus'] += $exportEmpty;
             }
         }
         return $results;
     }
 
-    public function socOutboundmarketStrategy($filters)
+    public function socOutboundMarketStrategy(array $filters): array
     {
         if (empty($filters)) {
             return [];
         }
-        $mlos = MloWiseCount::with('mlo')->get()
+
+        $query = MloWiseCount::with('mlo');
+
+        if (!empty($filters['route_id'])) {
+            $query->whereIn('route_id', (array) $filters['route_id']);
+        }
+
+        if (!empty($filters['from_date'])) {
+            $fromDate = Carbon::parse($filters['from_date'])->startOfMonth();
+            $query->whereDate('date', '>=', $fromDate);
+        }
+
+        if (!empty($filters['to_date'])) {
+            $toDate = Carbon::parse($filters['to_date'])->endOfMonth();
+            $query->whereDate('date', '<=', $toDate);
+        }
+
+        $mlos = $query->get();
+
+        // 🔁 Group by MLO Line → then by MLO Code
+        $grouped = $mlos
             ->groupBy(function ($item) {
                 return optional($item->mlo)->line_belongs_to ?? $item->mlo_code;
             })
@@ -256,33 +256,39 @@ class MloService
 
         $summary = [];
 
-        foreach ($mlos as $line => $mloGroup) {
-            $mloCodes = array_keys($mloGroup->toArray());
-            $firstMlo = collect($mloGroup[$mloCodes[0]])->first();
-            $mloName = optional($firstMlo['mlo'])['mlo_details'] ?? $mloCodes[0];
+        foreach ($grouped as $line => $mloGroup) {
+            $mloCodes = $mloGroup->keys()->toArray();
+            $firstRecord = $mloGroup->first()->first(); // collection of collections
+
+            $mloName = optional($firstRecord->mlo)->mlo_details ?? $firstRecord->mlo_code;
 
             $exportLdn = 0;
             $exportMty = 0;
 
-            foreach ($mloGroup as $mloCode => $records) {
+            foreach ($mloGroup as $records) {
                 foreach ($records as $record) {
-                    if ($record['type'] === 'export') {
+                    if ($record->type === 'export') {
                         $exportLdn +=
-                            ($record['dc20'] ?? 0) +
-                            ($record['r20'] ?? 0) +
-                            2 * (($record['dc40'] ?? 0) + ($record['dc45'] ?? 0) + ($record['r40'] ?? 0));
+                            ($record->dc20 ?? 0) +
+                            ($record->r20 ?? 0) +
+                            2 * (
+                                ($record->dc40 ?? 0) +
+                                ($record->dc45 ?? 0) +
+                                ($record->r40 ?? 0)
+                            );
+
                         $exportMty +=
-                            ($record['mty20'] ?? 0) +
-                            2 * ($record['mty40'] ?? 0);
+                            ($record->mty20 ?? 0) +
+                            2 * ($record->mty40 ?? 0);
                     }
                 }
             }
 
             $summary[$line] = [
-                'mlo_code'   => implode('/', $mloCodes),
-                'mlo_name'   => $mloName,
-                'exportLdn'  => intval(round($exportLdn / 4)),
-                'exportMty'  => intval(round($exportMty / 4)),
+                'mlo_code'  => implode('/', $mloCodes),
+                'mlo_name'  => $mloName,
+                'exportLdn' => (int) round($exportLdn / 4),
+                'exportMty' => (int) round($exportMty / 4),
             ];
         }
 

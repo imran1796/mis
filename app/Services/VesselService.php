@@ -46,9 +46,9 @@ class VesselService
         return $this->vesselRepository->createVessel($data);
     }
 
-    public function updateVessel($id, array $data)
+    public function updateVessel(array $data)
     {
-        return $this->vesselRepository->updateVessel($id, $data);
+        return $this->vesselRepository->updateVessel($data);
     }
 
     public function deleteVessel($id)

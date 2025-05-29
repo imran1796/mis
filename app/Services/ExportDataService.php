@@ -131,9 +131,9 @@ class ExportDataService
     }
 
 
-    public function getUniqueExportData($column)
+    public function getUniqueExportData($column,$value=null)
     {
-        return $this->exportDataRepository->getUniqueExportData($column);
+        return $this->exportDataRepository->getUniqueExportData($column,$value);
     }
 
 

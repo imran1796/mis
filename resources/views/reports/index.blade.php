@@ -227,7 +227,7 @@
                                             </div>
                                             <div class="col-10 d-flex align-items-center ">
                                                 <div class="numbers align-content-center">
-                                                    <p class="card-category">Vessel Info Report</p>
+                                                    <p class="card-category">Vessel-Operator Info Report</p>
                                                 </div>
                                             </div>
 

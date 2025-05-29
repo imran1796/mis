@@ -50,27 +50,37 @@
 
                 <div class="card mt-3">
                     <div class="card-header">
-                        <h4>Uploaded Records</h4>
+                        <div class="row">
+                            <div class="col-md-10">
+                                <h4 class="p-0 m-0">Records</h4>
+                            </div>
+                            <div class="col-md-2">
+                                    <input type="text" id="recordYear" name="date"
+                                        class="form-control form-control-sm yearpicker" placeholder="Year" value="">
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
-                        <table class="table table-bordered table-sm text-center">
+                        <table class="tableFixHead table-bordered custom-table-report table-sm">
                             <thead>
-                                <tr>
+                                <tr class="text-center">
                                     <th>#</th>
                                     <th>Month</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @forelse ($turnAroundByMonth as $date => $item)
+                            <tbody id="exportMonthsTbody">
+                                {{-- @forelse ($turnAroundByMonth as $date => $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ \Carbon\Carbon::parse($date)->format('F Y') }}</td>
                                         <td>
-                                            <button type="button" class="btn btn-danger btn-sm deleteBtn"
-                                                data-date="{{ $date }}">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                            @can('turnAround-delete')
+                                                <button type="button" class="btn btn-danger btn-sm deleteBtn"
+                                                    data-date="{{ $date }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            @endcan
 
                                             <form id="delete-form-{{ $date }}" method="POST" class="d-none">
                                                 @csrf
@@ -83,7 +93,7 @@
                                     <tr>
                                         <td colspan="3">No data available</td>
                                     </tr>
-                                @endforelse
+                                @endforelse --}}
                             </tbody>
                         </table>
                     </div>
@@ -98,6 +108,7 @@
     <script>
         $(document).ready(function() {
             initializeMonthYearPicker('.datepicker');
+            initializeYearPicker('#recordYear');
 
             $('#uploadForm').on('submit', function(e) {
                 e.preventDefault();
@@ -127,32 +138,36 @@
                 });
             });
 
-            $('.deleteBtn').on('click', function() {
-                const date = $(this).data('date');
-                if (!confirm('Are you sure you want to delete records for this date?')) return;
+            // $('.deleteBtn').on('click', function() {
+            //     const date = $(this).data('date');
+            //     if (!confirm('Are you sure you want to delete records for this date?')) return;
 
-                const form = $('#delete-form-' + date);
+            //     const form = $('#delete-form-' + date);
 
-                $.ajax({
-                    url: '{{ route('vesselTurnAround.deleteByDate') }}',
-                    method: 'DELETE',
-                    data: form.serialize(),
-                    success(response) {
-                        demo.customShowNotification('success', response.success);
-                        window.location.reload();
-                    },
-                    error(xhr) {
-                        const res = xhr.responseJSON;
-                        if (res?.error) {
-                            demo.customShowNotification('danger', res.error);
-                        }
-                        if (res?.errors) {
-                            Object.values(res.errors).flat().forEach(msg => {
-                                demo.customShowNotification('danger', msg);
-                            });
-                        }
-                    }
-                });
+            //     $.ajax({
+            //         url: '{{ route('vesselTurnAround.deleteByDate') }}',
+            //         method: 'DELETE',
+            //         data: form.serialize(),
+            //         success(response) {
+            //             demo.customShowNotification('success', response.success);
+            //             window.location.reload();
+            //         },
+            //         error(xhr) {
+            //             const res = xhr.responseJSON;
+            //             if (res?.error) {
+            //                 demo.customShowNotification('danger', res.error);
+            //             }
+            //             if (res?.errors) {
+            //                 Object.values(res.errors).flat().forEach(msg => {
+            //                     demo.customShowNotification('danger', msg);
+            //                 });
+            //             }
+            //         }
+            //     });
+            // });
+
+            $('#recordYear').on('change', function() {
+                loadExportMonths($(this).val());
             });
         });
 
@@ -190,6 +205,121 @@
                         }
                     }
                 }
+            });
+        }
+
+        function initializeYearPicker(selector) {
+            $(selector).datepicker({
+                changeYear: true,
+                showButtonPanel: true,
+                dateFormat: 'yy',
+
+                onChangeMonthYear: function(year, month, inst) {
+                    $(this).val(year).trigger('change'); // <-- trigger change event here
+                },
+
+                onClose: function(dateText, inst) {
+                    var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                    $(this).val(year).datepicker('setDate', new Date(year, 0, 1)).trigger(
+                        'change'); // <-- trigger change event here
+                }
+            }).focus(function() {
+                $(".ui-datepicker-month, .ui-datepicker-calendar").hide();
+            });
+        }
+
+        function loadExportMonths(year = null) {
+            $.ajax({
+                url: '{{ route('vesselTurnAround.perMonth') }}',
+                type: 'GET',
+                data: {
+                    year: year
+                },
+                success: function(data) {
+                    let tbody = '';
+                    data.forEach((item, index) => {
+                        const date = new Date(item);
+                        const formattedDate = date.toLocaleString('en-US', {
+                            month: 'long',
+                            year: 'numeric'
+                        });
+                        const safeItem = item.replace(/[^a-zA-Z0-9]/g, '_');
+                        tbody += `
+                            <tr class="text-center">
+                                <td>${index + 1}</td>
+                                <td>${formattedDate}</td>
+                                <td>
+                                    @can('turnAround-delete')
+                                    <button type="button" class="btn btn-danger btn-sm deleteBtn" data-date="${item}" data-modal-id="confirmModal-${safeItem}">
+                                        <i class="fas fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                    @endcan
+
+                                    <!-- Confirmation Modal -->
+                                    <div class="modal fade" id="confirmModal-${safeItem}" tabindex="-1" role="dialog" aria-labelledby="confirmModal-${safeItem}Label" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-warning p-3">
+                                                    <h5 class="modal-title" id="confirmModal-${safeItem}Label">Confirmation Required</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span>&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <h5>Are you sure you want to delete export data for ${formattedDate}?</h5>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+                                                    <button type="button" class="btn btn-sm btn-success confirmDeleteBtn" data-date="${item}">Confirm</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    $('#exportMonthsTbody').html(tbody);
+                    bindDeleteButtons();
+                }
+            });
+        }
+
+        function bindDeleteButtons() {
+            $('.deleteBtn').off('click').on('click', function() {
+                const modalId = $(this).data('modal-id');
+                $('#' + modalId).modal('show');
+            });
+
+            $('.confirmDeleteBtn').off('click').on('click', function(e) {
+                e.preventDefault();
+                const date = $(this).data('date');
+                const deleteUrl = '{{ route('vesselTurnAround.deleteByDate') }}';
+                $.ajax({
+                    url: deleteUrl,
+                    method: 'DELETE',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        date:date
+                    },
+                    success: function(response) {
+                        demo.customShowNotification('success', 'Deleted Successfully');
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2000);
+                    },
+                    error: function(xhr) {
+                        const res = xhr.responseJSON;
+                        if (res?.error) {
+                            demo.customShowNotification('danger', res.error);
+                        }
+                        const errors = res?.errors || {};
+                        Object.values(errors).forEach(messages =>
+                            messages.forEach(msg => demo.customShowNotification('danger',
+                                msg))
+                        );
+                    }
+                });
             });
         }
     </script>

@@ -19,9 +19,12 @@
                             {{-- @can('mlos.create') --}}
                             {{-- <button class="btn btn-success" id="mloCreateBtn" href="{{ route('mlos.create') }}">Add Vessel</button> --}}
                             {{-- <a class="btn btn-success" href="{{ route('mlos.create') }}">Upload Mlo</a> --}}
-                            <button class="btn btn-success" data-toggle="modal" data-target="#createMloModal">
+                            @can('mlo-list')
+                                <button class="btn btn-success" data-toggle="modal" data-target="#createMloModal">
                                 Add New MLO
                             </button>
+                            @endcan
+                            
                             {{-- @endcan --}}
                         </div>
                     </div>
@@ -80,16 +83,19 @@
                                         <td>{{ $mlo->mlo_details }}</td>
                                         <td>{{ $mlo->effective_to ?? '' }}</td>
                                         <td>
-                                            <button class="btn btn-sm btn-success editMloInfoBtn"
-                                                data-id="{{ $mlo->id }}"
-                                                data-line_belongs_to="{{ $mlo->line_belongs_to ?? '' }}"
-                                                data-mlo_code="{{ $mlo->mlo_code ?? '' }}"
-                                                data-mlo_details="{{ $mlo->mlo_details ?? '' }}"
-                                                data-effective_from="{{ $mlo->effective_from ?? '' }}"
-                                                data-effective_to="{{ $mlo->effective_to ?? '' }}"
-                                                data-target="#editMloModal" data-toggle="modal">
-                                                Edit
-                                            </button>
+                                            @can('mlo-list')
+                                                <button class="btn btn-sm btn-success editMloInfoBtn"
+                                                    data-id="{{ $mlo->id }}"
+                                                    data-line_belongs_to="{{ $mlo->line_belongs_to ?? '' }}"
+                                                    data-mlo_code="{{ $mlo->mlo_code ?? '' }}"
+                                                    data-mlo_details="{{ $mlo->mlo_details ?? '' }}"
+                                                    data-effective_from="{{ $mlo->effective_from ?? '' }}"
+                                                    data-effective_to="{{ $mlo->effective_to ?? '' }}"
+                                                    data-target="#editMloModal" data-toggle="modal">
+                                                    Edit
+                                                </button>
+                                            @endcan
+                                            
                                         </td>
 
                                     </tr>

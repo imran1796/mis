@@ -21,7 +21,7 @@
                 <div class="row mb-2">
                     <div class="col-lg-12 margin-tb">
                         <div class="pull-left">
-                            <h2>Vessel Info Report</h2>
+                            <h2>Vessel-Operator Info Report</h2>
                         </div>
 
 
@@ -32,9 +32,9 @@
                     {{-- Report Type --}}
                     <div class="col-sm-2 pr-0 form-group">
                         <select name="report_type" class="form-control form-control-sm selectpicker" title="Report Type">
-                            @foreach (['operator-wise', 'operator-route-wise', 'route-wise'] as $type)
+                            @foreach (['vessel-wise', 'operator-wise', 'operator-route-wise', 'route-wise'] as $type)
                                 <option value="{{ $type }}" {{ request('report_type') == $type ? 'selected' : '' }}>
-                                    {{ $type }}
+                                    {{ $type =='vessel-wise'? 'All' : strtoupper(str_replace('-', ' ', $type)) }}
                                 </option>
                             @endforeach
                         </select>
@@ -50,6 +50,28 @@
                     <div class="col-sm-2 pr-0 mt-1 form-group">
                         <input type="text" name="to_date" class="form-control form-control-sm monthpicker"
                             placeholder="To Month" value="{{ request('to_date') }}">
+                    </div>
+
+                    {{-- Operator --}}
+                    <div class="col-sm-2 pr-0  form-group">
+                        {{-- <select name="operator[]" class="form-control form-control-sm selectpicker" title="Operators" multiple>
+                            @foreach ($operators as $operator)
+                                <option value="{{ $operator->id }}"
+                                    {{ collect(request('operator_id'))->contains($operator->id) ? 'selected' : '' }}>
+                                    {{ $operator->name }}
+                                </option>
+                            @endforeach
+                        </select> --}}
+                        <select data-live-search="true"
+                            class="form-control selectpicker form-control-sm search-select selectpicker" name="operator[]"
+                            id="operator" multiple title="Operators">
+                            @foreach ($operators as $operator)
+                                <option value="{{ $operator }}"
+                                    {{ is_array(request('operator')) && in_array($operator, request('operator')) ? 'selected' : '' }}>
+                                    {{ $operator }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
 
                     {{-- Route --}}
@@ -158,6 +180,7 @@
                             $colspan = match ($reportType) {
                                 'operator-route-wise' => 3,
                                 'operator-wise', 'route-wise' => 2,
+                                'vessel-wise' => 3,
                                 default => 2,
                             };
                         @endphp
@@ -176,9 +199,18 @@
                                         </h6>
                                     </th>
                                 </tr>
+
+                                @if (request()->filled('from_date') && request()->filled('to_date'))
+                                    <tr>
+                                        <th class="text-center reportRange" colspan="{{ $colspan + count($headers) }}">
+                                            Date: {{ request('from_date') }} to {{ request('to_date') }}
+                                        </th>
+                                    </tr>
+                                @endif
+
                                 @if ($shortNames)
                                     <tr>
-                                        <th colspan="{{ $colspan + count($headers) }}" class="pt-0">
+                                        <th colspan="{{ $colspan + count($headers) }}">
                                             <h6 class="text-center">{{ 'Route: ' . $shortNames }}</h6>
                                         </th>
                                     </tr>
@@ -192,6 +224,9 @@
                                         <th>Operator</th>
                                     @elseif($reportType === 'route-wise')
                                         <th>Route</th>
+                                    @elseif($reportType === 'vessel-wise')
+                                        <th>Vessel</th>
+                                        <th>Operator</th>
                                     @else
                                         <th>Operator</th>
                                     @endif
@@ -246,6 +281,47 @@
                                                     </tr>
                                                 @endforeach
                                             @endforeach
+                                        @elseif ($reportType === 'vessel-wise')
+                                            @php $routeCount = count($value1); @endphp
+                                            @foreach ($value1 as $vls => $typeData)
+                                                @foreach ($types as $i => $type)
+                                                    <tr>
+                                                        
+                                                        @if ($i === 0)
+                                                            <td rowspan="{{ count($types) }}">{{ $vls }}</td>
+                                                        @endif
+                                                        @if ($i === 0)
+                                                            <td rowspan="{{ count($types) }}">{{ $key1 }}</td>
+                                                        @endif
+                                                        <td>{{ strtoupper($type) }}</td>
+
+                                                        {{-- titles --}}
+                                                        @foreach ($headersCtnUTP as $h)
+                                                            <td class="text-right">
+                                                                {{ number_format($typeData[$type][$h] ?? 0) }}</td>
+                                                        @endforeach
+                                                        <td class="text-right">
+                                                            {{ round(($typeData[$type]['teus'] / $data[1]) * 100, 2) }}
+                                                        </td>
+                                                        <td class="text-center">
+                                                            @php
+                                                                $ctnTypes = (array) request('ctn_type');
+                                                            @endphp
+
+                                                            @if (in_array('laden', $ctnTypes) && in_array('empty', $ctnTypes))
+                                                                {{ $typeData[$type]['ttlExisting'] }}
+                                                            @elseif (in_array('laden', $ctnTypes))
+                                                                {{ $typeData[$type]['ladenLaden'] }}
+                                                            @elseif (in_array('empty', $ctnTypes))
+                                                                {{ $typeData[$type]['emptyEmpty'] }}
+                                                            @else
+                                                                {{ $typeData[$type]['ttlExisting'] }}
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @endforeach
+                                            {{-- @endforeach --}}
                                         @else
                                             @foreach ($types as $i => $type)
                                                 {{-- export/import --}}
@@ -293,7 +369,7 @@
                                     @foreach ($headersCtnSizes as $type)
                                         <th class="text-right">
                                             @if (isset($data[0]))
-                                                @if ($reportType === 'operator-route-wise')
+                                                @if ($reportType === 'operator-route-wise' || $reportType === 'vessel-wise')
                                                     {{ collect($data[0])->flatten(2)->sum(function ($item) use ($type) {
                                                             return $item[$type] ?? 0;
                                                         }) }}
@@ -306,7 +382,7 @@
                                         </th>
                                     @endforeach
                                     <th class="text-right">
-                                        @if ($reportType === 'operator-route-wise')
+                                        @if ($reportType === 'operator-route-wise' || $reportType === 'vessel-wise')
                                             {{ collect($data[0] ?? collect())->flatten(2)->sum('unit') }}
                                         @else
                                             {{ collect($data[0] ?? collect())->flatten(1)->sum('unit') }}
@@ -314,7 +390,7 @@
                                         {{-- {{ collect($data[0] ?? collect())->flatten(1)->sum('unit') }} --}}
                                     </th>
                                     <th class="text-right">
-                                        @if ($reportType === 'operator-route-wise')
+                                        @if ($reportType === 'operator-route-wise' || $reportType === 'vessel-wise')
                                             {{ collect($data[0] ?? collect())->flatten(2)->sum('teus') }}
                                         @else
                                             {{ collect($data[0] ?? collect())->flatten(1)->sum('teus') }}

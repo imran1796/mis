@@ -49,12 +49,13 @@ class VesselRepository implements VesselInterface
         }
     }
 
-    public function updateVessel($id, array $data)
+    public function updateVessel(array $data)
     {
 
         \DB::beginTransaction();
         try {
-            $VesselUpdate = Vessel::findOrFail($id);
+            $VesselUpdate = Vessel::where('vessel_name',$data['vessel_name'])->first();
+            // dd($VesselUpdate);
             $VesselUpdate->update($data);
             \DB::commit();
             return response()->json([

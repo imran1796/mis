@@ -46,8 +46,8 @@ class VesselInfoRepository implements VesselInfoInterface
             $query->whereDate('date', '<=', $toDate);
         }
 
-        if(!empty($filters['operators'])){
-            $query->whereIn('operator', $filters['operators']);
+        if(!empty($filters['operator'])){
+            $query->whereIn('operator', $filters['operator']);
         }
 
         return $query->get();
@@ -85,6 +85,13 @@ class VesselInfoRepository implements VesselInfoInterface
         }
 
         return $query->get();
+    }
+
+    public function getAllUniqueOperators(){
+        return VesselInfos::query()
+            ->select('operator')
+            ->distinct()
+            ->pluck('operator');
     }
 
     public function createVesselInfos(array $data)

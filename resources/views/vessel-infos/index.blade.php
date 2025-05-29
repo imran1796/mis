@@ -10,6 +10,9 @@
         .ui-timepicker-container {
             z-index: 9999 !important;
         }
+        .ui-datepicker-calendar {
+            display: none;
+        }
     </style>
     <div class="content">
         <div class="container-fluid">
@@ -17,7 +20,7 @@
                 <div class="row mb-2">
                     <div class="col-lg-12 margin-tb">
                         <div class="pull-left">
-                            <h2>Vessel Info</h2>
+                            <h2>Vessel-Opt Wise Data</h2>
                         </div>
 
 
@@ -41,6 +44,17 @@
                         <label for="to_date" class="sr-only">To Date</label>
                         <input placeholder="To Date" class="form-control form-control-sm monthpicker" type="text"
                             name="to_date" id="to_date" value="{{ request('to_date') }}">
+                    </div>
+
+                    <div class="col-md-2 px-1 form-group">
+                        <select id="pod" name="route_id[]" class="form-control form-control-sm selectpicker" multiple
+                            title="Select Route">
+                            @foreach ($pods as $pod)
+                                <option value="{{ $pod->id }}"
+                                    {{ in_array($pod->id, (array) request('route_id')) ? 'selected' : '' }}>
+                                    {{ $pod->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="col-sm-2 pr-0 mt-1">

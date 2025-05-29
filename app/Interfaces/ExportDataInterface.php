@@ -6,7 +6,7 @@ interface ExportDataInterface
 {
     public function getAllExportData($filters = []);
     public function createExportData(array $exportData);
-    public function getUniqueExportData($column);
+    public function getUniqueExportData($column, $value=[]);
     // public function getAllExportDatas();
     // public function getExportDataById($id);
     // public function createExportData(array $data);
