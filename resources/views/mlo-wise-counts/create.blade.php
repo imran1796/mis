@@ -73,17 +73,23 @@
                 <div class="card mt-3">
                     <div class="card-header">
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-4">
                                 <h4>Records</h4>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-8">
                                 <div class="row">
-                                    <div class="col-sm-6 form-group">
+                                    <div class="col-sm-4 mt-1 form-group">
                                         <input type="text" id="recordFromDate" name="from_date"
                                             class="form-control form-control-sm datepicker" placeholder="From Month"
                                             value="{{ request('from_date') }}">
                                     </div>
-                                    <div class="col-sm-6 form-group">
+
+                                    <div class="col-sm-4 mt-1 form-group">
+                                        <input type="text" id="recordToDate" name="to_date"
+                                            class="form-control form-control-sm datepicker" placeholder="To Month"
+                                            value="{{ request('to_date') }}">
+                                    </div>
+                                    <div class="col-sm-3 form-group">
                                         <select name="route_id[]" id="recordRoutes"
                                             class="form-control form-control-sm selectpicker" title="Route" multiple>
                                             @foreach ($routes as $route)
@@ -93,6 +99,13 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                    <div class="col-sm-1 form-group">
+                                        <button type="button" id="searchVesselDataBtn"
+                                            class="btn btn-sm btn-primary w-100">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -107,73 +120,7 @@
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {{-- @foreach ($mloWisePerMonth as $date => $items)
-                                    @foreach ($items as $item)
-                                        @php
-                                            $formattedDate = \Carbon\Carbon::parse($date)->format('F Y');
-                                            $formId = 'deleteMloWiseByDateForm-' . md5($date . $item->route_id);
-                                            $modalId = 'confirmModal-' . md5($date . $item->route_id);
-                                        @endphp
-
-                                        <tr class="text-center">
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $formattedDate }}</td>
-                                            <td>{{ $item->route->name }}</td>
-                                            <td>
-                                                <!-- Delete Button -->
-                                                @can('mloData-delete')
-                                                    <button type="button" class="btn btn-danger btn-sm deleteBtn"
-                                                        data-date="{{ $date }}" data-route-id="{{ $item->route_id }}"
-                                                        data-form-id="{{ $formId }}" data-modal-id="{{ $modalId }}">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                @endcan
-
-                                                <!-- Delete Form -->
-                                                <form id="{{ $formId }}" class="delete-mlo-form" method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <input type="hidden" name="date" value="{{ $date }}">
-                                                    <input type="hidden" name="route_id" value="{{ $item->route_id }}">
-                                                </form>
-
-                                                <!-- Confirmation Modal -->
-                                                <div class="modal fade" id="{{ $modalId }}" tabindex="-1"
-                                                    role="dialog" aria-labelledby="{{ $modalId }}Label"
-                                                    aria-hidden="true">
-                                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header bg-warning p-3">
-                                                                <h5 class="modal-title" id="{{ $modalId }}Label">
-                                                                    Confirmation Required</h5>
-                                                                <button type="button" class="close" data-dismiss="modal"
-                                                                    aria-label="Close">
-                                                                    <span>&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body text-center">
-                                                                <h5>Are you sure you want to delete MLO wise count for
-                                                                    {{ $formattedDate }}?</h5>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-sm btn-secondary"
-                                                                    data-dismiss="modal">Cancel</button>
-                                                                <button type="button"
-                                                                    class="btn btn-sm btn-success confirmDeleteBtn"
-                                                                    data-form-id="{{ $formId }}">
-                                                                    Confirm
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                @endforeach --}}
-                                <tbody id="mlo-table-body"></tbody>
-                            </tbody>
+                            <tbody id="mlo-table-body"></tbody>
                         </table>
                     </div>
                 </div>
@@ -194,7 +141,10 @@
 
             initializeMonthYearPicker('.datepicker');
 
-            $('#recordFromDate, #recordRoutes').on('change', fetchVesselData);
+            $('#searchVesselDataBtn').on('click', function() {
+                fetchVesselData();
+            });
+
 
 
             $('#uploadForm').on('submit', function(e) {
@@ -211,9 +161,22 @@
                     processData: false,
                     enctype: 'multipart/form-data',
                     success: function(response) {
-                        console.log(response);
                         demo.customShowNotification('success', response.success);
-                        window.location.reload();
+
+                        const fromDate = formData.get('date');
+                        const toDate = formData.get('date');
+                        const routeId = formData.get('route_id');
+
+                        console.log(fromDate, toDate, routeId);
+
+                        $('#uploadForm')[0].reset();
+                        $('#uploadForm .selectpicker').selectpicker('refresh');
+
+                        $('#recordFromDate').val(fromDate);
+                        $('#recordToDate').val(toDate);
+                        $('#recordRoutes').selectpicker('val', routeId);
+
+                        fetchVesselData();
                     },
                     error: function(response) {
                         if (response.responseJSON.error) {
@@ -231,49 +194,13 @@
 
             });
 
-            $('.deleteBtn').on('click', function() {
-                const modalId = $(this).data('modal-id');
-                $('#' + modalId).modal('show');
-            });
-
-            // $('.confirmDeleteBtn').on('click', function() {
-            //     const formId = $(this).data('form-id');
-            //     const form = $('#' + formId);
-            //     const date = form.find('input[name="date"]').val();
-            //     const routeId = form.find('input[name="route_id"]').val();
-            //     const token = form.find('input[name="_token"]').val();
-
-            //     $.ajax({
-            //         url: "{{ route('mloWiseCount.deleteByDateRoute') }}",
-            //         method: 'DELETE',
-            //         data: {
-            //             _token: token,
-            //             date: date,
-            //             route_id: routeId
-            //         },
-            //         success: function(response) {
-            //             demo.customShowNotification('success', response.success ||
-            //                 'Deleted successfully.');
-            //             location
-            //                 .reload(); // Optionally replace with dynamic row removal for better UX
-            //         },
-            //         error: function(xhr) {
-            //             const res = xhr.responseJSON;
-            //             if (res?.error) {
-            //                 demo.customShowNotification('danger', res.error);
-            //             }
-            //             const errors = res?.errors || {};
-            //             Object.values(errors).forEach(messages =>
-            //                 messages.forEach(msg => demo.customShowNotification('danger',
-            //                     msg))
-            //             );
-            //         }
-            //     });
-            // });
             $(document).on('click', '.confirm-delete', function() {
                 const date = $(this).data('date');
                 const route_id = $(this).data('route_id');
                 const modalId = $(this).data('modal');
+                const uid = $(this).data('uid');
+
+                console.log(date, route_id, modalId, uid);
 
                 $.ajax({
                     url: "{{ route('mloWiseCount.deleteByDateRoute') }}",
@@ -284,14 +211,13 @@
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
-                        // // Close modal
-                        // $(modalId).modal('hide');
-                        // // Optionally reload or remove row
-                        // location.reload(); // or dynamically remove row
                         demo.customShowNotification('success', response.success ||
                             'Deleted successfully.');
-                        location
-                            .reload();
+                        $(modalId).modal('hide');
+                        setTimeout(function() {
+                            $(`tr[data-uid="${uid}"]`).remove();
+                        }, 2000);
+                        
                     },
                     error: function(xhr) {
                         const res = xhr.responseJSON;
@@ -347,38 +273,43 @@
 
         function fetchVesselData() {
             const fromDate = $('#recordFromDate').val();
+            const toDate = $('#recordToDate').val();
             const routeIds = $('#recordRoutes').val();
 
-            // console.log(fromDate,routeIds);
             $.ajax({
                 url: '{{ route('mloWiseCount.perMonth') }}',
                 method: 'GET',
                 data: {
-                    date: fromDate,
+                    from_date: fromDate,
+                    to_date: toDate,
                     route_id: routeIds
                 },
                 success: function(response) {
                     let tbody = '';
                     let i = 1;
 
-                    Object.keys(response).forEach(date => {
-                        response[date].forEach(item => {
-                            const uid = `${date}${item.route_id}`;
-                            var formattedDate = new Date(item.date);
-                            formattedDate = formattedDate.toLocaleString('en-US', {
-                                month: 'long',
-                                year: 'numeric'
-                            });
-                            // console.log(item.date,formattedDate);
-                            tbody += `
-                            <tr class="text-center">
+                    Object.entries(response).forEach(([date, routes]) => {
+                        Object.entries(routes).forEach(([routeId, items]) => {
+                            items.forEach(item => {
+                                const uid = `${date}${item.route_id}`;
+                                const formattedDate = new Date(item.date)
+                                    .toLocaleString('en-US', {
+                                        month: 'long',
+                                        year: 'numeric'
+                                    });
+
+                                tbody += `
+                            <tr class="text-center" data-uid="${uid}">
                                 <td>${i++}</td>
                                 <td>${formattedDate}</td>
-                                <td>${item.route.name}</td>
+                                <td>${item.route?.name || 'N/A'}</td>
                                 <td>
                                     @can('mloData-delete')
-                                    <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirmModal-${uid}"><i class="fas fa-trash"></i></button>
+                                    <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirmModal-${uid}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                     @endcan
+
                                     <div class="modal fade" id="confirmModal-${uid}" tabindex="-1" role="dialog">
                                         <div class="modal-dialog modal-dialog-centered" role="document">
                                             <div class="modal-content">
@@ -387,14 +318,15 @@
                                                     <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
                                                 </div>
                                                 <div class="modal-body text-center">
-                                                    <h5>Are you sure you want to delete vessel-wise data for ${formattedDate}?</h5>
+                                                    <h5>Are you sure you want to delete records for ${formattedDate}?</h5>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
-                                                    <button type="button" class="btn btn-sm btn-success confirm-delete" 
-                                                        data-date="${date}" 
-                                                        data-route_id="${item.route_id}" 
-                                                        data-modal="#confirmModal-${uid}">
+                                                    <button type="button" class="btn btn-sm btn-success confirm-delete"
+                                                        data-date="${date}"
+                                                        data-route_id="${item.route_id}"
+                                                        data-modal="#confirmModal-${uid}"
+                                                        data-uid="${uid}">
                                                         Confirm
                                                     </button>
                                                 </div>
@@ -402,8 +334,8 @@
                                         </div>
                                     </div>
                                 </td>
-                            </tr>
-                        `;
+                            </tr>`;
+                            });
                         });
                     });
 
@@ -411,7 +343,7 @@
                 },
                 error: function() {
                     $('#mlo-table-body').html(
-                        '<tr><td colspan="4" class="text-danger text-center">Failed to load data.</td></tr>'
+                        `<tr><td colspan="4" class="text-danger text-center">⚠️ Failed to load data.</td></tr>`
                     );
                 }
             });

@@ -75,17 +75,22 @@ class VesselController extends Controller
     public function delete(){}
 
     public function getAllVesselWisePerMonthData(Request $request){
-        $filters = $request->only(['date', 'route_id']);
+        $filters = $request->only(['from_date','to_date', 'route_id']);
         $vesselWisePerMonth = VesselInfos::select('date', 'route_id')
             ->with('route', 'importExportCounts')
             ->distinct('date')
             ->orderByDesc('date')
-            ->whereIn('route_id',$filters['route_id'])
-            ->when(!empty($filters['date']), function ($q) use ($filters) {
-                $q->whereDate('date', Carbon::parse($filters['date'])->startOfMonth());
+            ->when(!empty($filters['route_id']), function ($q) use ($filters) {
+                $q->whereIn('route_id',$filters['route_id']);
+            })
+            ->when(!empty($filters['from_date']), function ($q) use ($filters) {
+                $q->whereDate('date', '>=',Carbon::parse($filters['from_date'])->startOfMonth());
+            })
+            ->when(!empty($filters['to_date']), function ($q) use ($filters) {
+                $q->whereDate('date', '<=', Carbon::parse($filters['to_date'])->startOfMonth());
             })
             ->get()
-            ->groupBy('date');
+            ->groupBy(['date','route_id']);
 
         return response()->json($vesselWisePerMonth);
     }

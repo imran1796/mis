@@ -71,17 +71,23 @@
                 <div class="card mt-3">
                     <div class="card-header">
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-4">
                                 <h4>Records</h4>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-8">
                                 <div class="row">
-                                    <div class="col-sm-6 form-group">
+                                    <div class="col-sm-4 mt-1 form-group">
                                         <input type="text" id="recordFromDate" name="from_date"
                                             class="form-control form-control-sm datepicker" placeholder="From Month"
                                             value="{{ request('from_date') }}">
                                     </div>
-                                    <div class="col-sm-6 form-group">
+
+                                    <div class="col-sm-4 mt-1 form-group">
+                                        <input type="text" id="recordToDate" name="to_date"
+                                            class="form-control form-control-sm datepicker" placeholder="To Month"
+                                            value="{{ request('to_date') }}">
+                                    </div>
+                                    <div class="col-sm-3 form-group">
                                         <select name="route_id[]" id="recordRoutes"
                                             class="form-control form-control-sm selectpicker" title="Route" multiple>
                                             @foreach ($routes as $route)
@@ -91,6 +97,13 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                    <div class="col-sm-1 form-group">
+                                        <button type="button" id="searchVesselDataBtn"
+                                            class="btn btn-sm btn-primary w-100">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -132,7 +145,21 @@
                     processData: false,
                     success: function(response) {
                         demo.customShowNotification('success', response.success);
-                        location.reload();
+                        
+                        const fromDate = formData.get('date');
+                        const toDate = formData.get('date');
+                        const routeId = formData.get('route_id');
+
+                        console.log(fromDate, toDate, routeId);
+
+                        $('#uploadForm')[0].reset();
+                        $('#uploadForm .selectpicker').selectpicker('refresh');
+
+                        $('#recordFromDate').val(fromDate);
+                        $('#recordToDate').val(toDate);
+                        $('#recordRoutes').selectpicker('val', routeId);
+
+                        fetchVesselData();
                     },
                     error: function(response) {
                         let res = response.responseJSON;
@@ -145,13 +172,20 @@
                 });
             });
 
-            $('#recordFromDate, #recordRoutes').on('change', fetchVesselData);
+            $('#searchVesselDataBtn').on('click', function() {
+                fetchVesselData();
+            });
+
+            // $('#recordFromDate, #recordRoutes').on('change', fetchVesselData);
 
             // $('.confirm-delete').on('click', function () {
             $(document).on('click', '.confirm-delete', function() {
                 const date = $(this).data('date');
                 const route_id = $(this).data('route_id');
                 const modalId = $(this).data('modal');
+                const uid = $(this).data('uid');
+
+                console.log(date, route_id, modalId, uid);
 
                 $.ajax({
                     url: "{{ route('vesselInfo.deleteByDateRoute') }}",
@@ -162,14 +196,24 @@
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
-                        // Close modal
+                        demo.customShowNotification('success', response.success ||
+                            'Deleted successfully.');
                         $(modalId).modal('hide');
-                        // Optionally reload or remove row
-                        location.reload(); // or dynamically remove row
+                        setTimeout(function() {
+                            $(`tr[data-uid="${uid}"]`).remove();
+                        }, 2000);
+
                     },
                     error: function(xhr) {
-                        alert('Delete failed: ' + xhr.responseText);
-                        $(modalId).modal('hide');
+                        const res = xhr.responseJSON;
+                        if (res?.error) {
+                            demo.customShowNotification('danger', res.error);
+                        }
+                        const errors = res?.errors || {};
+                        Object.values(errors).forEach(messages =>
+                            messages.forEach(msg => demo.customShowNotification('danger',
+                                msg))
+                        );
                     }
                 });
             });
@@ -207,37 +251,43 @@
 
         function fetchVesselData() {
             const fromDate = $('#recordFromDate').val();
+            const toDate = $('#recordToDate').val();
             const routeIds = $('#recordRoutes').val();
 
             $.ajax({
                 url: '{{ route('vesselInfo.perMonth') }}',
                 method: 'GET',
                 data: {
-                    date: fromDate,
+                    from_date: fromDate,
+                    to_date: toDate,
                     route_id: routeIds
                 },
                 success: function(response) {
                     let tbody = '';
                     let i = 1;
 
-                    Object.keys(response).forEach(date => {
-                        response[date].forEach(item => {
-                            const uid = `${date}${item.route_id}`;
-                            var formattedDate = new Date(item.date);
-                            formattedDate = formattedDate.toLocaleString('en-US', {
-                                month: 'long',
-                                year: 'numeric'
-                            });
-                            // console.log(item.date,formattedDate);
-                            tbody += `
-                            <tr class="text-center">
+                    Object.entries(response).forEach(([date, routes]) => {
+                        Object.entries(routes).forEach(([routeId, items]) => {
+                            items.forEach(item => {
+                                const uid = `${date}${item.route_id}`;
+                                const formattedDate = new Date(item.date)
+                                    .toLocaleString('en-US', {
+                                        month: 'long',
+                                        year: 'numeric'
+                                    });
+
+                                tbody += `
+                            <tr class="text-center" data-uid="${uid}">
                                 <td>${i++}</td>
                                 <td>${formattedDate}</td>
-                                <td>${item.route.name}</td>
+                                <td>${item.route?.name || 'N/A'}</td>
                                 <td>
                                     @can('operatorData-delete')
-                                    <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirmModal-${uid}"><i class="fas fa-trash"></i></button>
+                                    <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirmModal-${uid}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                     @endcan
+
                                     <div class="modal fade" id="confirmModal-${uid}" tabindex="-1" role="dialog">
                                         <div class="modal-dialog modal-dialog-centered" role="document">
                                             <div class="modal-content">
@@ -246,14 +296,15 @@
                                                     <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
                                                 </div>
                                                 <div class="modal-body text-center">
-                                                    <h5>Are you sure you want to delete vessel-wise data for ${formattedDate}?</h5>
+                                                    <h5>Are you sure you want to delete records for ${formattedDate}?</h5>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
-                                                    <button type="button" class="btn btn-sm btn-success confirm-delete" 
-                                                        data-date="${date}" 
-                                                        data-route_id="${item.route_id}" 
-                                                        data-modal="#confirmModal-${uid}">
+                                                    <button type="button" class="btn btn-sm btn-success confirm-delete"
+                                                        data-date="${date}"
+                                                        data-route_id="${item.route_id}"
+                                                        data-modal="#confirmModal-${uid}"
+                                                        data-uid="${uid}">
                                                         Confirm
                                                     </button>
                                                 </div>
@@ -261,8 +312,8 @@
                                         </div>
                                     </div>
                                 </td>
-                            </tr>
-                        `;
+                            </tr>`;
+                            });
                         });
                     });
 
@@ -270,7 +321,7 @@
                 },
                 error: function() {
                     $('#vessel-table-body').html(
-                        '<tr><td colspan="4" class="text-danger text-center">Failed to load data.</td></tr>'
+                        `<tr><td colspan="4" class="text-danger text-center">⚠️ Failed to load data.</td></tr>`
                     );
                 }
             });

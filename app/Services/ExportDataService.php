@@ -154,7 +154,7 @@ class ExportDataService
 
         $data = [];
         foreach ($array2[0] as $a) {
-            if (strtoupper($a[1]) === 'G.TOTAL') {
+            if (str_starts_with(strtoupper(trim($a[1])), 'G.TOTAL')) {
                 break;
             }
 

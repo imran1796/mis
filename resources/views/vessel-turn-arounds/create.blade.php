@@ -51,12 +51,18 @@
                 <div class="card mt-3">
                     <div class="card-header">
                         <div class="row">
-                            <div class="col-md-10">
+                            <div class="col-md-9">
                                 <h4 class="p-0 m-0">Records</h4>
                             </div>
                             <div class="col-md-2">
                                     <input type="text" id="recordYear" name="date"
                                         class="form-control form-control-sm yearpicker" placeholder="Year" value="">
+                            </div>
+                            <div class="col-md-1">
+                                <button type="button" id="searchVesselDataBtn"
+                                    class="btn btn-sm btn-primary w-100">
+                                    <i class="fas fa-search"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -166,8 +172,11 @@
             //     });
             // });
 
-            $('#recordYear').on('change', function() {
-                loadExportMonths($(this).val());
+            // $('#searchVesselDataBtn').on('change', function() {
+            //     loadExportMonths($(this).val());
+            // });
+            $('#searchVesselDataBtn').on('click', function() {
+                loadExportMonths($('#recordYear').val());
             });
         });
 
@@ -266,7 +275,7 @@
                                                     </button>
                                                 </div>
                                                 <div class="modal-body text-center">
-                                                    <h5>Are you sure you want to delete export data for ${formattedDate}?</h5>
+                                                    <h5>Are you sure you want to delete records for ${formattedDate}?</h5>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
