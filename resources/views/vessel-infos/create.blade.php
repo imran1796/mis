@@ -116,6 +116,7 @@
                                     <th>#</th>
                                     <th>Month</th>
                                     <th>Route</th>
+                                    <th>Report</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -275,12 +276,19 @@
                                         month: 'long',
                                         year: 'numeric'
                                     });
+                                const baseDownloadUrl = @json(route('reports.operator.container-handling'));
 
                                 tbody += `
                             <tr class="text-center" data-uid="${uid}">
                                 <td>${i++}</td>
                                 <td>${formattedDate}</td>
                                 <td>${item.route?.name || 'N/A'}</td>
+                                <td>
+                                    <a href="${baseDownloadUrl}?date=${item.date}&route_id=${item.route_id}"
+                                        class="btn btn-success btn-sm">
+                                        <i class="fas fa-file-excel"></i>
+                                    </a>
+                                </td>
                                 <td>
                                     @can('operatorData-delete')
                                     <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirmModal-${uid}">

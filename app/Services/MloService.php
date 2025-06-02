@@ -294,4 +294,24 @@ class MloService
 
         return $summary;
     }
+
+    public function mloWiseContainerHandling($request){
+        $filters= [
+            'from_date' => Carbon::parse($request['date'])->format('M-Y'),
+            'to_date' => Carbon::parse($request['date'])->format('M-Y'),
+            'route_id' => [$request->route_id]
+        ];
+
+        $data = $this->mloRepository->getAllMloWiseCount($filters)->groupBy('mlo_code')->sortKeys();
+        $range = Carbon::parse($request['date'])->format('M-y');
+        $routeNames = [1 => 'SIN', 2 => 'CBO', 3 => 'CCU'];
+        $route = collect($filters['route_id'] ?? [])
+            ->map(fn($id) => $routeNames[$id] ?? '')
+            ->filter()
+            ->implode(', ');
+        $fileName = "MLO_Wise_Container_Handling - {$range}" . ($route ? " - {$route}" : '') . ".xlsx";
+
+        return [$data,$route,$range,$fileName];
+
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\MLOWiseContainerHandling;
 use App\Exports\MLoWiseSummary;
 use App\Http\Requests\MloStoreRequest;
 use App\Http\Requests\MloUpdateRequest;
@@ -128,5 +129,11 @@ class MloController extends Controller
         $datas = $this->mloService->socOutboundMarketStrategy($filters);
 
         return view('reports.soc-outbound-market', compact('datas', 'pods'));
+    }
+    
+    public function mloWiseContainerHandling(Request $request)
+    {
+        $datas = $this->mloService->mloWiseContainerHandling($request);
+        return Excel::download(new MLOWiseContainerHandling($datas[0],$datas[1],$datas[2]), $datas[3]);
     }
 }

@@ -50,11 +50,11 @@ class OperatorWiseSummary implements FromCollection, WithMapping, WithHeadings, 
             $data['export_empty_eff'] ?? 0,
             $data['vessel_calls'] ?? 0,
             $data['unique_vessels'] ?? 0,
-            $data['effective_capacity'] ?? 0,
+            $data['effective_capacity'] ?round($data['effective_capacity']): 0,
             $data['nominal_capacity'] ?? 0,
-            $data['import'] ?? 0,
-            $data['export_laden'] ?? 0,
-            $data['export_empty'] ?? 0,
+            $data['import'] ?round($data['import'],1).'%': 0,
+            $data['export_laden'] ?round($data['export_laden'],1).'%': 0,
+            $data['export_empty'] ?round($data['export_empty'],1).'%': 0,
         ];
     }
 
@@ -66,16 +66,9 @@ class OperatorWiseSummary implements FromCollection, WithMapping, WithHeadings, 
             ['Operator Wise Container Lifting (Summary) ' . $this->range . ' - ' . strtoupper($this->route)],
             [''],
             [
-                'Sl',
-                'Operator',
-                'Import Laden TEU',
-                'Import Empty TEU',
-                'Import Laden Eff%',
-                'Import Empty Eff%',
-                'Export Laden TEU',
-                'Export Empty TEU',
-                'Export Laden Eff%',
-                'Export Empty Eff%',
+                'SL', 'OPERATOR',
+                'IMPORT', '', '', '',
+                'EXPORT', '', '', '',
                 'T. VSL Call',
                 'T. VSL Handled',
                 'Eff. Capacity',
@@ -84,6 +77,31 @@ class OperatorWiseSummary implements FromCollection, WithMapping, WithHeadings, 
                 'Export Laden %',
                 'Export Empty %'
             ],
+            [
+                '', '', 
+                'Laden TEUs', 'Empty TEUs', 'Laden Eff%', 'Empty Eff%',
+                'Laden TEUs', 'Empty TEUs', 'Laden Eff%', 'Empty Eff%',
+                '', '', '', '', '', '', ''
+            ],
+            // [
+            //     'Sl',
+            //     'Operator',
+            //     'Import Laden TEU',
+            //     'Import Empty TEU',
+            //     'Import Laden Eff%',
+            //     'Import Empty Eff%',
+            //     'Export Laden TEU',
+            //     'Export Empty TEU',
+            //     'Export Laden Eff%',
+            //     'Export Empty Eff%',
+            //     'T. VSL Call',
+            //     'T. VSL Handled',
+            //     'Eff. Capacity',
+            //     'Nom. Capacity',
+            //     'Import %',
+            //     'Export Laden %',
+            //     'Export Empty %'
+            // ],
         ];
     }
 
@@ -105,11 +123,30 @@ class OperatorWiseSummary implements FromCollection, WithMapping, WithHeadings, 
                 $highestRow = $sheet->getHighestRow();
                 $range = "A1:{$highestColumn}{$highestRow}";
 
+                $sheet->getStyle('A5:Q6')->getFont()->setBold(true);
+
                 // Merge headers
                 $sheet->mergeCells("A1:{$highestColumn}1");
                 $sheet->mergeCells("A2:{$highestColumn}2");
                 $sheet->mergeCells("A3:{$highestColumn}3");
                 $sheet->mergeCells("A4:{$highestColumn}4");
+
+                $sheet->mergeCells('A5:A6');
+                $sheet->mergeCells('B5:B6');
+                $sheet->mergeCells('C5:F5');
+                $sheet->mergeCells('G5:J5');
+                $sheet->mergeCells('K5:K6');
+                $sheet->mergeCells('L5:L6');
+                $sheet->mergeCells('M5:M6');
+                $sheet->mergeCells('N5:N6');
+                $sheet->mergeCells('O5:O6');
+                $sheet->mergeCells('P5:P6');
+                $sheet->mergeCells('Q5:Q6');
+                $sheet->getStyle('O5:Q6')
+                        ->getFill()
+                        ->setFillType(Fill::FILL_SOLID)
+                        ->getStartColor()
+                        ->setARGB('FFF5F5F5');
 
                 $totalsRow = $highestRow + 1;
                 $sheet->setCellValue("A{$totalsRow}", 'Total');
@@ -117,9 +154,14 @@ class OperatorWiseSummary implements FromCollection, WithMapping, WithHeadings, 
                 $sheet->getStyle("A{$totalsRow}")->getFont()->setBold(true);
 
                 $columnsToTotal = ['C', 'D', 'G', 'H', 'K', 'L', 'M', 'N'];
+                $columnsTo100 = ['O', 'P', 'Q'];
 
                 foreach ($columnsToTotal as $col) {
                     $sheet->setCellValue("{$col}{$totalsRow}", "=SUM({$col}5:{$col}{$highestRow})");
+                    $sheet->getStyle("{$col}{$totalsRow}")->getFont()->setBold(true);
+                }
+                foreach ($columnsTo100 as $col) {
+                    $sheet->setCellValue("{$col}{$totalsRow}", "100%");
                     $sheet->getStyle("{$col}{$totalsRow}")->getFont()->setBold(true);
                 }
 
@@ -129,7 +171,7 @@ class OperatorWiseSummary implements FromCollection, WithMapping, WithHeadings, 
                 }
 
                 // Borders
-                $sheet->getStyle("A5:{$highestColumn}{$highestRow}")->applyFromArray([
+                $sheet->getStyle("A5:{$highestColumn}{$totalsRow}")->applyFromArray([
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => Border::BORDER_THIN,

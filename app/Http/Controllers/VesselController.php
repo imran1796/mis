@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\MLOWiseContainerHandling;
 use App\Exports\OperatorWiseSummary;
 use App\Exports\SocInOutBound;
+use App\Exports\VesselOperatorWiseContainerHandling;
 use App\Http\Requests\ImportExportCountCreateRequest;
 use App\Http\Requests\VesselInfoCreateRequest;
 use App\Http\Requests\VesselInfoUpdateRequest;
@@ -196,6 +198,11 @@ class VesselController extends Controller
         return Excel::download(new OperatorWiseSummary($data[0], $data[1], $range, $route), $fileName);
     }
 
+    public function operatorWiseContainerHandling(Request $request)
+    {
+        $datas = $this->vesselInfoService->operatorWiseContainerHandling($request);
+        return Excel::download(new VesselOperatorWiseContainerHandling($datas[0],$datas[1],$datas[2]), $datas[3]);
+    }
 
     public function socInOutBound(Request $request)
     {

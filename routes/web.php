@@ -69,6 +69,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::group(['prefix' => 'reports'], function () {
         Route::get('/index', [\App\Http\Controllers\VesselController::class, 'indexReport'])->name('reports.index');
+
+        Route::get('/mlo-wise/container-handling', [\App\Http\Controllers\MloController::class, 'mloWiseContainerHandling'])->name('reports.mlo.container-handling');
+        Route::get('/operator-wise/container-handling', [\App\Http\Controllers\VesselController::class, 'operatorWiseContainerHandling'])->name('reports.operator.container-handling');
+
         Route::get('/operator-wise-lifting', [\App\Http\Controllers\VesselController::class, 'operatorWiseLifting'])->name('reports.operator-wise-lifting');
         Route::get('/operator-wise-lifting/download', [\App\Http\Controllers\VesselController::class, 'operatorWiseLiftingDownload'])->name('reports.operator-wise-lifting.download');
 
