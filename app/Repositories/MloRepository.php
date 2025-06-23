@@ -142,4 +142,22 @@ class MloRepository implements MloInterface
             ], 500);
         }
     }
+
+    public function getDistinctMloWiseDates($filters=[]){
+        return MloWiseCount::select('date', 'route_id')
+        ->with('route')
+        ->distinct('date')
+        ->orderByDesc('date')
+        ->when(!empty($filters['route_id']), function ($q) use ($filters) {
+            $q->whereIn('route_id',$filters['route_id']);
+        })
+        ->when(!empty($filters['from_date']), function ($q) use ($filters) {
+            $q->whereDate('date', '>=',Carbon::parse($filters['from_date'])->startOfMonth());
+        })
+        ->when(!empty($filters['to_date']), function ($q) use ($filters) {
+            $q->whereDate('date', '<=', Carbon::parse($filters['to_date'])->startOfMonth());
+        })
+        ->get()
+        ->groupBy(['date','route_id']);
+    }
 }

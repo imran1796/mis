@@ -8,6 +8,8 @@ use App\Exports\SocInOutBound;
 use App\Exports\VesselOperatorWiseContainerHandling;
 use App\Http\Requests\ImportExportCountCreateRequest;
 use App\Http\Requests\VesselInfoCreateRequest;
+use App\Http\Requests\VesselInfoDeleteByDateRouteRequest;
+use App\Http\Requests\VesselInfoDeleteRequest;
 use App\Http\Requests\VesselInfoUpdateRequest;
 use App\Http\Requests\VesselStoreRequest;
 use App\Http\Requests\VesselTurnAroundStoreRequest;
@@ -76,23 +78,9 @@ class VesselController extends Controller
     
     public function delete(){}
 
-    public function getAllVesselWisePerMonthData(Request $request){
+    public function getDistinctVesselInfoDates(Request $request){
         $filters = $request->only(['from_date','to_date', 'route_id']);
-        $vesselWisePerMonth = VesselInfos::select('date', 'route_id')
-            ->with('route', 'importExportCounts')
-            ->distinct('date')
-            ->orderByDesc('date')
-            ->when(!empty($filters['route_id']), function ($q) use ($filters) {
-                $q->whereIn('route_id',$filters['route_id']);
-            })
-            ->when(!empty($filters['from_date']), function ($q) use ($filters) {
-                $q->whereDate('date', '>=',Carbon::parse($filters['from_date'])->startOfMonth());
-            })
-            ->when(!empty($filters['to_date']), function ($q) use ($filters) {
-                $q->whereDate('date', '<=', Carbon::parse($filters['to_date'])->startOfMonth());
-            })
-            ->get()
-            ->groupBy(['date','route_id']);
+        $vesselWisePerMonth = $this->vesselInfoService->getDistinctVesselInfoDates($filters);
 
         return response()->json($vesselWisePerMonth);
     }
@@ -118,47 +106,15 @@ class VesselController extends Controller
 
     public function updateVesselInfo(VesselInfoUpdateRequest $request)
     {
-        // dd($request->all());
         $vesselInfo = VesselInfos::findOrFail($request->vessel_info_id);
-        // dd($request->validated());
         $vesselInfo->update($request->validated());
     }
 
-    public function deletVesselInfoByDateRoute(Request $request)
+    public function deletVesselInfoByDateRoute(VesselInfoDeleteByDateRouteRequest $request)
     {
-        $request->validate([
-            'date' => 'required|date',
-            'route_id' => 'required|integer|exists:routes,id',
-        ]);
-        // return $this->mloService->deleteMloWiseCountByDateRoute($request);
-        \DB::beginTransaction();
-        try {
-            // Get all vessel_info records for the route and date
-            $vesselInfos = VesselInfos::where('route_id', $request->route_id)
-                ->whereDate('date', $request->date)
-                ->with('importExportCounts')
-                ->get();
-
-            if ($vesselInfos->isEmpty()) {
-                return response()->json(['error' => 'No records found for the selected route and date'], 404);
-            }
-
-            foreach ($vesselInfos as $vesselInfo) {
-                $vesselInfo->importExportCounts()->delete();
-                $vesselInfo->delete();
-            }
-
-            \DB::commit();
-            return response()->json(['success' => 'Vessel-wise data deleted successfully.'], 200);
-        } catch (\Throwable $e) {
-            \DB::rollBack();
-            \Log::error('Failed to delete vessel-wise data: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-                'route_id' => $request->route_id,
-                'date' => $request->date
-            ]);
-            return response()->json(['error' => 'An unexpected error occurred while deleting.'], 500);
-        }
+        $filters = $request->only(['date','route_id']);
+        return $this->vesselInfoService->deletVesselInfoByDateRoute($filters);
+        
     }
 
     public function indexReport()
@@ -240,7 +196,6 @@ class VesselController extends Controller
         $pods = $this->vesselInfoService->getData('Route');
         $datas = $this->vesselInfoService->vesselTurnAroundTime($filters);
 
-
         return view('reports.vessel-turn-around-time', compact('pods', 'datas'));
     }
 
@@ -274,27 +229,15 @@ class VesselController extends Controller
         return view('vessel-turn-arounds.index', compact('data'));
     }
 
-    public function getAllVesselTurnAroundPerMonth(Request $request){
+    public function getDistinctTurnAroundDates(Request $request){
         $filters = $request->only(['year']);
-        $vesselTurnAroundPerMonth = VesselTurnAround::query()
-        ->select('date')
-        ->distinct()
-        ->when($filters['year'], function ($query) use ($filters) {
-            return $query->whereYear('date', $filters['year']);
-        })
-        ->pluck('date');
-
+        $vesselTurnAroundPerMonth = $this->vesselTurnAroundService->getDistinctVesselTurnAroundDates($filters);
         return response()->json($vesselTurnAroundPerMonth);
     }
 
     public function createVesselTurnAround()
     {
         $routes = Route::all();
-        // $turnAroundByMonth = VesselTurnAround::select('date')
-        //     ->distinct()
-        //     ->orderByDesc('date')
-        //     ->get()
-        //     ->groupBy('date');
         return view('vessel-turn-arounds.create', compact('routes'));
     }
 

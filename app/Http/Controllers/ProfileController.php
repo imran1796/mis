@@ -48,11 +48,11 @@ class ProfileController extends Controller
         try {
             auth()->user()->update(['password' => Hash::make($request->get('password'))]);
 
-            Mail::to([Auth::user()->email])->send(new CustomMail("Password Update Notification",'update-password',Auth::user()->name,null,null));
+            // Mail::to([Auth::user()->email])->send(new CustomMail("Password Update Notification",'update-password',Auth::user()->name,null,null));
             return back()->withPasswordStatus(__('Password successfully updated.'));
         } catch (\Exception $e) {
-            Log::error('Error Sending Email: ' . $e->getMessage());
-            return back()->withPasswordStatus(__('Password successfully updated.'));
+            // Log::error('Error Sending Email: ' . $e->getMessage());
+            return back()->withPasswordStatus(__('Failed to update password'));
         }
         
     }

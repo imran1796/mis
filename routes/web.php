@@ -43,7 +43,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/store', [\App\Http\Controllers\MloController::class, 'storeMloWiseCount'])->name('mloWiseCount.store');
         Route::get('/report/summary', [\App\Http\Controllers\MloController::class, 'reportMloWiseSummary'])->name('mloWiseCount.report.summary');
         Route::delete('/delete', [\App\Http\Controllers\MloController::class, 'deleteMloWiseCountByDateRoute'])->name('mloWiseCount.deleteByDateRoute');
-        Route::get('/per-month', [\App\Http\Controllers\MloController::class, 'getAllMloWisePerMonthRoute'])->name('mloWiseCount.perMonth');
+        Route::get('/per-month', [\App\Http\Controllers\MloController::class, 'getDistinctMloWiseDates'])->name('mloWiseCount.perMonth');
 
     });
     
@@ -54,7 +54,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/store', [\App\Http\Controllers\VesselController::class, 'storeVesselInfo'])->name('vesselInfo.store');
         Route::post('/update', [\App\Http\Controllers\VesselController::class, 'updateVesselInfo'])->name('vesselInfo.update');
         Route::delete('/delete', [\App\Http\Controllers\VesselController::class, 'deletVesselInfoByDateRoute'])->name('vesselInfo.deleteByDateRoute');
-        Route::get('/per-month', [\App\Http\Controllers\VesselController::class, 'getAllVesselWisePerMonthData'])->name('vesselInfo.perMonth');
+        Route::get('/per-month', [\App\Http\Controllers\VesselController::class, 'getDistinctVesselInfoDates'])->name('vesselInfo.perMonth');
     });
 
     Route::group(['prefix' => 'vessel-turn-around'], function () {
@@ -63,7 +63,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/store', [\App\Http\Controllers\VesselController::class, 'storeVesselTurnAround'])->name('vesselTurnAround.store');
         Route::post('/update', [\App\Http\Controllers\VesselController::class, 'updateVesselTurnAround'])->name('vesselTurnAround.update');
         Route::delete('/delete', [\App\Http\Controllers\VesselController::class, 'deletVesselTurnAroundByDate'])->name('vesselTurnAround.deleteByDate');
-        Route::get('/per-month', [\App\Http\Controllers\VesselController::class, 'getAllVesselTurnAroundPerMonth'])->name('vesselTurnAround.perMonth');
+        Route::get('/per-month', [\App\Http\Controllers\VesselController::class, 'getDistinctTurnAroundDates'])->name('vesselTurnAround.perMonth');
         
     });
 

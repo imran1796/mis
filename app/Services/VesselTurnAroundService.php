@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Interfaces\VesselTurnAroundInterface;
 use App\Models\VesselTurnAround;
+use App\Repositories\VesselTurnAroundRepository;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -28,6 +29,10 @@ class VesselTurnAroundService
     public function getVesselTurnAroundById($id)
     {
         return $this->vesselTurnAroundRepository->getVesselTurnAroundById($id);
+    }
+
+    public function getDistinctVesselTurnAroundDates($filters){
+        return $this->vesselTurnAroundRepository->getDistinctVesselTurnAroundDates($filters);
     }
 
     public function createVesselTurnAround(array $data)

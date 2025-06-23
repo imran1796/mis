@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             VesselJsonToDBSeeder::class,
             UserWithRolePermissionSeeder::class,
             RouteSeeder::class,
+            MISModulePermissionSeeder::class,
         ]);
     }
 }

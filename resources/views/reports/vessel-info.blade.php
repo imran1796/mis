@@ -63,7 +63,7 @@
                             @endforeach
                         </select> --}}
                         <select data-live-search="true"
-                            class="form-control selectpicker form-control-sm search-select selectpicker" name="operator[]"
+                            class="form-control selectpicker form-control-sm search-select" name="operator[]"
                             id="operator" multiple title="Operators">
                             @foreach ($operators as $operator)
                                 <option value="{{ $operator }}"

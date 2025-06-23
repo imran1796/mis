@@ -13,4 +13,5 @@ interface MloInterface
     
     public function getAllMloWiseCount($filters = []);
     public function createMloWiseCount(array $data);
+    public function getDistinctMloWiseDates($filters =[]);
 }

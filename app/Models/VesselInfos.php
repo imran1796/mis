@@ -18,13 +18,13 @@ class VesselInfos extends Model {
 
     public function importCount()
     {
-        return $this->hasOne(ImportExportCount::class)
+        return $this->hasOne(ImportExportCount::class, 'vessel_info_id')
                     ->where('type', 'import');
     }
 
     public function exportCount()
     {
-        return $this->hasOne(ImportExportCount::class)
+        return $this->hasOne(ImportExportCount::class, 'vessel_info_id')
                     ->where('type', 'export');
     }
 

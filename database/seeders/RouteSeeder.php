@@ -14,12 +14,25 @@ class RouteSeeder extends Seeder
      */
     public function run(): void
     {
-        $data = [
-            ['name' => 'Singapore', 'short_name' => 'SIN', 'code' => 'SGSIN'],
-            ['name' => 'Colombo', 'short_name' => 'CBO', 'code' => 'LKCMB'],
-            ['name' => 'Kolkata', 'short_name' => 'CCU', 'code' => 'INCCU'],
+        // $data = [
+        //     ['name' => 'Singapore', 'short_name' => 'SIN', 'code' => 'SGSIN'],
+        //     ['name' => 'Colombo', 'short_name' => 'CBO', 'code' => 'LKCMB'],
+        //     ['name' => 'Kolkata', 'short_name' => 'CCU', 'code' => 'INCCU'],
+        // ];
+
+        // Route::insert($data);
+
+        $routes = [
+            ['id' => 1, 'name' => 'Singapore', 'short_name' => 'SIN', 'code' => 'SGSIN'],
+            ['id' => 2, 'name' => 'Colombo', 'short_name' => 'CBO', 'code' => 'LKCMB'],
+            ['id' => 3, 'name' => 'Kolkata', 'short_name' => 'CCU', 'code' => 'INCCU'],
         ];
 
-        Route::insert($data);
+        foreach ($routes as $route) {
+            Route::updateOrInsert(
+                ['id' => $route['id']],
+                $route
+            );
+        }
     }
 }

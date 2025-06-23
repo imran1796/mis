@@ -162,6 +162,10 @@ class VesselInfoService
         return $this->routeService->getAllRoutes();
     }
 
+    public function getDistinctVesselInfoDates($filters){
+        return $this->vesselInfoRepository->getDistinctVEsselInfoDates($filters);
+    }
+
     public function operatorWiseLifting($filters)
     {
         if (empty($filters['from_date']) && empty($filters['to_date']) && empty($filters['route_id'])) {
@@ -701,5 +705,9 @@ class VesselInfoService
         $fileName = "Vessel_Operator_Wise_Container_Handling - {$range}" . ($route ? " - {$route}" : '') . ".xlsx";
 
         return [$data,$route,$range,$fileName];
+    }
+
+    public function deletVesselInfoByDateRoute($filters){
+        return $this->vesselInfoRepository->deletVesselInfoByDateRoute($filters);
     }
 }

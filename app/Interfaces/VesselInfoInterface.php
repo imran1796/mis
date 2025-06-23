@@ -9,4 +9,6 @@ interface VesselInfoInterface
     public function createImportExportCount(array $data);
     public function updateVesselInfoTime(array $data);
     public function getAllUniqueOperators();
+    public function deletVesselInfoByDateRoute($filters=[]);
+    public function getDistinctVesselInfoDates($filters=[]);
 }

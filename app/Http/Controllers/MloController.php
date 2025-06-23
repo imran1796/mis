@@ -61,38 +61,15 @@ class MloController extends Controller
         return view('mlo-wise-counts.index', compact('data', 'mlos', 'pods'));
     }
 
-    public function getAllMloWisePerMonthRoute(Request $request){
+    public function getDistinctMloWiseDates(Request $request){
         $filters = $request->only(['from_date','to_date', 'route_id']);
-        $mloWisePerMonthRoute = MloWiseCount::select('date', 'route_id')
-            ->with('route')
-            ->distinct('date')
-            ->orderByDesc('date')
-            ->when(!empty($filters['route_id']), function ($q) use ($filters) {
-                $q->whereIn('route_id',$filters['route_id']);
-            })
-            ->when(!empty($filters['from_date']), function ($q) use ($filters) {
-                $q->whereDate('date', '>=',Carbon::parse($filters['from_date'])->startOfMonth());
-            })
-            ->when(!empty($filters['to_date']), function ($q) use ($filters) {
-                $q->whereDate('date', '<=', Carbon::parse($filters['to_date'])->startOfMonth());
-            })
-            ->get()
-            ->groupBy(['date','route_id']);
-            // dd($mloWisePerMonthRoute->toArray());
-
+        $mloWisePerMonthRoute = $this->mloService->getDistinctMloWiseDates($filters);
         return response()->json($mloWisePerMonthRoute);
     }
 
     public function createMloWiseCount()
     {
         $routes = Route::all();
-        // $mloWisePerMonth = MloWiseCount::select('date', 'route_id')
-        //     ->with('route')
-        //     ->distinct()
-        //     ->orderByDesc('date')
-        //     ->get()->groupBy('date');
-            // ->get()->groupBy(['date', 'route.short_name']);
-        // dd($mloWisePerMonth->toArray());
 
         return view('mlo-wise-counts.create', compact('routes'));
     }

@@ -131,9 +131,9 @@ class ExportDataService
     }
 
 
-    public function getUniqueExportData($column,$value=null)
+    public function getUniqueExportData($column, $value = null)
     {
-        return $this->exportDataRepository->getUniqueExportData($column,$value);
+        return $this->exportDataRepository->getUniqueExportData($column, $value);
     }
 
 
@@ -168,7 +168,7 @@ class ExportDataService
                 'commodity' => strtoupper(trim($a[7])),
                 'pod' => strtoupper(trim($a[8])),
                 'trade' => strtoupper(trim($a[9])),
-                'port_code' => strtoupper(trim($a[10]??'')),
+                'port_code' => strtoupper(trim($a[10] ?? '')),
                 'date' => $date,
             ];
         }
@@ -178,6 +178,10 @@ class ExportDataService
 
     public function exportVolByRegion($filters)
     {
+        $from = Carbon::createFromFormat('M-Y', $filters['from_date'])->startOfMonth();
+        $to = Carbon::createFromFormat('M-Y', $filters['to_date'])->startOfMonth();
+        $totalMonths = $from->diffInMonths($to) + 1;
+
         $x = [];
         $data = collect($this->getAllExportData($filters)[0])->groupBy('trade');
         foreach ($data as $region => $records) {
@@ -192,6 +196,7 @@ class ExportDataService
                 $x[$region][$port] = [
                     '20ft'       => $sum20,
                     '40ft'       => $sum40,
+                    'teuAvgMonth' => round($totalTeu/$totalMonths),
                     'total_teu'  => $totalTeu,
                     'mlo_share'  => $mloShare,
                     'commodities' => $commodityShare,
@@ -204,12 +209,52 @@ class ExportDataService
 
     public function exportVolByPort($filters)
     {
+        // dd($filters);
+        // $filters['pod'] = [
+        //     'SINGAPORE',
+        //     'PORT KLANG',
+        //     'PENANG',
+        //     'MANILA',
+        //     'JAKARTA',
+        //     'NINGBO',
+        //     'SHANGHAI',
+        //     'INCHON',
+        //     'BUSAN',
+        //     'PUSAN',
+        //     'PYONGTAEK',
+        //     'FUKUYAMA',
+        //     'HAKATA',
+        //     'ISHIKARIWAN',
+        //     'KANAZAWA',
+        //     'KOBE',
+        //     'MIZUSHIMA',
+        //     'MOJI',
+        //     'NIIGATA',
+        //     'OSAKA',
+        //     'SENDAI',
+        //     'TOMAKOMAI',
+        //     'VLADIVOSTOK',
+        //     'VOSTOCHINY',
+        //     'NAGOYA',
+        //     'NOVOROSSIYSK',
+        //     'MATSUYAMA',
+        //     'KUMPORT',
+        //     'ISTANBUL',
+        //     'HIROSIMA',
+        //     'JEBEL ALI'
+        // ];
+
         $data = collect($this->getAllExportData($filters)[0])->groupBy('pod');
+
+        $from = Carbon::createFromFormat('M-Y', $filters['from_date'])->startOfMonth();
+        $to = Carbon::createFromFormat('M-Y', $filters['to_date'])->startOfMonth();
+        $totalMonths = $from->diffInMonths($to) + 1;
 
         foreach ($data as $pod => $records) {
             $sum20 = $records->sum('20ft') + $records->sum('20R');
             $sum40 = ($records->sum('40ft') + $records->sum('45ft') + $records->sum('40R')) * 2;
 
+            $totalBox = $sum20 + ($sum40 / 2);
             $totalTeu = $sum20 + $sum40;
             $mloShare = $this->topShare($records, 'mlo', $totalTeu);
             $commodityShare = $this->topShare($records, 'commodity', $totalTeu);
@@ -217,20 +262,23 @@ class ExportDataService
             // $snkMetrics = $this->calculateSknMetrics($records, $totalTeu);
             $snkTeus = $records->where('mlo', 'SKN')->sum(fn($item) => ($item->{'20ft'} ?? 0) + ($item->{'20R'} ?? 0) + ($item->{'40R'} ? $item->{'40R'} * 2 : 0) + ($item->{'40ft'} ? $item->{'40ft'} * 2 : 0) + ($item->{'45ft'} ? $item->{'45ft'} * 2 : 0));
 
-            $snkShare = $totalTeu > 0 ? round(($snkTeus / $totalTeu) * 100, 1) : 0;
+            $snkShare = $totalTeu > 0 ? (($snkTeus / $totalTeu)) : 0;
 
+            // dd($totalTeu , $totalMonths,$totalTeu / $totalMonths);
             $x[$pod] = [
                 'pol'        => 'BDCGP',
                 'pod'        => $pod,
                 '20ft'       => $sum20,
-                '40ft'       => $sum40,
+                '40ft'       => $sum40/2,
+                'total_box'  => $totalBox,
                 'total_teu'  => $totalTeu,
-                '20_ratio'   => $totalTeu > 0 ? round(($sum20 / $totalTeu) * 100) . '%' : '0%',
-                '40_ratio'   => $totalTeu > 0 ? round(($sum40 / $totalTeu) * 100) . '%' : '0%',
+                '20_ratio'   => $totalTeu > 0 ? ($sum20 / $totalBox)  : 0,
+                '40_ratio'   => $totalTeu > 0 ? (($sum40/2) / $totalBox)  : 0,
+                'teuAvgMonth' => $totalTeu > 0 ? round(($totalTeu / $totalMonths)) : 0,
                 // 'snkTeus'     => $snkMetrics['teus'],
-                // 'snkShare'    => $snkMetrics['share'] . '%',
+                // 'snkShare'    => $snkMetrics['share'] ,
                 'snkTeus'     => $snkTeus,
-                'snkShare'    => $snkShare . '%',
+                'snkShare'    => $snkShare ,
                 'mlo_share'  => $mloShare,
                 'commodities' => $commodityShare,
             ];

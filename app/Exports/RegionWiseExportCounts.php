@@ -39,7 +39,7 @@ class RegionWiseExportCounts implements FromArray, WithHeadings, WithEvents
             $label = $enum ? $enum->label() : 'Unknown';
 
             $output[] = ["{$region} : {$label}"];
-            $output[] = ['POD', '20ft', '40ft', 'Total TEU', 'MLO Share', 'Commodities'];
+            $output[] = ['POD', '20ft', '40ft', 'Total TEU', 'Avg TEU (TEU/MON)', 'MLO Share', 'Commodities'];
 
             foreach ($ports as $pod => $values) {
                 $output[] = [
@@ -47,6 +47,7 @@ class RegionWiseExportCounts implements FromArray, WithHeadings, WithEvents
                     $values['20ft'],
                     $values['40ft']/2,
                     $values['total_teu'],
+                    $values['teuAvgMonth'],
                     $values['mlo_share'],
                     $values['commodities'],
                 ];
@@ -80,7 +81,7 @@ class RegionWiseExportCounts implements FromArray, WithHeadings, WithEvents
                 ]);
 
                 foreach ([1, 2, 3] as $titleRow) {
-                    $sheet->mergeCells("A{$titleRow}:F{$titleRow}");
+                    $sheet->mergeCells("A{$titleRow}:G{$titleRow}");
                     $sheet->getStyle("A{$titleRow}")->getFont()->setBold(true)->setSize(13);
                 }
 
@@ -88,24 +89,24 @@ class RegionWiseExportCounts implements FromArray, WithHeadings, WithEvents
 
                 foreach ($this->data as $region => $ports) {
                     $prevRow = $rowIndex - 1;
-                    $sheet->mergeCells("A{$rowIndex}:F{$rowIndex}");
-                    $sheet->mergeCells("A{$prevRow}:F{$prevRow}");
+                    $sheet->mergeCells("A{$rowIndex}:G{$rowIndex}");
+                    $sheet->mergeCells("A{$prevRow}:G{$prevRow}");
                     $sheet->getStyle("A{$rowIndex}")->getFont()->setBold(true)->setSize(12);
                     $rowIndex++;
 
-                    $sheet->getStyle("A{$rowIndex}:F{$rowIndex}")->getFont()->setBold(true)->setSize(12);
+                    $sheet->getStyle("A{$rowIndex}:G{$rowIndex}")->getFont()->setBold(true)->setSize(12);
                     $rowIndex++;
 
                     foreach ($ports as $pod => $values) {
-                        $sheet->getStyle("A{$rowIndex}:F{$rowIndex}")->getFont()->setSize(10);
+                        $sheet->getStyle("A{$rowIndex}:G{$rowIndex}")->getFont()->setSize(10);
                         $rowIndex++;
                     }
 
                     $rowIndex++;
                 }
 
-                $sheet->getColumnDimension('E')->setWidth(30); 
                 $sheet->getColumnDimension('F')->setWidth(30); 
+                $sheet->getColumnDimension('G')->setWidth(30); 
 
                 $highestColumn = $sheet->getHighestColumn();
                 $highestRow = $sheet->getHighestRow();

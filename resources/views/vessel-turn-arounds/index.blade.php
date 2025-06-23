@@ -10,6 +10,9 @@
         .ui-timepicker-container {
             z-index: 9999 !important;
         }
+        .ui-datepicker-calendar {
+            display: none;
+        }
     </style>
     <div class="content">
         <div class="container-fluid">

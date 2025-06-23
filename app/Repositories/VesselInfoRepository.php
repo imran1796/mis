@@ -46,7 +46,7 @@ class VesselInfoRepository implements VesselInfoInterface
             $query->whereDate('date', '<=', $toDate);
         }
 
-        if(!empty($filters['operator'])){
+        if (!empty($filters['operator'])) {
             $query->whereIn('operator', $filters['operator']);
         }
 
@@ -87,7 +87,8 @@ class VesselInfoRepository implements VesselInfoInterface
         return $query->get();
     }
 
-    public function getAllUniqueOperators(){
+    public function getAllUniqueOperators()
+    {
         return VesselInfos::query()
             ->select('operator')
             ->distinct()
@@ -109,10 +110,10 @@ class VesselInfoRepository implements VesselInfoInterface
         try {
             $vesselName = trim(strtoupper($data['vessel_name']));
             VesselInfos::whereDate('date', Carbon::parse($data['date'])->toDateString())
-            ->where('arrival_date', Carbon::parse($data['eta'])->toDateString())
-            ->whereHas('vessel', function ($query) use ($vesselName) {
-                $query->whereRaw('TRIM(UPPER(vessel_name)) = ?', [$vesselName]);
-            })
+                ->where('arrival_date', Carbon::parse($data['eta'])->toDateString())
+                ->whereHas('vessel', function ($query) use ($vesselName) {
+                    $query->whereRaw('TRIM(UPPER(vessel_name)) = ?', [$vesselName]);
+                })
                 ->update([
                     'arrival_time' => Carbon::parse($data['eta'])->format('H:i:s'),
                     'berth_time' => Carbon::parse($data['berth_time'])->format('H:i:s'),
@@ -124,5 +125,56 @@ class VesselInfoRepository implements VesselInfoInterface
                 'data' => $data,
             ]);
         }
+    }
+
+    public function deletVesselInfoByDateRoute($filters = [])
+    {
+        \DB::beginTransaction();
+        try {
+            // Get all vessel_info records for the route and date
+            $vesselInfos = VesselInfos::where('route_id', $filters['route_id'])
+                ->whereDate('date', $filters['date'])
+                ->with('importExportCounts')
+                ->get();
+
+            if ($vesselInfos->isEmpty()) {
+                return response()->json(['error' => 'No records found for the selected route and date'], 404);
+            }
+
+            foreach ($vesselInfos as $vesselInfo) {
+                $vesselInfo->importExportCounts()->delete();
+                $vesselInfo->delete();
+            }
+
+            \DB::commit();
+            return response()->json(['success' => 'Vessel-wise data deleted successfully.'], 200);
+        } catch (\Throwable $e) {
+            \DB::rollBack();
+            \Log::error('Failed to delete vessel-wise data: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'route_id' => $filters['route_id'],
+                'date' => $filters['date']
+            ]);
+            return response()->json(['error' => 'An unexpected error occurred while deleting.'], 500);
+        }
+    }
+
+    public function getDistinctVesselInfoDates($filters = [])
+    {
+        return VesselInfos::select('date', 'route_id')
+            ->with('route', 'importExportCounts')
+            ->distinct('date')
+            ->orderByDesc('date')
+            ->when(!empty($filters['route_id']), function ($q) use ($filters) {
+                $q->whereIn('route_id', $filters['route_id']);
+            })
+            ->when(!empty($filters['from_date']), function ($q) use ($filters) {
+                $q->whereDate('date', '>=', Carbon::parse($filters['from_date'])->startOfMonth());
+            })
+            ->when(!empty($filters['to_date']), function ($q) use ($filters) {
+                $q->whereDate('date', '<=', Carbon::parse($filters['to_date'])->startOfMonth());
+            })
+            ->get()
+            ->groupBy(['date', 'route_id']);
     }
 }

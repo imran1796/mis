@@ -50,6 +50,10 @@ class MloService
         return $this->mloRepository->getMloById($id);
     }
 
+    public function getDistinctMloWiseDates($filters){
+        return $this->mloRepository->getDistinctMloWiseDates($filters);
+    }
+
     // public function createMlo(UploadedFile $file): void
     // {
     //     $rows = Excel::toArray(new MyImport, $file)[0];

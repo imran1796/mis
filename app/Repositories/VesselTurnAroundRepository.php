@@ -26,6 +26,16 @@ class VesselTurnAroundRepository implements VesselTurnAroundInterface
         return $query->get();
     }
 
+    public function getDistinctVesselTurnAroundDates($filters=[]){
+        return VesselTurnAround::query()
+        ->select('date')
+        ->distinct()
+        ->when($filters['year'], function ($query) use ($filters) {
+            return $query->whereYear('date', $filters['year']);
+        })
+        ->pluck('date');
+    }
+
 
     public function getVesselTurnAroundById($id)
     {
