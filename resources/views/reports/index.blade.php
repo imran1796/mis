@@ -59,7 +59,7 @@
                                             </div>
                                             <div class="col-10 d-flex align-items-center ">
                                                 <div class="numbers align-content-center">
-                                                    <p class="card-category"> Operatior Wise Container Lifting (Summary)</p>
+                                                    <p class="card-category"> Operator Wise Container Lifting (Summary)</p>
                                                 </div>
                                             </div>
 
