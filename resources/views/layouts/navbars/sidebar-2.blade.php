@@ -107,7 +107,7 @@
                             <li class="nav-item @if ($activePage == 'mloWiseCount-create') active @endif">
                                 <a class="nav-link" href="{{ route('mloWiseCount.create') }}">
                                     <i class="fas fa-user"></i>
-                                    {{ __('Upload MLO (xls)') }}
+                                    {{ __('Upload MLO Data(xls)') }}
                                 </a>
                             </li>
                         @endcan
@@ -138,7 +138,7 @@
                             <li class="nav-item @if ($activePage == 'vesselInfo-create') active @endif">
                                 <a class="nav-link" href="{{ route('vesselInfo.create') }}">
                                     <i class="fas fa-user"></i>
-                                    {{ __('Upload OPT. (xls)') }}
+                                    {{ __('Upload OPT. Data(xls)') }}
                                 </a>
                             </li>
                         @endcan
@@ -178,7 +178,7 @@
                             <li class="nav-item @if ($activePage == 'vesselTurnAround-create') active @endif">
                                 <a class="nav-link" href="{{ route('vesselTurnAround.create') }}">
                                     <i class="fas fa-user"></i>
-                                    {{ __('Upload TA (xls)') }}
+                                    {{ __('Upload TA Data(xls)') }}
                                 </a>
                             </li>
                         @endcan
@@ -199,6 +199,3 @@
         </ul>
     </div>
 </nav>
-
-
-<!-- Page Content  -->

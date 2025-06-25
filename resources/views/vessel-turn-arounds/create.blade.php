@@ -1,7 +1,7 @@
 @extends('layouts.app', [
     'activePage' => 'vesselTurnAround-create',
     'title' => 'GLA Admin',
-    'navName' => 'Vessel Turnaround',
+    'navName' => 'Vessel Turn Around',
     'activeButton' => 'laravel',
 ])
 
@@ -18,7 +18,7 @@
 
                 <div class="row mb-2">
                     <div class="col-lg-12">
-                        <h2>Vessel Turnaround Upload</h2>
+                        <h2>Vessel Turn Around Upload</h2>
                     </div>
                 </div>
 

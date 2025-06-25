@@ -17,7 +17,7 @@
                 <div class="row mb-2">
                     <div class="col-lg-12 margin-tb">
                         <div class="pull-left">
-                            <h2>MLO Wise Volume</h2>
+                            <h2>MLO Wise Data</h2>
                         </div>
                     </div>
                 </div>
