@@ -10,6 +10,28 @@
         .ui-datepicker-calendar {
             display: none;
         }
+        .ui-datepicker {
+            z-index: 9999 !important;
+        }
+
+        thead tr:nth-child(1) th {
+            top: 0;
+            z-index: 4;
+        }
+
+        thead tr:nth-child(2) th {
+            top: 30px;
+            z-index: 3;
+        }
+
+        thead tr:nth-child(3) th {
+            top: 60px;
+            z-index: 2;
+        }
+        thead tr:nth-child(4) th {
+            top: 90px;
+            z-index: 1;
+        }
     </style>
 
     <div class="content">
@@ -27,37 +49,31 @@
                     </div>
                 </div>
 
-                <form class="row px-3 mb-2">
+                <form class="row px-3 mb-2" autocomplete="off">
                     <div class="col-md-2 px-1 form-group">
-                        <select id="pod" name="route_id[]" class="form-control form-control-sm selectpicker" multiple>
+                        <select id="pod" required name="route_id[]" class="form-control form-control-sm selectpicker" multiple>
                             @foreach ($pods as $pod)
-                                <option value="{{ $pod->id }}">{{ $pod->name }}</option>
+                                <option {{ in_array($pod->id, (array) request('route_id')) ? 'selected' : '' }} value="{{ $pod->id }}">{{ $pod->name }}</option>
                             @endforeach
                         </select>
                     </div>
 
                     <div class="col-md-2 px-1 mt-1 form-group">
                         <label for="from_date" class="sr-only">From Date</label>
-                        <input placeholder="From Date" class="form-control form-control-sm datepicker" type="text"
+                        <input autocomplete="off" required placeholder="From Date" class="form-control form-control-sm datepicker" type="text"
                             name="from_date" id="from_date" value="{{ request('from_date') }}">
                     </div>
                     <div class=" col-md-2 mt-1 px-1 form-group">
                         <label for="to_date" class="sr-only">To Date</label>
-                        <input placeholder="To Date" class="form-control form-control-sm datepicker" type="text"
+                        <input autocomplete="off" required placeholder="To Date" class="form-control form-control-sm datepicker" type="text"
                             name="to_date" id="to_date" value="{{ request('to_date') }}">
                     </div>
 
-                    <div class="col-md-2 px-1 mt-1">
+                    <div class="col-md-1 px-1 mt-1">
                         <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
                     </div>
 
-                    <div class="col-md-2 px-1 mt-1">
-                        {{-- <button class="btn btn-success btn-sm w-100" id="btnExcelJsExport" type="button"><i class="fa fa-download"
-                                aria-hidden="true"></i> xls</button> --}}
-                        {{-- <a href="{{ route('reports.soc-inout-bound.download', ['from_date' => request()->get('from_date'), 'to_date' => request()->get('to_date'), 'route_id' => request()->get('route_id')]) }}"
-                            class="btn btn-success btn-sm w-100">
-                            <i class="fa fa-download" aria-hidden="true"></i> (xlsx)
-                        </a> --}}
+                    <div class="col-md-1 px-1 mt-1">
                         <button class="btn btn-success btn-sm w-100" id="btnExcelJsExport" type="button"><i
                                 class="fa fa-download" aria-hidden="true"></i> xls</button>
                     </div>
@@ -91,7 +107,7 @@
                             $allRoutes = [1 => 'SIN', 2 => 'CBO', 3 => 'CCU'];
                             $routes = array_intersect_key($allRoutes, array_flip((array) request('route_id', [])));
                         @endphp
-                        <table id="excelJsTable" class="tableFixHead table-bordered table2excel custom-table-report mb-3">
+                        <table id="excelJsTable" class="tableFixHead table-sm table-bordered table2excel custom-table-report mb-3">
                             @if (request('from_date') && request('to_date'))
                                 <p class="reportRange" style="display: none;">
                                     {{ '(' . \Carbon\Carbon::parse(request('from_date'))->format('M y') . ' to ' . \Carbon\Carbon::parse(request('to_date'))->format('M y') . ')' }}
@@ -101,37 +117,39 @@
                             <thead>
 
                                 <tr>
-                                    <th colspan="{{ 23 + count($routes)*2 }}" class="text-center" style="font-size: 17px">SOC In/Out Bound Report
-                                    </th>
+                                    <th colspan="{{ 23 + count($routes)*2 }}" class="text-center" style="font-size: 16px">SOC In/Out Bound Report</th>
                                 </tr>
                                 <tr>
-                                    <th rowspan="2">Month</th>
-                                    <th colspan="{{ count($teuCols) }}">Import</th>
-                                    <th colspan="{{ count($teuCols) }}">Export</th>
-                                    <th colspan="{{ count($routes) }}">Total Call</th>
-                                    <th rowspan="2">Total</th>
-                                    <th colspan="{{ count($routes) }}">Total Vessel</th>
-                                    <th rowspan="2">Total</th>
+                                    <th colspan="{{ 23 + count($routes)*2 }}" class="text-center">@include('components.route-range-summary')</th>
+                                </tr>
+                                <tr>
+                                    <th class="text-center" rowspan="2">Month</th>
+                                    <th class="text-center" colspan="{{ count($teuCols) }}">Import</th>
+                                    <th class="text-center" colspan="{{ count($teuCols) }}">Export</th>
+                                    <th class="text-center" colspan="{{ count($routes) }}">Total Call</th>
+                                    <th class="text-center" rowspan="2">Total</th>
+                                    <th class="text-center" colspan="{{ count($routes) }}">Total Vessel</th>
+                                    <th class="text-center" rowspan="2">Total</th>
                                 </tr>
                                 <tr>
                                     {{-- Import TEUs --}}
                                     @foreach($teuCols as $col)
-                                        <th>{{ $col }}</th>
+                                        <th class="text-center">{{ $col }}</th>
                                     @endforeach
                                 
                                     {{-- Export TEUs --}}
                                     @foreach($teuCols as $col)
-                                        <th>{{ $col }}</th>
+                                        <th class="text-center">{{ $col }}</th>
                                     @endforeach
                                 
                                     {{-- Total Call by Route --}}
                                     @foreach($routes as $name)
-                                        <th>{{ $name }}</th>
+                                        <th class="text-center">{{ $name }}</th>
                                     @endforeach
                                 
                                     {{-- Total Vessel by Route --}}
                                     @foreach($routes as $name)
-                                        <th>{{ $name }}</th>
+                                        <th class="text-center">{{ $name }}</th>
                                     @endforeach
                                 </tr>
                             </thead>
@@ -325,35 +343,40 @@
         }
 
         function initializeMonthYearPicker(selector) {
+            let isDateManuallySelected = false;
+
             $(selector).datepicker({
                 changeMonth: true,
                 changeYear: true,
                 showButtonPanel: true,
                 dateFormat: 'M-yy',
-
-                onChangeMonthYear: function(year, month, inst) {
-                    $(this).datepicker('setDate', new Date(year, month - 1, 1));
-                },
-
-                onClose: function() {
-                    const iMonth = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-                    const iYear = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-
-
-                    if (iMonth !== null && iYear !== null) {
-                        $(this).datepicker('setDate', new Date(iYear, iMonth, 1));
-                    }
-                },
-
                 beforeShow: function() {
+                    isDateManuallySelected = false;
+
                     const selDate = $(this).val();
                     if (selDate.length > 0) {
                         const iYear = selDate.slice(-4);
-                        const iMonth = $.inArray(selDate.slice(0, -5), $(this).datepicker('option',
-                            'monthNames'));
+                        const iMonth = $.inArray(
+                            selDate.slice(0, -5),
+                            $(this).datepicker('option', 'monthNames')
+                        );
 
                         if (iMonth !== -1) {
                             $(this).datepicker('option', 'defaultDate', new Date(iYear, iMonth, 1));
+                            $(this).datepicker('setDate', new Date(iYear, iMonth, 1));
+                        }
+                    }
+                },
+                onChangeMonthYear: function(year, month, inst) {
+                    isDateManuallySelected = true;
+                    $(this).datepicker('setDate', new Date(year, month - 1, 1));
+                },
+                onClose: function(dateText, inst) {
+                    if (isDateManuallySelected) {
+                        const iMonth = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                        const iYear = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+
+                        if (iMonth !== null && iYear !== null) {
                             $(this).datepicker('setDate', new Date(iYear, iMonth, 1));
                         }
                     }

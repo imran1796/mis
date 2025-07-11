@@ -7,6 +7,7 @@ use App\Exports\MLoWiseSummary;
 use App\Http\Requests\MloStoreRequest;
 use App\Http\Requests\MloUpdateRequest;
 use App\Http\Requests\MloWiseCountCreateRequest;
+use App\Models\Mlo;
 use App\Models\MloWiseCount;
 use App\Models\Route;
 use App\Services\MloService;
@@ -90,11 +91,17 @@ class MloController extends Controller
 
     public function mloWiseSummary(Request $request)
     {
+        // dd($request->all());
         $filters = $request->only(['from_date', 'to_date', 'route_id', 'mlos']);
         $pods = Route::all();
+        $mlos = Mlo::select('mlo_code','is_show_nvocc')->get();
+        // $selectedMlos = $request->input('mlos');
+        // if (!$selectedMlos) {
+        //     $selectedMlos = $mlos->where('is_show_nvocc', 1)->pluck('mlo_code')->toArray();
+        // }
 
         $results = $this->mloService->mloWiseSummary($filters);
-        return view('reports.mlo-wise-summary', compact('pods', 'results'));
+        return view('reports.mlo-wise-summary', compact('pods', 'results','mlos'));
 
         // return Excel::download(new MLoWiseSummary($data,$range), 'mloWiseSummary'.$range.'.xlsx');
     }
@@ -107,10 +114,23 @@ class MloController extends Controller
 
         return view('reports.soc-outbound-market', compact('datas', 'pods'));
     }
+
+    public function mloWiseContainerHandling(Request $request){
+        $pods = Route::all();
+        $data = $this->mloService->mloWiseContainerHandling($request);
+        return view('reports.mlo-wise-handling',compact('pods','data'));
+    }
     
-    public function mloWiseContainerHandling(Request $request)
+    public function mloWiseContainerHandlingDownload(Request $request)
     {
-        $datas = $this->mloService->mloWiseContainerHandling($request);
-        return Excel::download(new MLOWiseContainerHandling($datas[0],$datas[1],$datas[2]), $datas[3]);
+        $range = Carbon::parse($request['from_date'])->format('M-y').' To '.Carbon::parse($request['to_date'])->format('M-y');
+        $routeNames = [1 => 'Singapore', 2 => 'Colombo', 3 => 'Kolkata'];
+        $route = collect(request('route_id'))
+        ->map(fn($id) => $routeNames[$id] ?? '')
+        ->filter()
+        ->join(', ');
+        $fileName = "MLO_Wise_Container_Handling - {$range}" . ($route ? " - {$route}" : '') . ".xlsx";
+        $data = $this->mloService->mloWiseContainerHandling($request);
+        return Excel::download(new MLOWiseContainerHandling($data,$route,$range), $fileName);
     }
 }

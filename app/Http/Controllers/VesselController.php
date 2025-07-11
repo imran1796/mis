@@ -28,6 +28,8 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use SebastianBergmann\CodeCoverage\Report\Xml\Totals;
 
+use function Ramsey\Uuid\v1;
+
 class VesselController extends Controller
 {
     protected $vesselService, $vesselInfoService, $vesselTurnAroundService;
@@ -154,12 +156,6 @@ class VesselController extends Controller
         return Excel::download(new OperatorWiseSummary($data[0], $data[1], $range, $route), $fileName);
     }
 
-    public function operatorWiseContainerHandling(Request $request)
-    {
-        $datas = $this->vesselInfoService->operatorWiseContainerHandling($request);
-        return Excel::download(new VesselOperatorWiseContainerHandling($datas[0],$datas[1],$datas[2]), $datas[3]);
-    }
-
     public function socInOutBound(Request $request)
     {
         $filters = $request->only(['from_date', 'to_date', 'route_id']);
@@ -248,5 +244,26 @@ class VesselController extends Controller
 
     public function deletVesselTurnAroundByDate(Request $request){
         return VesselTurnAround::whereDate('date', $request->date)->delete();
+    }
+
+    public function vesselOperatorWiseLifting(Request $request){
+        $pods = $this->vesselInfoService->getAllRoutes();
+        $data = $this->vesselInfoService->operatorWiseContainerHandling($request);
+        return view('reports.vessel-operator-wise-lifting',compact('data','pods'));
+    }
+    
+    public function operatorWiseContainerHandling(Request $request)
+    {
+        // dd($request->all());
+        $range = Carbon::parse($request['from_date'])->format('M-y').' To '.Carbon::parse($request['to_date'])->format('M-y');
+        $routeNames = [1 => 'Singapore', 2 => 'Colombo', 3 => 'Kolkata'];
+        $route = collect(request('route_id'))
+        ->map(fn($id) => $routeNames[$id] ?? '')
+        ->filter()
+        ->join(', ');
+        $fileName = "Vessel_Operator_Wise_Container_Handling - {$range}" . ($route ? " - {$route}" : '') . ".xlsx";
+
+        $data = $this->vesselInfoService->operatorWiseContainerHandling($request);
+        return Excel::download(new VesselOperatorWiseContainerHandling($data,$route,$range), $fileName);
     }
 }

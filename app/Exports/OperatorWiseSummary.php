@@ -11,6 +11,8 @@ use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
+use App\Helpers\ContainerCountHelper as CCH;
+
 
 class OperatorWiseSummary implements FromCollection, WithMapping, WithHeadings, WithEvents
 {
@@ -39,22 +41,22 @@ class OperatorWiseSummary implements FromCollection, WithMapping, WithHeadings, 
     {
         return [
             $this->sq++,
-            $data['operator'] ?? '',
-            $data['total_laden_import'] ?? 0,
-            $data['total_empty_import'] ?? 0,
-            $data['import_laden_eff'] ?? 0,
-            $data['import_empty_eff'] ?? 0,
-            $data['total_laden_export'] ?? 0,
-            $data['total_empty_export'] ?? 0,
-            $data['export_laden_eff'] ?? 0,
-            $data['export_empty_eff'] ?? 0,
-            $data['vessel_calls'] ?? 0,
-            $data['unique_vessels'] ?? 0,
-            $data['effective_capacity'] ?round($data['effective_capacity']): 0,
-            $data['nominal_capacity'] ?? 0,
-            $data['import'] ?round($data['import'],1).'%': 0,
-            $data['export_laden'] ?round($data['export_laden'],1).'%': 0,
-            $data['export_empty'] ?round($data['export_empty'],1).'%': 0,
+            CCH::charZeroIfEmpty($data['operator'] ),
+            CCH::charZeroIfEmpty($data['total_laden_import']),
+            CCH::charZeroIfEmpty($data['total_empty_import']),
+            CCH::charZeroIfEmpty($data['import_laden_eff']),
+            CCH::charZeroIfEmpty($data['import_empty_eff']),
+            CCH::charZeroIfEmpty($data['total_laden_export']),
+            CCH::charZeroIfEmpty($data['total_empty_export']),
+            CCH::charZeroIfEmpty($data['export_laden_eff']),
+            CCH::charZeroIfEmpty($data['export_empty_eff']),
+            CCH::charZeroIfEmpty($data['vessel_calls']),
+            CCH::charZeroIfEmpty($data['unique_vessels']),
+            CCH::charZeroIfEmpty($data['effective_capacity'] ?round($data['effective_capacity']): 0),
+            CCH::charZeroIfEmpty($data['nominal_capacity'] ?? 0),
+            CCH::charZeroIfEmpty($data['import'] ?round($data['import'],1).'%': 0),
+            CCH::charZeroIfEmpty($data['export_laden'] ?round($data['export_laden'],1).'%': 0),
+            CCH::charZeroIfEmpty($data['export_empty'] ?round($data['export_empty'],1).'%': 0),
         ];
     }
 

@@ -30,51 +30,61 @@ class MLOWiseContainerHandling implements FromCollection, WithMapping, WithHeadi
     public function collection()
     {
         return collect($this->data);
-        
     }
 
     public function map($data): array
     {
-        // dd($data);
-        $import = $data->where('type', 'import')->first();
-        $export = $data->where('type', 'export')->first();
+        $imports = $data->where('type', 'import');
+        $exports = $data->where('type', 'export');
 
-        $importTeu = CCH::calculateTeu($import ?? (object)[]);
-        $exportTeu = CCH::calculateTeu($export ?? (object)[]);
+        $importTeu = [
+            'laden' => $imports->sum(fn($item) => CCH::calculateTeu($item)['laden'] ?? 0),
+            'empty' => $imports->sum(fn($item) => CCH::calculateTeu($item)['empty'] ?? 0),
+        ];
+
+        $exportTeu = [
+            'laden' => $exports->sum(fn($item) => CCH::calculateTeu($item)['laden'] ?? 0),
+            'empty' => $exports->sum(fn($item) => CCH::calculateTeu($item)['empty'] ?? 0),
+        ];
 
         return [
-            $import?->mlo_code ?? $export?->mlo_code ?? '-',
-            CCH::zeroIfEmpty($import->dc20 ?? null),
-            CCH::zeroIfEmpty($import->dc40 ?? null),
-            CCH::zeroIfEmpty($import->dc45 ?? null),
-            CCH::zeroIfEmpty($import->r20 ?? null),
-            CCH::zeroIfEmpty($import->r40 ?? null),
-            CCH::zeroIfEmpty($import->mty20 ?? null),
-            CCH::zeroIfEmpty($import->mty40 ?? null),
-            $importTeu['laden'] ?? 0,
-            $importTeu['empty'] ?? 0,
-            (($importTeu['laden']??0)+($importTeu['empty']??0)),
+            // Prefer import MLO code; fallback to export; else "-"
+            $imports->first()?->mlo_code ?? $exports->first()?->mlo_code ?? '-',
 
-            CCH::zeroIfEmpty($export->dc20 ?? null),
-            CCH::zeroIfEmpty($export->dc40 ?? null),
-            CCH::zeroIfEmpty($export->dc45 ?? null),
-            CCH::zeroIfEmpty($export->r20 ?? null),
-            CCH::zeroIfEmpty($export->r40 ?? null),
-            CCH::zeroIfEmpty($export->mty20 ?? null),
-            CCH::zeroIfEmpty($export->mty40 ?? null),
-            $exportTeu['laden'] ?? 0,
-            $exportTeu['empty'] ?? 0,
-            (($exportTeu['laden']??0)+($exportTeu['empty']??0)),
+            // IMPORT sums
+            CCH::zeroIfEmpty($imports->sum('dc20')),
+            CCH::zeroIfEmpty($imports->sum('dc40')),
+            CCH::zeroIfEmpty($imports->sum('dc45')),
+            CCH::zeroIfEmpty($imports->sum('r20')),
+            CCH::zeroIfEmpty($imports->sum('r40')),
+            CCH::zeroIfEmpty($imports->sum('mty20')),
+            CCH::zeroIfEmpty($imports->sum('mty40')),
+            $importTeu['laden'],
+            $importTeu['empty'],
+            $importTeu['laden'] + $importTeu['empty'],
+
+            // EXPORT sums
+            CCH::zeroIfEmpty($exports->sum('dc20')),
+            CCH::zeroIfEmpty($exports->sum('dc40')),
+            CCH::zeroIfEmpty($exports->sum('dc45')),
+            CCH::zeroIfEmpty($exports->sum('r20')),
+            CCH::zeroIfEmpty($exports->sum('r40')),
+            CCH::zeroIfEmpty($exports->sum('mty20')),
+            CCH::zeroIfEmpty($exports->sum('mty40')),
+            $exportTeu['laden'],
+            $exportTeu['empty'],
+            $exportTeu['laden'] + $exportTeu['empty'],
         ];
     }
+
 
     public function headings(): array
     {
         return [
-            ['MLO Wise Container Handling for '.$this->range],
-            ['Route: '.$this->route],
-            ['','IMPORT', '', '', '', '', '', '', '', '', 'TTL IMP. TEUs', 'EXPORT', '', '', '', '', '', '', '', '', 'TTL EXP. TEUs'],
-            ['MLO', '20\'', '40\'', '45\'', '20R', '40R', '20M', '40M', 'LDN TEUs', 'MTY TEUs', '', '20\'', '40\'', '45\'', '20R', '40R', '20M', '40M', 'LDN TEUs', 'MTY TEUs','']
+            ['MLO Wise Container Handling for ' . $this->range],
+            ['Route: ' . $this->route],
+            ['', 'IMPORT', '', '', '', '', '', '', '', '', 'TTL IMP. TEUs', 'EXPORT', '', '', '', '', '', '', '', '', 'TTL EXP. TEUs'],
+            ['MLO', '20\'', '40\'', '45\'', '20R', '40R', '20M', '40M', 'LDN TEUs', 'MTY TEUs', '', '20\'', '40\'', '45\'', '20R', '40R', '20M', '40M', 'LDN TEUs', 'MTY TEUs', '']
         ];
     }
 
@@ -119,8 +129,8 @@ class MLOWiseContainerHandling implements FromCollection, WithMapping, WithHeadi
                 $event->sheet->getDelegate()->getStyle("A{$subtotalRow}:{$highestColumn}{$subtotalRow}")->getFont()->setBold(true);
                 $sheet->getStyle("A{$subtotalRow}:{$highestColumn}{$subtotalRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
-                $subtotalColumns = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I','J','K','L','M','N','O','P','Q','R','S','T','U'];
-            
+                $subtotalColumns = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U'];
+
                 foreach ($subtotalColumns as $col) {
                     $sheet->setCellValue("{$col}{$subtotalRow}", "=SUM({$col}5:{$col}{$lastDataRow})");
                     $sheet->getStyle("{$col}{$subtotalRow}")->getFont()->setBold(true);

@@ -11,9 +11,28 @@
             z-index: 9999 !important;
         }
 
+        .ui-datepicker {
+            z-index: 9999 !important;
+        }
+
         .ui-datepicker-calendar {
             display: none;
         }
+
+        /* thead tr:nth-child(1) th {
+                top: 0;
+                z-index: 23
+            }
+
+            thead tr:nth-child(2) th {
+                top: 30px;
+                z-index: 2;
+            }
+
+            thead tr:nth-child(3) th {
+                top: 60px;
+                z-index: 1;
+            } */
     </style>
     <div class="content">
         <div class="container-fluid">
@@ -30,41 +49,32 @@
 
                 <form class="row">
                     {{-- Report Type --}}
-                    <div class="col-sm-2 pr-0 form-group">
+                    <div class="col-md-2 pr-0 form-group">
                         <select name="report_type" class="form-control form-control-sm selectpicker" title="Report Type">
                             @foreach (['vessel-wise', 'operator-wise', 'operator-route-wise', 'route-wise'] as $type)
                                 <option value="{{ $type }}" {{ request('report_type') == $type ? 'selected' : '' }}>
-                                    {{ $type =='vessel-wise'? 'All' : strtoupper(str_replace('-', ' ', $type)) }}
+                                    {{ $type == 'vessel-wise' ? 'All' : strtoupper(str_replace('-', ' ', $type)) }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
                     {{-- From Month --}}
-                    <div class="col-sm-2 pr-0 mt-1 form-group">
+                    <div class="col-md-2 pr-0 mt-1 form-group">
                         <input type="text" name="from_date" class="form-control form-control-sm monthpicker"
                             placeholder="From Month" value="{{ request('from_date') }}">
                     </div>
 
                     {{-- To Month --}}
-                    <div class="col-sm-2 pr-0 mt-1 form-group">
+                    <div class="col-md-2 pr-0 mt-1 form-group">
                         <input type="text" name="to_date" class="form-control form-control-sm monthpicker"
                             placeholder="To Month" value="{{ request('to_date') }}">
                     </div>
 
                     {{-- Operator --}}
-                    <div class="col-sm-2 pr-0  form-group">
-                        {{-- <select name="operator[]" class="form-control form-control-sm selectpicker" title="Operators" multiple>
-                            @foreach ($operators as $operator)
-                                <option value="{{ $operator->id }}"
-                                    {{ collect(request('operator_id'))->contains($operator->id) ? 'selected' : '' }}>
-                                    {{ $operator->name }}
-                                </option>
-                            @endforeach
-                        </select> --}}
-                        <select data-live-search="true"
-                            class="form-control selectpicker form-control-sm search-select" name="operator[]"
-                            id="operator" multiple title="Operators">
+                    <div class="col-md-2 pr-0  form-group">
+                        <select data-live-search="true" class="form-control selectpicker form-control-sm search-select"
+                            name="operator[]" id="operator" multiple title="Operators">
                             @foreach ($operators as $operator)
                                 <option value="{{ $operator }}"
                                     {{ is_array(request('operator')) && in_array($operator, request('operator')) ? 'selected' : '' }}>
@@ -75,7 +85,7 @@
                     </div>
 
                     {{-- Route --}}
-                    <div class="col-sm-2 pr-0  form-group">
+                    <div class="col-md-2 pr-0  form-group">
                         <select name="route_id[]" class="form-control form-control-sm selectpicker" title="Route" multiple>
                             @foreach ($routes as $route)
                                 <option value="{{ $route->id }}"
@@ -87,7 +97,7 @@
                     </div>
 
                     {{-- Shipment Type --}}
-                    <div class="col-sm-2 pr-0  form-group">
+                    <div class="col-md-2 pr-0  form-group">
                         <select name="shipment_type[]" class="form-control form-control-sm selectpicker"
                             title="Export/Import" multiple>
                             @foreach (['export', 'import'] as $type)
@@ -100,7 +110,7 @@
                     </div>
 
                     {{-- Container Type --}}
-                    <div class="col-sm-2 form-group">
+                    <div class="col-md-2 form-group">
                         <select id="ctnTypeSelect" name="ctn_type[]" class="form-control form-control-sm selectpicker"
                             title="Mty/Ldn" multiple>
                             @foreach (['empty', 'laden'] as $type)
@@ -113,7 +123,7 @@
                     </div>
 
                     {{-- Container Size --}}
-                    <div class="col-sm-2 form-group">
+                    <div class="col-md-2 form-group">
                         <select id="ctnSizeSelect" name="ctn_size[]" class="form-control form-control-sm selectpicker"
                             title="CTN Size" multiple>
                             @foreach (['dc20', 'dc40', 'dc45', 'r20', 'r40', 'mty20', 'mty40'] as $type)
@@ -128,17 +138,17 @@
 
 
                     {{-- Search Button --}}
-                    <div class="col-sm-1 mt-1 form-group">
+                    <div class="col-md-1 px-1 mt-1 form-group">
                         <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
                     </div>
 
-                    <div class="col-sm-1 mt-1 form-group">
+                    <div class="col-md-1 px-1 mt-1 form-group">
                         <button class="btn btn-success btn-sm w-100" id="btnExcelJsExport" type="button"><i
                                 class="fa fa-download" aria-hidden="true"></i> xls</button>
                     </div>
 
                     {{-- Optional Export Button --}}
-                    {{-- <div class="col-sm-1 mt-1 form-group">
+                    {{-- <div class="col-md-1 mt-1 form-group">
                         <button type="button" id="btnExcelExport" class="btn btn-success btn-sm w-100">
                             <i class="fa fa-download"></i> Excel
                         </button>
@@ -190,7 +200,7 @@
                             <thead class="bg-gray-200">
                                 <tr>
                                     <th colspan="{{ $colspan + count($headers) }}" class="text-center">
-                                        <h6 class="m-0 reportTitle text-center" style="font-size: 18px">
+                                        <h6 class="m-0 reportTitle text-center" style="font-size: 15px">
                                             <strong>
                                                 {{ request()->filled('report_type')
                                                     ? Str::title(str_replace('_', ' ', request('report_type'))) . ' Report'
@@ -286,7 +296,7 @@
                                             @foreach ($value1 as $vls => $typeData)
                                                 @foreach ($types as $i => $type)
                                                     <tr>
-                                                        
+
                                                         @if ($i === 0)
                                                             <td rowspan="{{ count($types) }}">{{ $vls }}</td>
                                                         @endif
@@ -467,37 +477,40 @@
         });
 
         function initializeMonthYearPicker(selector) {
+            let isDateManuallySelected = false;
+
             $(selector).datepicker({
                 changeMonth: true,
                 changeYear: true,
                 showButtonPanel: true,
                 dateFormat: 'M-yy',
-
-                onChangeMonthYear: function(year, month, inst) {
-                    $(this).datepicker('setDate', new Date(year, month - 1, 1));
-                },
-
-                onClose: function() {
-                    const iMonth = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-                    const iYear = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-                    const dateExist = $('.datepicker').val();
-                    // // const tDateExist = $('.tdatepicker').val();
-                    // console.log(dateExist);
-
-                    if (iMonth !== null && iYear !== null && dateExist != '') {
-                        $(this).datepicker('setDate', new Date(iYear, iMonth, 1));
-                    }
-                },
-
                 beforeShow: function() {
+                    isDateManuallySelected = false;
+
                     const selDate = $(this).val();
                     if (selDate.length > 0) {
                         const iYear = selDate.slice(-4);
-                        const iMonth = $.inArray(selDate.slice(0, -5), $(this).datepicker('option',
-                            'monthNames'));
+                        const iMonth = $.inArray(
+                            selDate.slice(0, -5),
+                            $(this).datepicker('option', 'monthNames')
+                        );
 
                         if (iMonth !== -1) {
                             $(this).datepicker('option', 'defaultDate', new Date(iYear, iMonth, 1));
+                            $(this).datepicker('setDate', new Date(iYear, iMonth, 1));
+                        }
+                    }
+                },
+                onChangeMonthYear: function(year, month, inst) {
+                    isDateManuallySelected = true;
+                    $(this).datepicker('setDate', new Date(year, month - 1, 1));
+                },
+                onClose: function(dateText, inst) {
+                    if (isDateManuallySelected) {
+                        const iMonth = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                        const iYear = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+
+                        if (iMonth !== null && iYear !== null) {
                             $(this).datepicker('setDate', new Date(iYear, iMonth, 1));
                         }
                     }

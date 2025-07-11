@@ -1,7 +1,7 @@
 @extends('layouts.app', [
     'activePage' => 'reports',
     'title' => 'GLA Admin',
-    'navName' => 'SOC Out Bound',
+    'navName' => 'Vessel Operator Wise Lifting',
     'activeButton' => 'laravel',
 ])
 
@@ -29,6 +29,7 @@
             top: 60px;
             z-index: 2;
         }
+
         thead tr:nth-child(4) th {
             top: 90px;
             z-index: 1;
@@ -41,7 +42,7 @@
                 <div class="row mb-2">
                     <div class="col-lg-12 margin-tb">
                         <div class="pull-left">
-                            <h2>SOC Outbound Marketing Strategy</h2>
+                            <h2>MLO Wise Container Handling</h2>
                         </div>
 
                         <div class="pull-right">
@@ -52,7 +53,7 @@
 
                 <form class="row px-3 mb-2" autocomplete="off">
                     <div class="col-md-2 px-1 form-group">
-                        <select id="pod" required name="route_id[]" class="form-control form-control-sm selectpicker"
+                        <select required id="pod" name="route_id[]" class="form-control form-control-sm selectpicker"
                             multiple>
                             @foreach ($pods as $pod)
                                 <option {{ in_array($pod->id, (array) request('route_id')) ? 'selected' : '' }}
@@ -77,9 +78,12 @@
                     <div class="col-md-1 px-1 mt-1">
                         <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
                     </div>
+
                     <div class="col-md-1 px-1 mt-1">
-                        <button class="btn btn-success btn-sm w-100" id="btnExcelJsExport" type="button"><i
-                                class="fa fa-download" aria-hidden="true"></i> xls</button>
+                        <a href="{{ route('reports.mlo.container-handling.download', ['from_date' => request()->get('from_date'), 'to_date' => request()->get('to_date'), 'route_id' => request()->get('route_id')]) }}"
+                            class="btn btn-success btn-sm w-100">
+                            <i class="fa fa-download" aria-hidden="true"></i> (xlsx)
+                        </a>
                     </div>
                 </form>
 
@@ -94,54 +98,121 @@
                         {{-- end auto search --}}
                     </div>
                     <div class="card-body">
-                        @if (request('from_date') && request('to_date'))
-                            <p class="reportRange" style="display: none;">
-                                {{ '(' . \Carbon\Carbon::parse(request('from_date'))->format('M y') . ' to ' . \Carbon\Carbon::parse(request('to_date'))->format('M y') . ')' }}
-                            </p>
-                        @endif
-                        <p class="reportTitle" style="display: none;" type="hidden">Outbound Market Strategy</p>
-                        <table id="excelJsTable"
-                            class="tableFixHead table-sm table-bordered table2excel custom-table-report mb-3">
+                        <table class="tableFixHead table-bordered table-sm custom-table-report">
                             <thead>
                                 <tr>
-                                    <th colspan="6" class="text-center" style="font-size: 16px">Outbound Market Strategy</th>
+                                    <th colspan="21" class="text-center" style="font-size: 16px">MLO Wise Container
+                                        Handling</th>
                                 </tr>
                                 <tr>
-                                    <th colspan="6" class="text-center">@include('components.route-range-summary')</th>
+                                    <th colspan="21" class="text-center">@include('components.route-range-summary')</th>
                                 </tr>
                                 <tr>
-                                    <th class="text-center" rowspan="2">MLO Code</th>
-                                    <th class="text-center" rowspan="2">MLO Name</th>
-                                    <th class="text-center" rowspan="2">Local Agent Address</th>
-                                    <th class="text-center" rowspan="2">Principal Contact Address</th>
-                                    <th class="text-center" colspan="2">AVG Weekly Volume</th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">LDN</th>
-                                    <th class="text-center">MTY</th>
-                                </tr>
+                                    <th rowspan="2">MLO</th>
 
+                                    {{-- IMPORT --}}
+                                    <th colspan="7" class="text-center">IMPORT</th>
+                                    <th rowspan="2">LDN TEUs</th>
+                                    <th rowspan="2">MTY TEUs</th>
+                                    <th rowspan="2">TTL IMP. TEUs</th>
+
+                                    {{-- EXPORT --}}
+                                    <th colspan="7" class="text-center">EXPORT</th>
+                                    <th rowspan="2">LDN TEUs</th>
+                                    <th rowspan="2">MTY TEUs</th>
+                                    <th rowspan="2">TTL EXP. TEUs</th>
+                                </tr>
+                                <tr>
+                                    {{-- IMPORT details --}}
+                                    <th>20'</th>
+                                    <th>40'</th>
+                                    <th>45'</th>
+                                    <th>20R</th>
+                                    <th>40R</th>
+                                    <th>20M</th>
+                                    <th>40M</th>
+
+                                    {{-- EXPORT details --}}
+                                    <th>20'</th>
+                                    <th>40'</th>
+                                    <th>45'</th>
+                                    <th>20R</th>
+                                    <th>40R</th>
+                                    <th>20M</th>
+                                    <th>40M</th>
+                                </tr>
                             </thead>
                             <tbody>
-                                @foreach ($datas as $opt => $item)
+                                @foreach ($data as $mlo => $item)
                                     <tr>
-                                        <td>{{ $item['mlo_code'] }}</td>
-                                        <td>{{ $item['mlo_name'] }}</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td>{{ $item['exportLdn'] }}</td>
-                                        <td>{{ $item['exportMty'] }}</td>
+                                        <td>{{ $mlo }}</td>
+                                        {{-- IMPORT --}}
+                                        <td>{{ $item->where('type', 'import')->sum('dc20') }}</td>
+                                        <td>{{ $item->where('type', 'import')->sum('dc40') }}</td>
+                                        <td>{{ $item->where('type', 'import')->sum('dc45') }}</td>
+                                        <td>{{ $item->where('type', 'import')->sum('r20') }}</td>
+                                        <td>{{ $item->where('type', 'import')->sum('r40') }}</td>
+                                        <td>{{ $item->where('type', 'import')->sum('mty20') }}</td>
+                                        <td>{{ $item->where('type', 'import')->sum('mty40') }}</td>
+
+                                        <td>
+                                            {{ $item->where('type', 'import')->sum(fn($i) => $i->import_teu['laden'] ?? 0) }}
+                                        </td>
+                                        <td>
+                                            {{ $item->where('type', 'import')->sum(fn($i) => $i->import_teu['empty'] ?? 0) }}
+                                        </td>
+                                        <td>
+                                            {{ $item->where('type', 'import')->sum(fn($i) => $i->import_teu['total'] ?? 0) }}
+                                        </td>
+
+                                        {{-- EXPORT --}}
+                                        <td>{{ $item->where('type', 'export')->sum('dc20') }}</td>
+                                        <td>{{ $item->where('type', 'export')->sum('dc40') }}</td>
+                                        <td>{{ $item->where('type', 'export')->sum('dc45') }}</td>
+                                        <td>{{ $item->where('type', 'export')->sum('r20') }}</td>
+                                        <td>{{ $item->where('type', 'export')->sum('r40') }}</td>
+                                        <td>{{ $item->where('type', 'export')->sum('mty20') }}</td>
+                                        <td>{{ $item->where('type', 'export')->sum('mty40') }}</td>
+
+                                        <td>
+                                            {{ $item->where('type', 'export')->sum(fn($i) => $i->export_teu['laden'] ?? 0) }}
+                                        </td>
+                                        <td>
+                                            {{ $item->where('type', 'export')->sum(fn($i) => $i->export_teu['empty'] ?? 0) }}
+                                        </td>
+                                        <td>
+                                            {{ $item->where('type', 'export')->sum(fn($i) => $i->export_teu['total'] ?? 0) }}
+                                        </td>
+
                                     </tr>
                                 @endforeach
 
                             </tbody>
-
                             <tfoot>
-                                <th colspan="4" class="text-center">Grand Total</th>
-                                <th></th>
-                                <th></th>
+                                <tr>
+                                    <th>G.TTL</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
                             </tfoot>
-
                         </table>
                     </div>
                 </div>
@@ -151,9 +222,9 @@
 @endsection
 
 @push('js')
+    <script src="{{ asset('light-bootstrap/js/jquery.table2excel.min.js') }}"></script>
     <script>
         $(document).ready(function() {
-
             initializeMonthYearPicker('.datepicker');
 
             $("#autosearch").on("keyup", function() {
@@ -162,9 +233,10 @@
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             });
+
             const table = $('.tableFixHead');
-            const totalColumns = 6;
-            const startColIndex = 4;
+            const totalColumns = 20;
+            const startColIndex = 1;
             let totals = Array(totalColumns).fill(0);
 
             table.find('tbody tr').each(function() {

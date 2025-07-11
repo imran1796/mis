@@ -17,11 +17,8 @@ class MloRepository implements MloInterface
 
     public function getAllMloWiseCount($filters = [])
     {
-        if (empty($filters)) {
-            return collect();
-        }
-
-        $query = MloWiseCount::with('mlo');
+        $query = MloWiseCount::with('mloAllVersions');
+        // $query = MloWiseCount::with('mlo');
         if (!empty($filters['from_date'])) {
             $fromDate = Carbon::createFromFormat('d-M-Y', '01-' . $filters['from_date'])->startOfMonth();
             $query->whereDate('date', '>=', $fromDate);
@@ -47,8 +44,22 @@ class MloRepository implements MloInterface
                 $query->where('type', $filters['type']);
             }
         }
+        // dd($query->where('mlo_code','HMM')->get()->toArray());
 
         return $query->get();
+
+        // $results = $query->get();
+
+        // $results->each(function ($c) {
+        //     $c->setRelation(
+        //         'effectiveMlo',
+        //         $c->mloAllVersions->first(function ($mlo) use ($c) {
+        //             return $mlo->effective_from <= $c->date &&
+        //                 (is_null($mlo->effective_to) || $mlo->effective_to >= $c->date);
+        //         })
+        //     );
+        // });
+        // return $results;
     }
 
     public function getMloById($id)

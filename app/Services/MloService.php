@@ -174,7 +174,26 @@ class MloService
 
     public function mloWiseSummary($filters)
     {
+        if (empty($filters)||empty($filters['mlos'])) {
+            return collect();
+        }
         $mloWiseDatas = $this->mloRepository->getAllMloWiseCount($filters)->groupBy(['mlo_code', 'date']);
+        $mloWiseDatas->each(function ($c) {
+            //each mlo
+            $c->each(function ($d) {
+                //each date
+                $d->each(function ($e) {
+                    //each type(import/export)
+                    $e->setRelation(
+                        'effectiveMlo',
+                        $e->mloAllVersions->first(function ($mlo) use ($e) {
+                            return $mlo->effective_from <= $e->date &&
+                                (is_null($mlo->effective_to) || $mlo->effective_to >= $e->date);
+                        })
+                    );
+                });
+            });
+        });
 
         $results = [];
         foreach ($mloWiseDatas as $mlo => $mloWiseData) {
@@ -243,7 +262,7 @@ class MloService
         }
 
         if (!empty($filters['to_date'])) {
-            $toDate = Carbon::parse($filters['to_date'])->endOfMonth();
+            $toDate = Carbon::parse($filters['to_date'])->startOfMonth();
             $query->whereDate('date', '<=', $toDate);
         }
 
@@ -301,21 +320,13 @@ class MloService
 
     public function mloWiseContainerHandling($request){
         $filters= [
-            'from_date' => Carbon::parse($request['date'])->format('M-Y'),
-            'to_date' => Carbon::parse($request['date'])->format('M-Y'),
-            'route_id' => [$request->route_id]
+            'from_date' => Carbon::parse($request['from_date'])->format('M-Y'),
+            'to_date' => Carbon::parse($request['to_date'])->format('M-Y'),
+            'route_id' => $request->route_id
         ];
 
         $data = $this->mloRepository->getAllMloWiseCount($filters)->groupBy('mlo_code')->sortKeys();
-        $range = Carbon::parse($request['date'])->format('M-y');
-        $routeNames = [1 => 'SIN', 2 => 'CBO', 3 => 'CCU'];
-        $route = collect($filters['route_id'] ?? [])
-            ->map(fn($id) => $routeNames[$id] ?? '')
-            ->filter()
-            ->implode(', ');
-        $fileName = "MLO_Wise_Container_Handling - {$range}" . ($route ? " - {$route}" : '') . ".xlsx";
-
-        return [$data,$route,$range,$fileName];
-
+        
+        return $data;
     }
 }

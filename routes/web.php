@@ -70,11 +70,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::group(['prefix' => 'reports'], function () {
         Route::get('/index', [\App\Http\Controllers\VesselController::class, 'indexReport'])->name('reports.index');
 
-        Route::get('/mlo-wise/container-handling', [\App\Http\Controllers\MloController::class, 'mloWiseContainerHandling'])->name('reports.mlo.container-handling');
+        Route::get('/mlo-wise/container-handling/donwload', [\App\Http\Controllers\MloController::class, 'mloWiseContainerHandlingDownload'])->name('reports.mlo.container-handling.download');
+        Route::get('/mlo-wise/container-handling', [\App\Http\Controllers\MloController::class, 'mloWiseContainerHandling'])->name('reports.mlo-wise-handling');
+        
         Route::get('/operator-wise/container-handling', [\App\Http\Controllers\VesselController::class, 'operatorWiseContainerHandling'])->name('reports.operator.container-handling');
-
-        Route::get('/operator-wise-lifting', [\App\Http\Controllers\VesselController::class, 'operatorWiseLifting'])->name('reports.operator-wise-lifting');
-        Route::get('/operator-wise-lifting/download', [\App\Http\Controllers\VesselController::class, 'operatorWiseLiftingDownload'])->name('reports.operator-wise-lifting.download');
+        Route::get('/vessel-operator-wise-lifting', [\App\Http\Controllers\VesselController::class, 'vesselOperatorWiseLifting'])->name('reports.vessel-operator-wise-lifting');
+        Route::get('/operator-wise-lifting/summary', [\App\Http\Controllers\VesselController::class, 'operatorWiseLifting'])->name('reports.operator-wise-lifting');
+        Route::get('/operator-wise-lifting/summary/download', [\App\Http\Controllers\VesselController::class, 'operatorWiseLiftingDownload'])->name('reports.operator-wise-lifting.download');
 
         Route::get('/soc-inout-bound', [\App\Http\Controllers\VesselController::class, 'socInOutBound'])->name('reports.soc-inout-bound');
         Route::get('/soc-inout-bound/download', [\App\Http\Controllers\VesselController::class, 'socInOutBoundDownload'])->name('reports.soc-inout-bound.download');

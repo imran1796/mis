@@ -33,6 +33,9 @@ class MloUpdateRequest extends FormRequest
                 'nullable',
                 'date',
             ],
+            'is_show_nvocc' => [
+                'nullable',
+            ],
             'mlo_code' => [
                 'required',
                 'string',

@@ -298,7 +298,7 @@
                                         month: 'long',
                                         year: 'numeric'
                                     });
-                                const baseDownloadUrl = @json(route('reports.mlo.container-handling'));
+                                const baseDownloadUrl = @json(route('reports.mlo.container-handling.download'));
 
                                 tbody += `
                             <tr class="text-center" data-uid="${uid}">
@@ -306,7 +306,7 @@
                                 <td>${formattedDate}</td>
                                 <td>${item.route?.name || 'N/A'}</td>
                                 <td>
-                                    <a href="${baseDownloadUrl}?date=${item.date}&route_id=${item.route_id}"
+                                    <a href="${baseDownloadUrl}?from_date=${item.date}&to_date=${item.date}&route_id[]=${item.route_id}"
                                         class="btn btn-success btn-sm">
                                         <i class="fas fa-file-excel"></i>
                                     </a>

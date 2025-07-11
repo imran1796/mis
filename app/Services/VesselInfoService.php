@@ -686,9 +686,9 @@ class VesselInfoService
 
     public function operatorWiseContainerHandling($request){
         $filters= [
-            'from_date' => Carbon::parse($request['date'])->format('M-Y'),
-            'to_date' => Carbon::parse($request['date'])->format('M-Y'),
-            'route_id' => [$request->route_id]
+            'from_date' => Carbon::parse($request['from_date'])->format('M-Y'),
+            'to_date' => Carbon::parse($request['to_date'])->format('M-Y'),
+            'route_id' => $request->route_id
         ];
 
         $data = $this->vesselInfoRepository->getAllVesselInfos($filters)->sortBy([
@@ -696,15 +696,7 @@ class VesselInfoService
             ['sail_date', 'asc'],
         ])->values();
 
-        $range = Carbon::parse($request['date'])->format('M-y');
-        $routeNames = [1 => 'SIN', 2 => 'CBO', 3 => 'CCU'];
-        $route = collect($filters['route_id'] ?? [])
-            ->map(fn($id) => $routeNames[$id] ?? '')
-            ->filter()
-            ->implode(', ');
-        $fileName = "Vessel_Operator_Wise_Container_Handling - {$range}" . ($route ? " - {$route}" : '') . ".xlsx";
-
-        return [$data,$route,$range,$fileName];
+        return $data;
     }
 
     public function deletVesselInfoByDateRoute($filters){

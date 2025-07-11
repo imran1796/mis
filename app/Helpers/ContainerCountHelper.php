@@ -39,6 +39,11 @@ class ContainerCountHelper
         return $value ?: 0;
     }
 
+    public static function charZeroIfEmpty($value)
+    {
+        return $value ?: '0';
+    }
+
     public static function percent($part, $whole): float
     {
         $whole = $whole ?: 1;

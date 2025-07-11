@@ -66,30 +66,30 @@ class VesselOperatorWiseContainerHandling implements FromCollection, WithMapping
             $data->vessel->crane_status,
             $data->route->short_name ?? '',
 
-            CCH::zeroIfEmpty($data->importExportCounts->where('type','import')->first()->dc20),
-            CCH::zeroIfEmpty($data->importExportCounts->where('type','import')->first()->dc40),
-            CCH::zeroIfEmpty($data->importExportCounts->where('type','import')->first()->dc45),
-            CCH::zeroIfEmpty($data->importExportCounts->where('type','import')->first()->r20),
-            CCH::zeroIfEmpty($data->importExportCounts->where('type','import')->first()->r40),
-            CCH::zeroIfEmpty($data->importExportCounts->where('type','import')->first()->mty20),
-            CCH::zeroIfEmpty($data->importExportCounts->where('type','import')->first()->mty40),
+            CCH::charZeroIfEmpty($data->importExportCounts->where('type','import')->first()->dc20),
+            CCH::charZeroIfEmpty($data->importExportCounts->where('type','import')->first()->dc40),
+            CCH::charZeroIfEmpty($data->importExportCounts->where('type','import')->first()->dc45),
+            CCH::charZeroIfEmpty($data->importExportCounts->where('type','import')->first()->r20),
+            CCH::charZeroIfEmpty($data->importExportCounts->where('type','import')->first()->r40),
+            CCH::charZeroIfEmpty($data->importExportCounts->where('type','import')->first()->mty20),
+            CCH::charZeroIfEmpty($data->importExportCounts->where('type','import')->first()->mty40),
 
-            $importTeu['laden'],
-            $importTeu['empty'],
-            $importTeu['total'],
+            CCH::charZeroIfEmpty($importTeu['laden']),
+            CCH::charZeroIfEmpty($importTeu['empty']),
+            CCH::charZeroIfEmpty($importTeu['total']),
 
-            CCH::zeroIfEmpty($data->importExportCounts->where('type','export')->first()->dc20),
-            CCH::zeroIfEmpty($data->importExportCounts->where('type','export')->first()->dc40),
-            CCH::zeroIfEmpty($data->importExportCounts->where('type','export')->first()->dc45),
-            CCH::zeroIfEmpty($data->importExportCounts->where('type','export')->first()->r20),
-            CCH::zeroIfEmpty($data->importExportCounts->where('type','export')->first()->r40),
-            CCH::zeroIfEmpty($data->importExportCounts->where('type','export')->first()->mty20),
-            CCH::zeroIfEmpty($data->importExportCounts->where('type','export')->first()->mty40),
+            CCH::charZeroIfEmpty($data->importExportCounts->where('type','export')->first()->dc20),
+            CCH::charZeroIfEmpty($data->importExportCounts->where('type','export')->first()->dc40),
+            CCH::charZeroIfEmpty($data->importExportCounts->where('type','export')->first()->dc45),
+            CCH::charZeroIfEmpty($data->importExportCounts->where('type','export')->first()->r20),
+            CCH::charZeroIfEmpty($data->importExportCounts->where('type','export')->first()->r40),
+            CCH::charZeroIfEmpty($data->importExportCounts->where('type','export')->first()->mty20),
+            CCH::charZeroIfEmpty($data->importExportCounts->where('type','export')->first()->mty40),
 
-            $exportTeu['laden'],
-            $exportTeu['empty'],
-            $exportTeu['total'],
-            $importBox['total'] + $exportBox['total']
+            CCH::charZeroIfEmpty($exportTeu['laden']),
+            CCH::charZeroIfEmpty($exportTeu['empty']),
+            CCH::charZeroIfEmpty($exportTeu['total']),
+            CCH::charZeroIfEmpty($importBox['total'] + $exportBox['total'])
         ];
 
         return $rows;
@@ -99,7 +99,7 @@ class VesselOperatorWiseContainerHandling implements FromCollection, WithMapping
     {
         return [
             [
-                'OPT wise Container Lifting Ex. ' . $this->route . ' - ' .$this->range
+                'OPT wise Container Lifting' . ($this->route?' | '.$this->route:''). ' | ' .$this->range
             ],
             [
                 'Arrival Departure Info',

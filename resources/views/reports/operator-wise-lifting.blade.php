@@ -10,6 +10,29 @@
         .ui-datepicker-calendar {
             display: none;
         }
+
+        .ui-datepicker {
+            z-index: 9999 !important;
+        }
+
+        thead tr:nth-child(1) th {
+            top: 0;
+            z-index: 4;
+        }
+
+        thead tr:nth-child(2) th {
+            top: 30px;
+            z-index: 3;
+        }
+
+        thead tr:nth-child(3) th {
+            top: 60px;
+            z-index: 2;
+        }
+        thead tr:nth-child(4) th {
+            top: 90px;
+            z-index: 1;
+        }
     </style>
 
     <div class="content">
@@ -27,31 +50,35 @@
                     </div>
                 </div>
 
-                <form class="row px-3 mb-2">
+                <form class="row px-3 mb-2" autocomplete="off">
                     <div class="col-md-2 px-1 form-group">
-                        <select id="pod" name="route_id[]" class="form-control form-control-sm selectpicker" multiple>
+                        <select required id="pod" name="route_id[]" class="form-control form-control-sm selectpicker"
+                            multiple>
                             @foreach ($pods as $pod)
-                                <option value="{{ $pod->id }}">{{ $pod->name }}</option>
+                                <option {{ in_array($pod->id, (array) request('route_id')) ? 'selected' : '' }}
+                                    value="{{ $pod->id }}">{{ $pod->name }}</option>
                             @endforeach
                         </select>
                     </div>
 
                     <div class="col-md-2 px-1 mt-1 form-group">
                         <label for="from_date" class="sr-only">From Date</label>
-                        <input placeholder="From Date" class="form-control form-control-sm datepicker" type="text"
-                            name="from_date" id="from_date" value="{{ request('from_date') }}">
+                        <input required autocomplete="off" placeholder="From Date"
+                            class="form-control form-control-sm datepicker" type="text" name="from_date" id="from_date"
+                            value="{{ request('from_date') }}">
                     </div>
                     <div class=" col-md-2 mt-1 px-1 form-group">
                         <label for="to_date" class="sr-only">To Date</label>
-                        <input placeholder="To Date" class="form-control form-control-sm datepicker" type="text"
-                            name="to_date" id="to_date" value="{{ request('to_date') }}">
+                        <input required autocomplete="off" placeholder="To Date"
+                            class="form-control form-control-sm datepicker" type="text" name="to_date" id="to_date"
+                            value="{{ request('to_date') }}">
                     </div>
 
-                    <div class="col-md-2 px-1 mt-1">
+                    <div class="col-md-1 px-1 mt-1">
                         <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
                     </div>
 
-                    <div class="col-sm-2 pr-0 mt-1">
+                    <div class="col-md-1 px-1 mt-1">
                         {{-- <button class="btn btn-success btn-sm w-100" id="btnExcelJsExport" type="button"><i class="fa fa-download"
                                 aria-hidden="true"></i> xls</button> --}}
                         <a href="{{ route('reports.operator-wise-lifting.download', ['from_date' => request()->get('from_date'), 'to_date' => request()->get('to_date'), 'route_id' => request()->get('route_id')]) }}"
@@ -74,31 +101,33 @@
                         {{-- end auto search --}}
                     </div>
                     <div class="card-body">
-                        <table class="tableFixHead table-bordered custom-table-report mb-3">
+                        <table style="display: block" class="table table-sm table-bordered mb-0">
                             <thead>
                                 <tr>
                                     <th></th>
-                                    <th colspan="2" class="text-center">Load Factor Import</th>
-                                    <th colspan="2" class="text-center">Load Factor Export</th>
+                                    <th colspan="2" class="font-weight-bold border-bottom text-center text-dark">Load
+                                        Factor Import</th>
+                                    <th colspan="2" class="font-weight-bold border-bottom text-center text-dark">Load
+                                        Factor Export</th>
                                 </tr>
                                 <tr>
                                     <th></th>
-                                    <th>LDN</th>
-                                    <th>MTY</th>
-                                    <th>LDN</th>
-                                    <th>MTY</th>
+                                    <th class="font-weight-bold text-dark">LDN</th>
+                                    <th class="font-weight-bold text-dark">MTY</th>
+                                    <th class="font-weight-bold text-dark">LDN</th>
+                                    <th class="font-weight-bold text-dark">MTY</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>Eff. Capacity</td>
+                                    <td class="font-weight-bold">Eff. Capacity</td>
                                     <td>{{ $data[1]['imp_ldn_lf_eff'] ?? 0 }}</td>
                                     <td>{{ $data[1]['imp_mty_lf_eff'] ?? 0 }}</td>
                                     <td>{{ $data[1]['exp_ldn_lf_eff'] ?? 0 }}</td>
                                     <td>{{ $data[1]['exp_mty_lf_eff'] ?? 0 }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Nom. Capacity</td>
+                                    <td class="font-weight-bold">Nom. Capacity</td>
                                     <td>{{ $data[1]['imp_ldn_lf_nom'] ?? 0 }}</td>
                                     <td>{{ $data[1]['imp_mty_lf_nom'] ?? 0 }}</td>
                                     <td>{{ $data[1]['exp_ldn_lf_nom'] ?? 0 }}</td>
@@ -110,8 +139,14 @@
                         </table>
                     </div>
                     <div class="card-body">
-                        <table class="tableFixHead table-bordered custom-table-report mb-3">
+                        <table class="tableFixHead table-bordered table-sm custom-table-report mb-3">
                             <thead>
+                                <tr>
+                                    <th colspan="17" style="font-size:16px" class="text-center">Operator Wise Container Lifting Summary</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="17" class="text-center">@include('components.route-range-summary')</th>
+                                </tr>
                                 <tr>
                                     <th rowspan="2">#</th>
                                     <th rowspan="2">Operator</th>
@@ -162,6 +197,28 @@
                                 @endif
 
                             </tbody>
+                            <tfoot>
+                                @if (!empty($data[0]))
+                                    <tr>
+                                        <th class="text-center" colspan="2">Total</th>
+                                        <th>{{ $data[0]->sum('total_laden_import') }}</th>
+                                        <th>{{ $data[0]->sum('total_empty_import') }}</th>
+                                        <th>{{ $data[0]->sum('import_laden_eff') }}</th>
+                                        <th>{{ $data[0]->sum('import_empty_eff') }}</th>
+                                        <th>{{ $data[0]->sum('total_laden_export') }}</th>
+                                        <th>{{ $data[0]->sum('total_empty_export') }}</th>
+                                        <th>{{ $data[0]->sum('export_laden_eff') }}</th>
+                                        <th>{{ $data[0]->sum('export_empty_eff') }}</th>
+                                        <th>{{ $data[0]->sum('vessel_calls') }}</th>
+                                        <th>{{ $data[0]->sum('unique_vessels') }}</th>
+                                        <th>{{ $data[0]->sum('effective_capacity') }}</th>
+                                        <th>{{ $data[0]->sum('nominal_capacity') }}</th>
+                                        <th>{{ round($data[0]->sum('import')) }}</th>
+                                        <th>{{ round($data[0]->sum('export_laden')) }}</th>
+                                        <th>{{ round($data[0]->sum('export_empty')) }}</th>
+                                    </tr>
+                                @endif
+                            </tfoot>
 
 
                         </table>
@@ -229,35 +286,40 @@
         });
 
         function initializeMonthYearPicker(selector) {
+            let isDateManuallySelected = false;
+
             $(selector).datepicker({
                 changeMonth: true,
                 changeYear: true,
                 showButtonPanel: true,
                 dateFormat: 'M-yy',
-
-                onChangeMonthYear: function(year, month, inst) {
-                    $(this).datepicker('setDate', new Date(year, month - 1, 1));
-                },
-
-                onClose: function() {
-                    const iMonth = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-                    const iYear = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-
-
-                    if (iMonth !== null && iYear !== null) {
-                        $(this).datepicker('setDate', new Date(iYear, iMonth, 1));
-                    }
-                },
-
                 beforeShow: function() {
+                    isDateManuallySelected = false;
+
                     const selDate = $(this).val();
                     if (selDate.length > 0) {
                         const iYear = selDate.slice(-4);
-                        const iMonth = $.inArray(selDate.slice(0, -5), $(this).datepicker('option',
-                            'monthNames'));
+                        const iMonth = $.inArray(
+                            selDate.slice(0, -5),
+                            $(this).datepicker('option', 'monthNames')
+                        );
 
                         if (iMonth !== -1) {
                             $(this).datepicker('option', 'defaultDate', new Date(iYear, iMonth, 1));
+                            $(this).datepicker('setDate', new Date(iYear, iMonth, 1));
+                        }
+                    }
+                },
+                onChangeMonthYear: function(year, month, inst) {
+                    isDateManuallySelected = true;
+                    $(this).datepicker('setDate', new Date(year, month - 1, 1));
+                },
+                onClose: function(dateText, inst) {
+                    if (isDateManuallySelected) {
+                        const iMonth = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                        const iYear = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+
+                        if (iMonth !== null && iYear !== null) {
                             $(this).datepicker('setDate', new Date(iYear, iMonth, 1));
                         }
                     }

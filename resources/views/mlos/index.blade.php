@@ -12,7 +12,7 @@
                 <div class="row mb-2">
                     <div class="col-lg-12 margin-tb">
                         <div class="pull-left">
-                            <h2>Mlo</h2>
+                            <h2>MLO</h2>
                         </div>
 
                         <div class="pull-right">
@@ -91,6 +91,7 @@
                                                     data-mlo_details="{{ $mlo->mlo_details ?? '' }}"
                                                     data-effective_from="{{ $mlo->effective_from ?? '' }}"
                                                     data-effective_to="{{ $mlo->effective_to ?? '' }}"
+                                                    data-is_show_nvocc="{{ $mlo->is_show_nvocc ?? '' }}"
                                                     data-target="#editMloModal" data-toggle="modal">
                                                     Edit
                                                 </button>
@@ -175,6 +176,16 @@
                             <div class="col-sm-9"><input type="date" name="effective_to" id="e_effective_to"
                                     class="form-control form-control-sm datepicker" placeholder="Effective to"></div>
                         </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3"><strong>Show In NVOCC Report</strong></div>
+                            <div class="col-sm-9">
+                                <select name="is_show_nvocc" id="e_show_in_nvocc" class="form-control form-control-sm">
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </div>
+                        </div>
+                        
                     @endcomponent
                 </div>
             </div>
@@ -256,6 +267,7 @@
                 $('#e_mlo_details').val($(this).data('mlo_details'));
                 $('#e_effective_from').val($(this).data('effective_from'));
                 $('#e_effective_to').val($(this).data('effective_to'));
+                $('#e_show_in_nvocc').val($(this).data('is_show_nvocc'));
             });
 
 
