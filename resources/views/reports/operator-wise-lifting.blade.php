@@ -1,7 +1,7 @@
 @extends('layouts.app', [
     'activePage' => 'reports',
     'title' => 'GLA Admin',
-    'navName' => 'Operator Wise Lifting',
+    'navName' => 'Operator Wise Container Lifting',
     'activeButton' => 'laravel',
 ])
 
@@ -41,7 +41,7 @@
                 <div class="row mb-2">
                     <div class="col-lg-12 margin-tb">
                         <div class="pull-left">
-                            <h2>Operator Wise Container Lifting</h2>
+                            <h2>Operator Wise Container Lifting (Summary)</h2>
                         </div>
 
                         <div class="pull-right">
@@ -203,19 +203,17 @@
                                         <th class="text-center" colspan="2">Total</th>
                                         <th>{{ $data[0]->sum('total_laden_import') }}</th>
                                         <th>{{ $data[0]->sum('total_empty_import') }}</th>
-                                        <th>{{ $data[0]->sum('import_laden_eff') }}</th>
-                                        <th>{{ $data[0]->sum('import_empty_eff') }}</th>
+                                        <th colspan="2"></th>
                                         <th>{{ $data[0]->sum('total_laden_export') }}</th>
                                         <th>{{ $data[0]->sum('total_empty_export') }}</th>
-                                        <th>{{ $data[0]->sum('export_laden_eff') }}</th>
-                                        <th>{{ $data[0]->sum('export_empty_eff') }}</th>
+                                        <th colspan="2"></th>
                                         <th>{{ $data[0]->sum('vessel_calls') }}</th>
                                         <th>{{ $data[0]->sum('unique_vessels') }}</th>
                                         <th>{{ $data[0]->sum('effective_capacity') }}</th>
                                         <th>{{ $data[0]->sum('nominal_capacity') }}</th>
-                                        <th>{{ round($data[0]->sum('import')) }}</th>
-                                        <th>{{ round($data[0]->sum('export_laden')) }}</th>
-                                        <th>{{ round($data[0]->sum('export_empty')) }}</th>
+                                        <th>{{ round($data[0]->sum('import')).'%' }}</th>
+                                        <th>{{ round($data[0]->sum('export_laden')).'%' }}</th>
+                                        <th>{{ round($data[0]->sum('export_empty')).'%' }}</th>
                                     </tr>
                                 @endif
                             </tfoot>

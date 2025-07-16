@@ -1,7 +1,7 @@
 @extends('layouts.app', [
     'activePage' => 'reports',
     'title' => 'GLA Admin',
-    'navName' => 'MLO',
+    'navName' => 'Feeder Turn Around Time',
     'activeButton' => 'laravel',
 ])
 
@@ -40,7 +40,7 @@
                 <div class="row mb-2">
                     <div class="col-lg-12 margin-tb">
                         <div class="pull-left">
-                            <h2>Vessel Turn Around Time</h2>
+                            <h2>Feeder Turn Around Time</h2>
                         </div>
 
                         <div class="pull-right">
@@ -102,10 +102,10 @@
                                     {{ '(' . \Carbon\Carbon::parse(request('from_date'))->format('M y') . ' to ' . \Carbon\Carbon::parse(request('to_date'))->format('M y') . ')' }}
                                 </p>
                             @endif
-                            <p class="reportTitle" style="display: none;" type="hidden">Vessel Turn Around Time</p>
+                            <p class="reportTitle" style="display: none;" type="hidden">Feeder Turn Around Time</p>
                             <thead>
                                 <tr>
-                                    <th class="text-center" style="font-size: 16px" colspan="19">Vessel Turn Around Time</th>
+                                    <th class="text-center" style="font-size: 16px" colspan="19">Feeder Turn Around Time</th>
                                 </tr>
                                 <tr>
                                     <th colspan="19" class="text-center">@include('components.route-range-summary')</th>

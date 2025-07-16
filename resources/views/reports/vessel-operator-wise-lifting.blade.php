@@ -1,7 +1,7 @@
 @extends('layouts.app', [
     'activePage' => 'reports',
     'title' => 'GLA Admin',
-    'navName' => 'Vessel Operator Wise Lifting',
+    'navName' => 'Vessel and Operator Wise Container Handling',
     'activeButton' => 'laravel',
 ])
 
@@ -41,7 +41,7 @@
                 <div class="row mb-2">
                     <div class="col-lg-12 margin-tb">
                         <div class="pull-left">
-                            <h2>Vessel Operator Wise Lifting</h2>
+                            <h2>Vessel and Operator Wise Container Handling</h2>
                         </div>
 
                         <div class="pull-right">
@@ -106,7 +106,7 @@
                         <table class="tableFixHead table-bordered table-sm custom-table-report">
                             <thead>
                                 <tr>
-                                    <th colspan="31" class="text-center" style="font-size:16px">OPT wise Container Lifting</th>
+                                    <th colspan="31" class="text-center" style="font-size:16px">Vessel and Operator Wise Container Handling</th>
                                 </tr>
                                 <tr>
                                     <th colspan="31" class="text-center">@include('components.route-range-summary')</th>

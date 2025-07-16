@@ -1,7 +1,7 @@
 @extends('layouts.app', [
     'activePage' => 'reports',
     'title' => 'GLA Admin',
-    'navName' => 'Vessel Operator Wise Lifting',
+    'navName' => 'MLO Wise Container Handling',
     'activeButton' => 'laravel',
 ])
 
@@ -101,8 +101,7 @@
                         <table class="tableFixHead table-bordered table-sm custom-table-report">
                             <thead>
                                 <tr>
-                                    <th colspan="21" class="text-center" style="font-size: 16px">MLO Wise Container
-                                        Handling</th>
+                                    <th colspan="21" class="text-center" style="font-size: 16px">MLO Wise Container Handling</th>
                                 </tr>
                                 <tr>
                                     <th colspan="21" class="text-center">@include('components.route-range-summary')</th>

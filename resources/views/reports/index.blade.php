@@ -59,7 +59,7 @@
                                             </div>
                                             <div class="col-10 d-flex align-items-center ">
                                                 <div class="numbers align-content-center">
-                                                    <p class="card-category"> Vessel & OPT  wise Container handling</p>
+                                                    <p class="card-category"> Vessel and Operator Wise Container Handling</p>
                                                 </div>
                                             </div>
 
@@ -143,7 +143,7 @@
                                             </div>
                                             <div class="col-10 d-flex align-items-center ">
                                                 <div class="numbers align-content-center">
-                                                    <p class="card-category">MLO NVOCC Summary</p>
+                                                    <p class="card-category">MLO-NVOCC Wise Import and Export Volume</p>
                                                 </div>
                                             </div>
 
@@ -171,7 +171,7 @@
                                             </div>
                                             <div class="col-10 d-flex align-items-center ">
                                                 <div class="numbers align-content-center">
-                                                    <p class="card-category"> SOC IN/OUT Bound Volume Data</p>
+                                                    <p class="card-category">SOC Inbound and Outbound Volume Data</p>
                                                 </div>
                                             </div>
 
@@ -199,7 +199,7 @@
                                             </div>
                                             <div class="col-10 d-flex align-items-center ">
                                                 <div class="numbers align-content-center">
-                                                    <p class="card-category">Opt. Wise Vessel Turn Around</p>
+                                                    <p class="card-category">Feeder Turn Around Time</p>
                                                 </div>
                                             </div>
 
@@ -227,7 +227,7 @@
                                             </div>
                                             <div class="col-10 d-flex align-items-center ">
                                                 <div class="numbers align-content-center">
-                                                    <p class="card-category">SOC Outbound Market</p>
+                                                    <p class="card-category">Outbound Marketing Strategy</p>
                                                 </div>
                                             </div>
 
@@ -255,7 +255,7 @@
                                             </div>
                                             <div class="col-10 d-flex align-items-center ">
                                                 <div class="numbers align-content-center">
-                                                    <p class="card-category">Market Competitors</p>
+                                                    <p class="card-category">Competitors Market Share</p>
                                                 </div>
                                             </div>
 

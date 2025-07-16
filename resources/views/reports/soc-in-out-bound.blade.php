@@ -1,7 +1,7 @@
 @extends('layouts.app', [
     'activePage' => 'reports',
     'title' => 'GLA Admin',
-    'navName' => 'Soc In/Out Bound',
+    'navName' => 'SOC Inbound and Outbound Volume Data',
     'activeButton' => 'laravel',
 ])
 
@@ -40,7 +40,7 @@
                 <div class="row mb-2">
                     <div class="col-lg-12 margin-tb">
                         <div class="pull-left">
-                            <h2>SOC In/Out Bound</h2>
+                            <h2>SOC Inbound and Outbound Volume Data</h2>
                         </div>
 
                         <div class="pull-right">
@@ -117,7 +117,7 @@
                             <thead>
 
                                 <tr>
-                                    <th colspan="{{ 23 + count($routes)*2 }}" class="text-center" style="font-size: 16px">SOC In/Out Bound Report</th>
+                                    <th colspan="{{ 23 + count($routes)*2 }}" class="text-center" style="font-size: 16px">SOC Inbound and Outbound Volume Data</th>
                                 </tr>
                                 <tr>
                                     <th colspan="{{ 23 + count($routes)*2 }}" class="text-center">@include('components.route-range-summary')</th>

@@ -1,7 +1,7 @@
 @extends('layouts.app', [
     'activePage' => 'reports',
     'title' => 'GLA Admin',
-    'navName' => 'SOC Out Bound',
+    'navName' => 'Outbound Marketing Strategy',
     'activeButton' => 'laravel',
 ])
 
@@ -41,7 +41,7 @@
                 <div class="row mb-2">
                     <div class="col-lg-12 margin-tb">
                         <div class="pull-left">
-                            <h2>SOC Outbound Marketing Strategy</h2>
+                            <h2>Outbound Marketing Strategy</h2>
                         </div>
 
                         <div class="pull-right">
@@ -99,12 +99,12 @@
                                 {{ '(' . \Carbon\Carbon::parse(request('from_date'))->format('M y') . ' to ' . \Carbon\Carbon::parse(request('to_date'))->format('M y') . ')' }}
                             </p>
                         @endif
-                        <p class="reportTitle" style="display: none;" type="hidden">Outbound Market Strategy</p>
+                        <p class="reportTitle" style="display: none;" type="hidden">Outbound Marketing Strategy</p>
                         <table id="excelJsTable"
                             class="tableFixHead table-sm table-bordered table2excel custom-table-report mb-3">
                             <thead>
                                 <tr>
-                                    <th colspan="6" class="text-center" style="font-size: 16px">Outbound Market Strategy</th>
+                                    <th colspan="6" class="text-center" style="font-size: 16px">Outbound Marketing Strategy</th>
                                 </tr>
                                 <tr>
                                     <th colspan="6" class="text-center">@include('components.route-range-summary')</th>

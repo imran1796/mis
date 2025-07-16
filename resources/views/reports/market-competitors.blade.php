@@ -1,7 +1,7 @@
 @extends('layouts.app', [
     'activePage' => 'reports',
     'title' => 'GLA Admin',
-    'navName' => 'Market Competitors',
+    'navName' => 'Competitors Market Share',
     'activeButton' => 'laravel',
 ])
 
@@ -41,7 +41,7 @@
                 <div class="row mb-2">
                     <div class="col-lg-12 margin-tb">
                         <div class="pull-left">
-                            <h2>Market Competitors</h2>
+                            <h2>Competitors Market Share</h2>
                         </div>
 
                         <div class="pull-right">
@@ -131,10 +131,10 @@
                                     {{ '(' . \Carbon\Carbon::parse(request('from_date'))->format('M y') . ' to ' . \Carbon\Carbon::parse(request('to_date'))->format('M y') . ')' }}
                                 </p>
                             @endif
-                            <p class="reportTitle" style="display: none;" type="hidden">Market Competitors</p>
+                            <p class="reportTitle" style="display: none;" type="hidden">Competitors Market Share</p>
                             <thead>
                                 <tr>
-                                    <th colspan="12" class="text-center" style="font-size: 16px">Market Competitors</th>
+                                    <th colspan="12" class="text-center" style="font-size: 16px">Competitors Market Share</th>
                                 </tr>
                                 <tr>
                                     <th colspan="12" class="text-center">@include('components.route-range-summary')</th>

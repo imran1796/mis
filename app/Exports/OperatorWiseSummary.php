@@ -54,9 +54,9 @@ class OperatorWiseSummary implements FromCollection, WithMapping, WithHeadings, 
             CCH::charZeroIfEmpty($data['unique_vessels']),
             CCH::charZeroIfEmpty($data['effective_capacity'] ?round($data['effective_capacity']): 0),
             CCH::charZeroIfEmpty($data['nominal_capacity'] ?? 0),
-            CCH::charZeroIfEmpty($data['import'] ?round($data['import'],1).'%': 0),
-            CCH::charZeroIfEmpty($data['export_laden'] ?round($data['export_laden'],1).'%': 0),
-            CCH::charZeroIfEmpty($data['export_empty'] ?round($data['export_empty'],1).'%': 0),
+            CCH::charZeroIfEmpty($data['import'] ?round($data['import'],1).'%': '0%'),
+            CCH::charZeroIfEmpty($data['export_laden'] ?round($data['export_laden'],1).'%': '0%'),
+            CCH::charZeroIfEmpty($data['export_empty'] ?round($data['export_empty'],1).'%': '0%'),
         ];
     }
 

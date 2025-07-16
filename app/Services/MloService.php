@@ -268,7 +268,6 @@ class MloService
 
         $mlos = $query->get();
 
-        // 🔁 Group by MLO Line → then by MLO Code
         $grouped = $mlos
             ->groupBy(function ($item) {
                 return optional($item->mlo)->line_belongs_to ?? $item->mlo_code;
@@ -281,41 +280,47 @@ class MloService
 
         foreach ($grouped as $line => $mloGroup) {
             $mloCodes = $mloGroup->keys()->toArray();
-            $firstRecord = $mloGroup->first()->first(); // collection of collections
-
+            $firstRecord = $mloGroup->first()->first();
+        
             $mloName = optional($firstRecord->mlo)->mlo_details ?? $firstRecord->mlo_code;
-
+        
             $exportLdn = 0;
             $exportMty = 0;
-
+        
             foreach ($mloGroup as $records) {
                 foreach ($records as $record) {
                     if ($record->type === 'export') {
-                        $exportLdn +=
-                            ($record->dc20 ?? 0) +
-                            ($record->r20 ?? 0) +
-                            2 * (
-                                ($record->dc40 ?? 0) +
-                                ($record->dc45 ?? 0) +
-                                ($record->r40 ?? 0)
-                            );
-
-                        $exportMty +=
-                            ($record->mty20 ?? 0) +
-                            2 * ($record->mty40 ?? 0);
+                        $exportLdn += $record->export_teu['laden'];
+                        $exportMty += $record->export_teu['empty'];
                     }
                 }
             }
-
+        
             $summary[$line] = [
                 'mlo_code'  => implode('/', $mloCodes),
                 'mlo_name'  => $mloName,
                 'exportLdn' => (int) round($exportLdn / 4),
                 'exportMty' => (int) round($exportMty / 4),
+                'total'     => (int) round($exportLdn / 4) + (int) round($exportMty / 4),
             ];
         }
-
-        return $summary;
+        
+        $summaryCollection = collect($summary);
+        $top30 = $summaryCollection->sortByDesc('total')->take(30); //sorty by total(ldn+empty) & take top30
+        
+        $specialMLOCodes = ['SITC', 'HMM', 'SKN', 'SNK'];
+        $specials = $summaryCollection->filter(function ($item) use ($specialMLOCodes) {
+            return in_array($item['mlo_code'], $specialMLOCodes);
+        });
+        
+        // Ensure missing specials are added
+        $missingSpecials = $specials->reject(function ($item) use ($top30) {
+            return $top30->pluck('mlo_code')->contains($item['mlo_code']);
+        });
+        
+        // Final output, reindexed
+        $finalSummary = $top30->merge($missingSpecials)->values();
+        return $finalSummary->toArray();
     }
 
     public function mloWiseContainerHandling($request){

@@ -1,7 +1,7 @@
 @extends('layouts.app', [
     'activePage' => 'reports',
     'title' => 'GLA Admin',
-    'navName' => 'MLO',
+    'navName' => 'MLO-NVOCC Wise Import and Export Volume',
     'activeButton' => 'laravel',
 ])
 
@@ -45,7 +45,7 @@
                 <div class="row mb-2">
                     <div class="col-lg-12 margin-tb">
                         <div class="pull-left">
-                            <h2>MLO NVOCC Summary</h2>
+                            <h2>MLO-NVOCC Wise Import and Export Volume</h2>
                         </div>
 
                         <div class="pull-right">
@@ -210,7 +210,7 @@
                             <input class="reportTitle" type="hidden" value="Mlo_Wise_Summary">
                             <thead>
                                 <tr>
-                                    <th style="font-size:16px" colspan="{{ $colspan }}" class="text-center">MLO NVOCC SUMMARY</th>
+                                    <th style="font-size:16px" colspan="{{ $colspan }}" class="text-center">MLO-NVOCC Wise Import and Export Volume</th>
                                 </tr>
                                 <tr>
                                     <th colspan="{{ $colspan }}" class="text-center">@include('components.route-range-summary')</th>
