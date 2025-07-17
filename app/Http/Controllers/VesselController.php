@@ -151,7 +151,7 @@ class VesselController extends Controller
 
         $data = $this->vesselInfoService->operatorWiseLifting($filters);
 
-        $fileName = "OperatorWiseLifting(Summary) - {$range}" . ($route ? " - {$route}" : '') . ".xlsx";
+        $fileName = "Operator_Wise_Container_Lifting_(Summary) - {$range}" . ($route ? " - {$route}" : '') . ".xlsx";
 
         return Excel::download(new OperatorWiseSummary($data[0], $data[1], $range, $route), $fileName);
     }
@@ -182,7 +182,7 @@ class VesselController extends Controller
             ->filter()
             ->implode(', ');
 
-        return Excel::download(new SocInOutBound($datas, $range, $route), 'soc_in_out_bound.xlsx');
+        return Excel::download(new SocInOutBound($datas, $range, $route), 'SOC_Inbound_and_Outbound_Volume_Data.xlsx');
     }
 
 
@@ -261,7 +261,7 @@ class VesselController extends Controller
         ->map(fn($id) => $routeNames[$id] ?? '')
         ->filter()
         ->join(', ');
-        $fileName = "Vessel_Operator_Wise_Container_Handling - {$range}" . ($route ? " - {$route}" : '') . ".xlsx";
+        $fileName = "Vessel_And_Operator_Wise_Container_Handling - {$range}" . ($route ? " - {$route}" : '') . ".xlsx";
 
         $data = $this->vesselInfoService->operatorWiseContainerHandling($request);
         return Excel::download(new VesselOperatorWiseContainerHandling($data,$route,$range), $fileName);
