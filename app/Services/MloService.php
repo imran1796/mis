@@ -308,7 +308,7 @@ class MloService
         $summaryCollection = collect($summary);
         $top30 = $summaryCollection->sortByDesc('total')->take(30); //sorty by total(ldn+empty) & take top30
         
-        $specialMLOCodes = ['SITC', 'HMM', 'SKN', 'SNK'];
+        $specialMLOCodes = ['SITC', 'HMM', 'SKN', 'SNK','SKR','HEG','HEUNGA','SCC'];
         $specials = $summaryCollection->filter(function ($item) use ($specialMLOCodes) {
             return in_array($item['mlo_code'], $specialMLOCodes);
         });

@@ -38,7 +38,7 @@ class VesselTurnAroundService
     public function createVesselTurnAround(array $data)
     {
         $rows = Excel::toArray([], $data['file'])[0] ?? [];
-        $date = Carbon::createFromFormat('M-Y', $data['date'])->startOfMonth();
+        $date = Carbon::createFromFormat('d-M-Y', '01-' . $data['date'])->startOfMonth();
         $dataRows = array_slice($rows, 3);
 
         foreach ($dataRows as $index => $row) {

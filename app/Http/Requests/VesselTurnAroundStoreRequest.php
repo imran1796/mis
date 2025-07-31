@@ -27,7 +27,7 @@ class VesselTurnAroundStoreRequest extends FormRequest
             $date = $this->input('date');
 
             $exists = \DB::table('vessel_turn_arounds')
-                ->whereDate('date', Carbon::createFromFormat('M-Y', $date)->startOfMonth())
+                ->whereDate('date', Carbon::createFromFormat('d-M-Y', '01-' . $date)->startOfMonth())
                 ->exists();
 
             if ($exists) {

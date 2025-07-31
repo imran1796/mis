@@ -21,10 +21,10 @@ class ExportDataService
     public function getAllExportData($filters)
     {
         if (!empty($filters['from_date'])) {
-            $filters['from_date'] = Carbon::createFromFormat('M-Y', $filters['from_date'])->startOfMonth();
+            $filters['from_date'] = Carbon::createFromFormat('d-M-Y', '01-' .$filters['from_date'])->startOfMonth();
         }
         if (!empty($filters['to_date'])) {
-            $filters['to_date'] = Carbon::createFromFormat('M-Y', $filters['to_date'])->startOfMonth();
+            $filters['to_date'] = Carbon::createFromFormat('d-M-Y', '01-' .$filters['to_date'])->startOfMonth();
         }
         // if(!isset($filters['report_type'])){
         //     return [collect(),collect()];
@@ -139,8 +139,8 @@ class ExportDataService
 
     public function createExportData($request)
     {
-        $date = Carbon::createFromFormat('M-Y', $request->date)->startOfMonth();
-
+        // $date = Carbon::createFromFormat('d-M-Y', '01-' .$request->date)
+        $date = Carbon::createFromFormat('d-M-Y', '01-' . $request->date)->startOfMonth();
         $existing = ExportData::whereDate('date', $date)->exists();
         if ($existing) {
             return response()->json(['error' => "Data for this Date already exist: "], 409);
@@ -178,8 +178,8 @@ class ExportDataService
 
     public function exportVolByRegion($filters)
     {
-        $from = Carbon::createFromFormat('M-Y', $filters['from_date'])->startOfMonth();
-        $to = Carbon::createFromFormat('M-Y', $filters['to_date'])->startOfMonth();
+        $from = Carbon::createFromFormat('d-M-Y', '01-' .$filters['from_date'])->startOfMonth();
+        $to = Carbon::createFromFormat('d-M-Y', '01-' .$filters['to_date'])->startOfMonth();
         $totalMonths = $from->diffInMonths($to) + 1;
 
         $x = [];
@@ -246,8 +246,8 @@ class ExportDataService
 
         $data = collect($this->getAllExportData($filters)[0])->groupBy('pod');
 
-        $from = Carbon::createFromFormat('M-Y', $filters['from_date'])->startOfMonth();
-        $to = Carbon::createFromFormat('M-Y', $filters['to_date'])->startOfMonth();
+        $from = Carbon::createFromFormat('d-M-Y', '01-' .$filters['from_date'])->startOfMonth();
+        $to = Carbon::createFromFormat('d-M-Y', '01-' .$filters['to_date'])->startOfMonth();
         $totalMonths = $from->diffInMonths($to) + 1;
 
         foreach ($data as $pod => $records) {

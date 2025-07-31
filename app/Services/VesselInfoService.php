@@ -41,7 +41,7 @@ class VesselInfoService
         }
 
         $routeId = $data['route_id'];
-        $date = Carbon::createFromFormat('M-Y', $data['date'])->startOfMonth();
+        $date = Carbon::createFromFormat('d-M-Y', '01-' . $data['date'])->startOfMonth();
         $vesselInfoRecords = [];
         $importExportRecords = [];
 

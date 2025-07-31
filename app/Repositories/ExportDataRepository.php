@@ -76,6 +76,7 @@ class ExportDataRepository implements ExportDataInterface
         return ExportData::query()
             ->select($column_name)
             ->distinct()
+            ->orderBy($column_name)
             ->when($value, function ($query) use ($column_name, $value) {
                 return $query->whereYear($column_name, $value);
             })

@@ -38,7 +38,7 @@ class VesselInfoCreateRequest extends FormRequest
 
             $exists = \DB::table('vessel_infos')
                 ->where('route_id', $routeId)
-                ->whereDate('date', Carbon::createFromFormat('M-Y', $date)->startOfMonth())
+                ->whereDate('date', Carbon::createFromFormat('d-M-Y', '01-' . $date)->startOfMonth())
                 ->exists();
 
             if ($exists) {
