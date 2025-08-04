@@ -80,6 +80,10 @@ $(() => {
         $('#avgAnchorageTime').text(`${turnAround.avgAnchorageTime ?? 0} HRS`);
         $('#avgBerthTime').text(`${turnAround.avgBerthTime ?? 0} HRS`);
         $('#avgTurnAroundTime').text(`${turnAround.avgTurnAroundTime ?? 0} HRS`);
+        $('#avgBoxHandling').text(`${turnAround.avgBox??0} Box`);
+        $('#avgImportTeu').text(`${turnAround.avgImpTeu??0} TEUs`);
+        $('#avgExportTeu').text(`${turnAround.avgExpTeu??0} TEUs`);
+        $('#ttlVesselByCrane').html(`Geared: ${turnAround.geared ?? 0}<br>Gearless: ${turnAround.gearless ?? 0}`);
 
         initBarChart('#exportData', ops.export);
         initBarChart('#importData', ops.import);

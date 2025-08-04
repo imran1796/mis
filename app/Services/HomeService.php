@@ -128,11 +128,22 @@ class HomeService
         $turnAroundData = $this->vesselTurnAroundService->getAllVesselTurnArounds($filters);
 
         $berthStay = $turnAroundTime = $oaStay = 0;
+        $ttlBox = $ttlImpBox = $ttlExpBox = 0;
+        $geared = $gearless = 0;
 
-        $turnAroundData->each(function ($v) use (&$berthStay, &$turnAroundTime, &$oaStay) {
+        
+        $turnAroundData->each(function ($v) use (
+            &$berthStay, &$turnAroundTime, &$oaStay,
+            &$ttlBox, &$ttlImpBox, &$ttlExpBox,
+            &$geared, &$gearless
+        ) {
             $oaStay += $v->oa_stay;
             $berthStay += $v->berth_stay;
             $turnAroundTime += $v->total_stay;
+            $v->crane_status == 'G' ? $geared+=1 : $gearless+=1;
+            $ttlBox+= $v->total_box;
+            $ttlImpBox += $v->import_ldn_teu+$v->import_mty_teu;
+            $ttlExpBox += $v->export_ldn_teu+$v->export_mty_teu;
         });
 
         $totalCalls = count($turnAroundData);
@@ -142,6 +153,11 @@ class HomeService
             'avgAnchorageTime'    => $totalCalls ? round($oaStay / $totalCalls) : 0,
             'avgBerthTime'        => $totalCalls ? round($berthStay / $totalCalls) : 0,
             'avgTurnAroundTime'   => $totalCalls ? round($turnAroundTime / $totalCalls) : 0,
+            'geared' => $geared??0,
+            'gearless' =>$gearless??0,
+            'avgBox' => $totalCalls ? round($ttlBox / $totalCalls) : 0,
+            'avgImpTeu' => $totalCalls ? round($ttlImpBox / $totalCalls) : 0,
+            'avgExpTeu' => $totalCalls ? round($ttlExpBox / $totalCalls) : 0,
         ];
     }
 

@@ -122,6 +122,7 @@
                             'iconBg' => 'bg-warning-subtle',
                             'icon' => 'fas fa-ship',
                             'valueId' => 'totalVesselCall',
+                            'element' => 'h5'
                         ],
                         [
                             'title' => 'Avg. Anchorage',
@@ -129,6 +130,7 @@
                             'iconBg' => 'bg-success-subtle',
                             'icon' => 'fas fa-anchor',
                             'valueId' => 'avgAnchorageTime',
+                            'element' => 'h5'
                         ],
                         [
                             'title' => 'Avg. Berth Stay',
@@ -136,6 +138,7 @@
                             'iconBg' => 'bg-primary-subtle',
                             'icon' => 'fas fa-clock',
                             'valueId' => 'avgBerthTime',
+                            'element' => 'h5'
                         ],
                         [
                             'title' => 'Avg. Turn Around',
@@ -143,6 +146,40 @@
                             'iconBg' => 'bg-danger-subtle',
                             'icon' => 'fas fa-sync-alt',
                             'valueId' => 'avgTurnAroundTime',
+                            'element' => 'h5'
+                        ],
+
+                        [
+                            'title' => 'Avg. Box Handling',
+                            'iconColor' => 'text-warning',
+                            'iconBg' => 'bg-warning-subtle',
+                            'icon' => 'fas fa-box-open',
+                            'valueId' => 'avgBoxHandling',
+                            'element' => 'h5'
+                        ],
+                        [
+                            'title' => 'Avg. Import (Teu)',
+                            'iconColor' => 'text-success',
+                            'iconBg' => 'bg-success-subtle',
+                            'icon' => 'fas fa-box-open',
+                            'valueId' => 'avgImportTeu',
+                            'element' => 'h5'
+                        ],
+                        [
+                            'title' => 'Avg. Export (Teu)',
+                            'iconColor' => 'text-primary',
+                            'iconBg' => 'bg-primary-subtle',
+                            'icon' => 'fas fa-balance-scale-left',
+                            'valueId' => 'avgExportTeu',
+                            'element' => 'h5'
+                        ],
+                        [
+                            'title' => 'TTL Vessel',
+                            'iconColor' => 'text-danger',
+                            'iconBg' => 'bg-danger-subtle',
+                            'icon' => 'fas fa-ship',
+                            'valueId' => 'ttlVesselByCrane',
+                            'element' => 'h6'
                         ],
                     ];
                 @endphp
@@ -159,7 +196,7 @@
                                 </div>
                                 <div>
                                     <h6 class="mb-1 small text-muted fw-semibold">{{ $card['title'] }}</h6>
-                                    <h5 id="{{ $card['valueId'] }}" class="fw-bold text-dark mb-0">--</h5>
+                                    <{{$card['element']}} id="{{ $card['valueId'] }}" class="fw-bold text-dark mb-0">--</{{$card['element']}}>
                                 </div>
                             </div>
                         </div>
