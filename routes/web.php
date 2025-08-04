@@ -18,6 +18,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/home', 'App\Http\Controllers\HomeController@index')->name('dashboard');
+    Route::post('/get_data', 'App\Http\Controllers\HomeController@getData')->name('dashboard.get_data');
 
     Route::get('profile', ['as' => 'profile.edit', 'uses' => 'App\Http\Controllers\ProfileController@edit']);
     Route::patch('profile', ['as' => 'profile.update', 'uses' => 'App\Http\Controllers\ProfileController@update']);

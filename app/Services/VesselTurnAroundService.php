@@ -20,9 +20,9 @@ class VesselTurnAroundService
 
     public function getAllVesselTurnArounds($filters)
     {
-        if (empty($filters['from_date']) && empty($filters['to_date'])) {
-            return [];
-        }
+        // if (empty($filters['from_date']) && empty($filters['to_date'])) {
+        //     return [];
+        // }
         return $this->vesselTurnAroundRepository->getAllVesselTurnArounds($filters);
     }
 

@@ -31,16 +31,18 @@
                     <div class="card-header">
                         {{-- start auto search --}}
                         <div class="row">
-                            <div class="col-sm-11"><div class="form-group">
-                                <label for="mr" class="sr-only">Auto Search</label>
-                                <input value="" type="text" name="autosearch" id="autosearch"
-                                    class="form-control form-control-sm" placeholder="Auto Search ">
-                            </div></div>
-                            <div class="col-sm-1"><button class="btn btn-success btn-sm w-100" id="btnExcelJsExport" type="button"><i
-                                class="fa fa-download" aria-hidden="true"></i> xls</button></div>
+                            <div class="col-sm-11">
+                                <div class="form-group">
+                                    <label for="mr" class="sr-only">Auto Search</label>
+                                    <input value="" type="text" name="autosearch" id="autosearch"
+                                        class="form-control form-control-sm" placeholder="Auto Search ">
+                                </div>
+                            </div>
+                            <div class="col-sm-1"><button class="btn btn-success btn-sm w-100" id="btnExcelJsExport"
+                                    type="button"><i class="fa fa-download" aria-hidden="true"></i> xls</button></div>
                         </div>
-                        
-                        
+
+
                         {{-- end auto search --}}
                     </div>
                     <div class="card-body">
@@ -68,14 +70,19 @@
                                         <td>{{ $vessel->imo_no }}</td>
                                         <td>
                                             @can('vessel-create')
-                                            <button class="btn btn-sm btn-primary edit-btn" data-id="{{ $vessel->id }}"
-                                                data-vessel_name="{{ $vessel->vessel_name }}"
-                                                data-length_overall="{{ $vessel->length_overall }}"
-                                                data-crane_status="{{ $vessel->crane_status }}"
-                                                data-nominal_capacity="{{ $vessel->nominal_capacity }}"
-                                                data-imo_no="{{ $vessel->imo_no }}">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
+                                                <button class="btn btn-sm btn-primary edit-btn" data-id="{{ $vessel->id }}"
+                                                    data-vessel_name="{{ $vessel->vessel_name }}"
+                                                    data-length_overall="{{ $vessel->length_overall }}"
+                                                    data-crane_status="{{ $vessel->crane_status }}"
+                                                    data-nominal_capacity="{{ $vessel->nominal_capacity }}"
+                                                    data-imo_no="{{ $vessel->imo_no }}">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            @endcan
+                                            @can('vessel-delete')
+                                                <button class="btn btn-sm btn-danger delete-btn" data-id="{{ $vessel->id }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
                                             @endcan
                                         </td>
                                     </tr>
@@ -127,19 +134,19 @@
                             'title' => 'Edit Vessel',
                             'size' => '',
                             'submitButton' => 'updateVesselButton',
-                            'method' => 'PUT'
+                            'method' => 'PUT',
                         ])
                             <input type="hidden" id="edit_vessel_id">
 
                             <div class="form-group">
                                 <label for="edit_vessel_name"><strong>Vessel Name:</strong></label>
-                                <input type="text" name="vessel_name" id="edit_vessel_name" class="form-control form-control-sm"
-                                    placeholder="Vessel Name">
+                                <input type="text" name="vessel_name" id="edit_vessel_name"
+                                    class="form-control form-control-sm" placeholder="Vessel Name">
                             </div>
                             <div class="form-group">
                                 <label for="edit_length_overall"><strong>Length Overall:</strong></label>
-                                <input type="text" name="length_overall" id="edit_length_overall" class="form-control form-control-sm"
-                                    placeholder="Length Overall">
+                                <input type="text" name="length_overall" id="edit_length_overall"
+                                    class="form-control form-control-sm" placeholder="Length Overall">
                             </div>
                             <div class="form-group">
                                 <label for="edit_crane_status"><strong>Crane Status:</strong></label>
@@ -150,14 +157,26 @@
                             </div>
                             <div class="form-group">
                                 <label for="edit_nominal_capacity"><strong>Nominal Capacity:</strong></label>
-                                <input type="text" name="nominal_capacity" id="edit_nominal_capacity" class="form-control form-control-sm"
-                                    placeholder="Nominal Capacity">
+                                <input type="text" name="nominal_capacity" id="edit_nominal_capacity"
+                                    class="form-control form-control-sm" placeholder="Nominal Capacity">
                             </div>
                             <div class="form-group">
                                 <label for="edit_imo_no"><strong>IMO NO:</strong></label>
                                 <input type="text" name="imo_no" id="edit_imo_no" class="form-control form-control-sm"
                                     placeholder="IMO No">
                             </div>
+                        @endcomponent
+
+                        @component('components.modal', [
+                            'id' => 'deleteVesselModal',
+                            'title' => 'Delete Vessel',
+                            'size' => '',
+                            'submitButton' => 'deleteVesselButton',
+                            'headerBgColor' => 'bg-danger',
+                            'method' => 'Delete',
+                        ])
+                            <input type="hidden" id="delete_vessel_id">
+                            <h5 class="text-center">Are you sure you want to delete this vessel? This action cannot be undone.</h5>
                         @endcomponent
 
                     </div>
@@ -223,7 +242,7 @@
 
             $('#editVesselModalForm').on('submit', function(e) {
                 e.preventDefault();
-                
+
                 var formData = new FormData(this);
                 const vesselId = $('#edit_vessel_id').val();
                 var url = '{{ route('vessels.update', ':id') }}';
@@ -256,8 +275,51 @@
                         }
                     }
                 });
-                
+
             });
+
+            $('.delete-btn').on('click', function() {
+                $('#delete_vessel_id').val($(this).data('id'));
+                $('#deleteVesselModal').modal('show');
+            });
+
+            $('#deleteVesselModalForm').on('submit', function(e) {
+                e.preventDefault();
+
+                var formData = new FormData(this);
+                const vesselId = $('#delete_vessel_id').val();
+                var url = '{{ route('vessels.destroy', ':id') }}';
+                url = url.replace(':id', vesselId);
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    enctype: 'multipart/form-data',
+                    success: function(response) {
+                        $('#deleteVesselModal').modal('hide');
+                        demo.customShowNotification('success', response.success);
+                        window.location.reload();
+                    },
+                    error: function(response) {
+                        if (response.responseJSON.error) {
+                            demo.customShowNotification('danger', response.responseJSON.error);
+                        }
+                        for (let field in response.responseJSON.errors) {
+                            for (let i = 0; i < response.responseJSON.errors[field]
+                                .length; i++) {
+                                demo.customShowNotification('danger', response.responseJSON
+                                    .errors[field][i]);
+                            }
+                        }
+                    }
+                });
+
+            });
+
         });
     </script>
 @endpush

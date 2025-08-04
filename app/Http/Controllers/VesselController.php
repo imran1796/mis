@@ -18,6 +18,7 @@ use App\Models\ImportExportCount;
 use App\Models\Mlo;
 use App\Models\MloWiseCount;
 use App\Models\Route;
+use App\Models\Vessel;
 use App\Models\VesselInfos;
 use App\Models\VesselTurnAround;
 use App\Services\VesselInfoService;
@@ -78,7 +79,21 @@ class VesselController extends Controller
         return $this->vesselService->updateVessel($vessel);
     }
     
-    public function delete(){}
+    public function destroy(Request $request,$id){
+        \DB::beginTransaction();
+        try {
+            // foreach ($data as $vessel) {
+            $vessel = Vessel::findOrFail($id);
+            $vessel->delete();
+                
+            \DB::commit();
+            return response()->json(['success' => 'Successfully Deleted Vessel'], 200);
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            Log::error('Error Deleting Vessel: ' . $e->getMessage());
+            return response()->json(['error' => "Error Deleting Vessel: " . $e->getMessage()], 500);
+        }
+    }
 
     public function getDistinctVesselInfoDates(Request $request){
         $filters = $request->only(['from_date','to_date', 'route_id']);

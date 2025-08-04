@@ -17,4 +17,20 @@
       $('#content').toggleClass('sidebar-active');
   });
 
+  function adjustSidebar() {
+	        if ($(window).width() <= 900) {
+	            $('#sidebar').addClass('active'); // Hide it
+	            $('#content').addClass('sidebar-active');
+	        } else {
+	            $('#sidebar').removeClass('active'); // Show sidebar on large screens
+	            $('#content').removeClass('sidebar-active');
+	        }
+	    }
+	
+	    // Call on page load
+	    adjustSidebar();
+	
+	    // Call on window resize
+	    $(window).resize(adjustSidebar);
+
 })(jQuery);

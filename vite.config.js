@@ -7,6 +7,8 @@ export default defineConfig({
             input: [
                 'resources/sass/app.scss',
                 'resources/js/app.js',
+                'resources/css/pages/dashboard.css',
+                'resources/js/pages/dashboard.js'
             ],
             refresh: true,
         }),

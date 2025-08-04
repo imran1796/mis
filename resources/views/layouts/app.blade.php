@@ -45,7 +45,8 @@
     <link href="{{ asset('light-bootstrap/css/select2.min.css') }}" rel="stylesheet" />
 
     <!-- Scripts -->
-    {{-- @vite(['resources/sass/app.scss', 'resources/js/app.js']) --}}
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @stack('styles')
 </head>
 
 <body>
@@ -84,6 +85,7 @@
 
         </div>
     </div>
+    @stack('scripts')
 </body>
 
 <!--   Core JS Files   -->
@@ -110,6 +112,7 @@
 <script src="{{ asset('light-bootstrap/js/plugins/chartist-plugin-pointlabels.js') }}"></script>
 {{-- <script src="{{ asset('light-bootstrap/js/plugins/chartist-plugin-barlabels.min.js') }}"></script> --}}
 <script src="{{ asset('light-bootstrap/js/plugins/chartist-plugin-barlabels2.js') }}"></script>
+{{-- <script src="{{ asset('light-bootstrap/js/plugins/chartist-plugin-tooltip.js') }}"></script> --}}
 <!--  Notifications Plugin    -->
 <script src="{{ asset('light-bootstrap/js/plugins/bootstrap-notify.js') }}"></script>
 <!-- Control Center for Light Bootstrap Dashboard: scripts for the example pages etc -->

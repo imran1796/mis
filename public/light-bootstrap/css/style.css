@@ -11906,7 +11906,7 @@ h5,
 }
 
 /* Sidebar Toggle Button */
-@media (max-width: 991.98px) {
+/* @media (max-width: 991.98px) {
   #sidebar {
     transform: translateX(-270px);
   }
@@ -11918,8 +11918,20 @@ h5,
   #sidebarCollapse span {
     display: none;
   }
-}
+} */
+@media (max-width: 991.98px) {
+  /* #sidebar {
+    margin-left: -300px; 
+  } */
 
+  #sidebar.active {
+      margin-left: -270px;
+  }
+
+  #sidebarCollapse span {
+    display: none; 
+  } 
+}
 /* Dropdown Arrow Fix */
 a[data-toggle="collapse"] {
   position: relative;

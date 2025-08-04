@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Helpers\OperatorNameHelper;
 use App\Interfaces\VesselTurnAroundInterface;
 use Illuminate\Support\Facades\Log;
 use App\Models\VesselTurnAround;
@@ -21,6 +22,22 @@ class VesselTurnAroundRepository implements VesselTurnAroundInterface
         if (!empty($filters['to_date'])) {
             $toDate = Carbon::parse($filters['to_date'])->endOfMonth();
             $query->whereDate('date', '<=', $toDate);
+        }
+        
+        if (!empty($filters['years'])) {
+            $query->whereIn(\DB::raw('YEAR(date)'), $filters['years']);
+        }
+
+        if (!empty($filters['months'])) {
+            $query->whereIn(\DB::raw('MONTH(date)'), $filters['months']);
+        }
+
+        if (!empty($filters['gear_types'])) {
+            $query->whereIn('crane_status', $filters['gear_types']);
+        }
+
+        if(!empty($filters['operators'])){
+            $query->whereIn('operator', OperatorNameHelper::expandOperators($filters['operators']));
         }
 
         return $query->get();

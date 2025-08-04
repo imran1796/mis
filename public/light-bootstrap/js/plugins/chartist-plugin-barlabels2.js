@@ -67,6 +67,7 @@
                                                 h = d.includeIndexClass ? ["ct-bar-label-i-", a.seriesIndex, "-", a.index].join("") : "",
                                                 i = b(d.thresholdPercentage, d.thresholdOptions, j, g),
                                                 k = c(d.labelPositionFnc, j, g, d.thresholdPercentage);
+                                            const txtAnchor = typeof InstallTrigger !== 'undefined' ? "end" : "start";
                                             (d = f.extend({}, d, k)),
                                                 (d.showZeroLabels || (!d.showZeroLabels && 0 != g)) &&
                                                     a.group
@@ -76,9 +77,10 @@
                                                                 x: (d.startAtBase && e.options.horizontalBars ? a.x1 : a.x2) + d.labelOffset.x,
                                                                 y: (d.startAtBase && !e.options.horizontalBars ? a.y1 : a.y2) + d.labelOffset.y,
                                                                 style: `
-                                                                    -webkit-writing-mode: vertical-lr;
+                                                                    // -webkit-writing-mode: vertical-lr;
                                                                     writing-mode: sideways-lr;
-                                                                    -ms-writing-mode: vertical-lr;
+                                                                    text-anchor: ${txtAnchor};
+                                                                    // -ms-writing-mode: vertical-lr;
                                                                     // text-anchor: ${d.textAnchor};
                                                                     // transform: rotate(-90deg);
                                                                     // transform-origin: ${d.startAtBase && e.options.horizontalBars ? 'left bottom' : 'left top'};

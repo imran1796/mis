@@ -17,9 +17,9 @@
                     @method('POST')
                 @endisset
 
-                <div class="modal-header">
+                <div class="modal-header {{ $headerBgColor ?? '' }}">
                     <h5 class="modal-title" id="{{ $id }}Label">{{ $title }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -33,7 +33,7 @@
 
                 <div class="modal-footer">
                     <div class="d-flex justify-content-end w-100">
-                        <button type="button" class="btn btn-sm btn-secondary mr-2" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-sm btn-secondary mr-2" data-bs-dismiss="modal" data-dismiss="modal">Close</button>
 
                         @isset($submitButton)
                             <button type="submit" class="btn btn-sm btn-primary" id="{{ $submitButton }}">Submit</button>
