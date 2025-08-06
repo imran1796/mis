@@ -161,7 +161,7 @@
                             'title' => 'Avg. Import (Teu)',
                             'iconColor' => 'text-success',
                             'iconBg' => 'bg-success-subtle',
-                            'icon' => 'fas fa-box-open',
+                            'icon' => 'fas fa-balance-scale-right',
                             'valueId' => 'avgImportTeu',
                             'element' => 'h5'
                         ],
