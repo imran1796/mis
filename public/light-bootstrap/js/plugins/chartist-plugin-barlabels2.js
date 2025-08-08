@@ -67,7 +67,9 @@
                                                 h = d.includeIndexClass ? ["ct-bar-label-i-", a.seriesIndex, "-", a.index].join("") : "",
                                                 i = b(d.thresholdPercentage, d.thresholdOptions, j, g),
                                                 k = c(d.labelPositionFnc, j, g, d.thresholdPercentage);
-                                            const txtAnchor = typeof InstallTrigger !== 'undefined' ? "end" : "start";
+                                            // const txtAnchor = typeof InstallTrigger !== 'undefined' ? "end" : "start";
+                                            const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
+                                            const txtAnchor = isFirefox ? "end" : "start";
                                             (d = f.extend({}, d, k)),
                                                 (d.showZeroLabels || (!d.showZeroLabels && 0 != g)) &&
                                                     a.group

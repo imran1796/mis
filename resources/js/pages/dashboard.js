@@ -114,7 +114,7 @@ $(() => {
 
     function padByDigitLength(number) {
         const length = number.toString().length;
-        const halfStep = Math.pow(10, length - 2) * 5;
+        const halfStep = Math.pow(10, length - 1);
         return number + halfStep;
     }    
 

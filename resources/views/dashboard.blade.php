@@ -179,7 +179,7 @@
                             'iconBg' => 'bg-danger-subtle',
                             'icon' => 'fas fa-ship',
                             'valueId' => 'ttlVesselByCrane',
-                            'element' => 'h6'
+                            'element' => 'h5'
                         ],
                     ];
                 @endphp
@@ -196,7 +196,7 @@
                                 </div>
                                 <div>
                                     <h6 class="mb-1 small text-muted fw-semibold">{{ $card['title'] }}</h6>
-                                    <{{$card['element']}} id="{{ $card['valueId'] }}" class="fw-bold text-dark mb-0">--</{{$card['element']}}>
+                                    <h5 id="{{ $card['valueId'] }}" class="fw-bold text-dark mb-0 lh-sm2">--</h5>
                                 </div>
                             </div>
                         </div>

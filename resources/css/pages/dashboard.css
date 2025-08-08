@@ -1,3 +1,9 @@
+.lh-1    { line-height: 1 !important; }
+.lh-sm   { line-height: 1.25 !important; }
+.lh-base { line-height: 1.5 !important; }
+.lh-lg   { line-height: 2 !important; }
+.lh-sm2   { line-height: 1.25rem; }
+
 .btn-xs {
     padding: .25rem .4rem;
     font-size: 12px !important;
