@@ -1,7 +1,8 @@
 @extends('layouts.app', ['activePage' => 'dashboard', 'title' => 'GLA Admin', 'navName' => 'Dashboard', 'activeButton' => 'laravel'])
 
 @push('styles')
-    @vite('resources/css/pages/dashboard.css')
+    {{-- @vite('resources/css/pages/dashboard.css') --}}
+    <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet" />
 @endpush
 
 @section('content')
@@ -524,7 +525,8 @@
     </div>
 @endsection
 
-@push('scripts')
+@push('js')
+    <script src="{{ asset('js/dashboard.js') }}" type="text/javascript"></script>
     <script>
         window.dashboardRoutes = {
             getData: "{{ route('dashboard.get_data') }}"
@@ -546,5 +548,5 @@
             }
         });
     </script>
-    @vite('resources/js/pages/dashboard.js')
+    {{-- @vite('resources/js/pages/dashboard.js') --}}
 @endpush

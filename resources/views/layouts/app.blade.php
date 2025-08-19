@@ -45,7 +45,7 @@
     <link href="{{ asset('light-bootstrap/css/select2.min.css') }}" rel="stylesheet" />
 
     <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    {{-- @vite(['resources/sass/app.scss', 'resources/js/app.js']) --}}
     @stack('styles')
 </head>
 

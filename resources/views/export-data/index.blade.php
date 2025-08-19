@@ -283,7 +283,7 @@
                         {{-- end auto search --}}
                     </div>
                     <div class="card-body">
-                        <table id="excelJsTable" class="tableFixHead table-bordered table2excel custom-table-report mb-3">
+                        <table id="excelJsTable" class="tableFixHead table-sm table-bordered table2excel custom-table-report mb-3">
                             <thead>
                                 @php
                                     $colspan = match (substr_count(request('report_type'), '_')) {
