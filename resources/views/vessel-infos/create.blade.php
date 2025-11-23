@@ -164,11 +164,15 @@
                     },
                     error: function(response) {
                         let res = response.responseJSON;
-                        if (res?.error) demo.customShowNotification('danger', res.error);
-                        if (res?.errors) {
-                            Object.values(res.errors).forEach(msgs => msgs.forEach(msg => demo
-                                .customShowNotification('danger', msg)));
+                        if (res?.error){
+                            const error = res.error;
+                            const message = Array.isArray(error) ? error.join('\n') : error;
+                            demo.customShowNotification('danger', message, true);
                         }
+                        // if (res?.errors) {
+                        //     Object.values(res.errors).forEach(msgs => msgs.forEach(msg => demo
+                        //         .customShowNotification('danger', msg)));
+                        // }
                     }
                 });
             });

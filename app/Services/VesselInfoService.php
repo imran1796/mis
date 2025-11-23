@@ -31,12 +31,109 @@ class VesselInfoService
         }
     }
 
+    // public function createVesselWiseData($data)
+    // {
+    //     $rows = Excel::toArray([], $data['file'])[0] ?? [];
+
+    //     if (count($rows) < 3) {
+    //         Log::error('Invalid Excel Structure');
+    //         return response()->json(['error' => 'Invalid Excel Structure'], 422);
+    //     }
+
+    //     $routeId = $data['route_id'];
+    //     $date = Carbon::createFromFormat('d-M-Y', '01-' . $data['date'])->startOfMonth();
+    //     $vesselInfoRecords = [];
+    //     $importExportRecords = [];
+
+    //     \DB::beginTransaction();
+    //     try {
+    //         foreach (array_slice($rows, 3) as $index => $row) {
+    //             if (strtoupper(trim($row[0] ?? '')) === 'GRAND TOTAL') break;
+    //             if (empty($row[0])) {
+    //                 continue;
+    //             }
+    //             $vesselName = strtoupper(trim($row[1]));
+    //             if (!$vesselName) {
+    //                 \Log::error("Row {$index}: Vessel name is empty");
+    //                 return response()->json(['error' => "Row {$index}: Vessel name is empty"], 422);
+    //             }
+
+    //             $vessel = $this->vesselService->getVesselByName($vesselName);
+    //             if (!$vessel) {
+    //                 \Log::error("Row {$index}: Vessel not found: $vesselName");
+    //                 return response()->json(['error' => "Row {$index}: Vessel not found: $vesselName"], 422);
+    //             }
+
+    //             $requiredFields = [
+    //                 'operator' => trim($row[5]) ?? '',
+    //                 'rotation_no' => trim($row[29]) ?? '',
+    //                 'arrival_date' => $row[2] ? Carbon::createFromFormat('d.m.y', $row[2])->format('Y-m-d') : '',
+    //                 'berth_date' => $row[3] ? Carbon::createFromFormat('d.m.y', $row[3])->format('Y-m-d') : '',
+    //                 'sail_date' => $row[4] ? Carbon::createFromFormat('d.m.y', $row[4])->format('Y-m-d') : '',
+    //                 'jetty' => trim($row[32]) ?? '',
+    //                 'local_agent' => trim($row[33]) ?? '',
+    //             ];
+
+    //             foreach ($requiredFields as $fieldName => $value) {
+    //                 if (empty($value)) {
+    //                     \Log::error("Missing $fieldName for vessel: $vesselName");
+    //                     return response()->json(['error' => "Missing $fieldName for vessel: $vesselName"], 422);
+    //                 }
+    //             }
+
+    //             $vesselInfoData = [
+    //                 'vessel_id' => $vessel->id,
+    //                 'route_id' => $routeId,
+    //                 'rotation_no' => $requiredFields['rotation_no'],
+    //                 'jetty' => $requiredFields['jetty'],
+    //                 'operator' => $requiredFields['operator'],
+    //                 'local_agent' => $requiredFields['local_agent'],
+    //                 'effective_capacity' => !empty($row[30]) ? intval($row[30]) * 0.8 : $vessel->nominal_capacity * 0.8,
+    //                 'arrival_date' => $requiredFields['arrival_date'],
+    //                 'berth_date' => $requiredFields['berth_date'],
+    //                 'sail_date' => $requiredFields['sail_date'],
+    //                 'date' => $date,
+    //             ];
+
+    //             // $vesselInfoRecords[] = $vesselInfoData;
+    //             $vesselInfo = $this->vesselInfoRepository->createVesselInfos($vesselInfoData);
+    //             if (!$vesselInfo) {
+    //                 \DB::rollBack();
+    //                 \Log::error("Failed to insert vessel info");
+    //                 return response()->json(['error' => "Failed to insert vessel info"], 500);
+    //             }
+
+    //             $importCols = array_slice($row, 9, 7);
+    //             $exportCols = array_slice($row, 19, 7);
+    //             $importData = $this->buildRow($vesselInfo->id, 'import', $importCols);
+    //             $exportData = $this->buildRow($vesselInfo->id, 'export', $exportCols);
+
+    //             $importSuccess = $this->vesselInfoRepository->createImportExportCount($importData);
+    //             $exportSuccess = $this->vesselInfoRepository->createImportExportCount($exportData);
+
+    //             if (!$importSuccess || !$exportSuccess) {
+    //                 \DB::rollBack();
+    //                 \Log::error("Failed to insert import/export counts");
+    //                 return response()->json(['error' => "Failed to insert import/export counts"], 500);
+    //             }
+    //         }
+
+    //         \DB::commit();
+    //         return response()->json(['success' => 'Successfully Uploaded'], 200);
+    //     } catch (\Throwable $e) {
+    //         \DB::rollBack();
+    //         \Log::error('Filed To Upload Vessel Wise Data: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+    //         return response()->json(['error' => 'An unexpected error occurred.'], 500);
+    //     }
+    // }
+
+
     public function createVesselWiseData($data)
     {
         $rows = Excel::toArray([], $data['file'])[0] ?? [];
 
         if (count($rows) < 3) {
-            Log::error('Invalid Excel Structure');
+            \Log::error('Invalid Excel Structure');
             return response()->json(['error' => 'Invalid Excel Structure'], 422);
         }
 
@@ -45,6 +142,92 @@ class VesselInfoService
         $vesselInfoRecords = [];
         $importExportRecords = [];
 
+        // First pass: validate entire sheet and collect all errors (including missing vessels)
+        $validationErrors = [];
+        $vesselCache = [];
+
+        foreach (array_slice($rows, 3) as $index => $row) {
+            $excelRow = $index + 4; // actual excel row number for clearer messages
+
+            if (strtoupper(trim($row[0] ?? '')) === 'GRAND TOTAL') break;
+            if (empty($row[0])) {
+                continue;
+            }
+
+            $vesselName = strtoupper(trim($row[1] ?? ''));
+            if (!$vesselName) {
+                $validationErrors[] = "Row {$excelRow}: Vessel name is empty";
+                continue;
+            }
+
+            // cache vessel lookup
+            if (!isset($vesselCache[$vesselName])) {
+                $vessel = $this->vesselService->getVesselByName($vesselName);
+                $vesselCache[$vesselName] = $vessel; // may be null
+            } else {
+                $vessel = $vesselCache[$vesselName];
+            }
+
+            if (!$vessel) {
+                $validationErrors[] = "Row {$excelRow}: Vessel not found: {$vesselName}";
+                continue;
+            }
+
+            // required fields
+            $operator = trim($row[5] ?? '') ?? '';
+            $rotation_no = trim($row[29] ?? '') ?? '';
+            $arrival_raw = $row[2] ?? '';
+            $berth_raw = $row[3] ?? '';
+            $sail_raw = $row[4] ?? '';
+            $jetty = trim($row[32] ?? '') ?? '';
+            $local_agent = trim($row[33] ?? '') ?? '';
+
+            if (empty($operator)) $validationErrors[] = "Row {$excelRow}: Missing operator for vessel {$vesselName}";
+            if (empty($rotation_no)) $validationErrors[] = "Row {$excelRow}: Missing rotation_no for vessel {$vesselName}";
+            if (empty($jetty)) $validationErrors[] = "Row {$excelRow}: Missing jetty for vessel {$vesselName}";
+            if (empty($local_agent)) $validationErrors[] = "Row {$excelRow}: Missing local_agent for vessel {$vesselName}";
+
+            // date parsing checks (but allow empty to be treated as missing)
+            try {
+                if ($arrival_raw) {
+                    Carbon::createFromFormat('d.m.y', $arrival_raw);
+                } else {
+                    $validationErrors[] = "Row {$excelRow}: Missing arrival_date for vessel {$vesselName}";
+                }
+            } catch (\Throwable $e) {
+                $validationErrors[] = "Row {$excelRow}: Invalid arrival_date format for vessel {$vesselName}";
+            }
+
+            try {
+                if ($berth_raw) {
+                    Carbon::createFromFormat('d.m.y', $berth_raw);
+                } else {
+                    $validationErrors[] = "Row {$excelRow}: Missing berth_date for vessel {$vesselName}";
+                }
+            } catch (\Throwable $e) {
+                $validationErrors[] = "Row {$excelRow}: Invalid berth_date format for vessel {$vesselName}";
+            }
+
+            try {
+                if ($sail_raw) {
+                    Carbon::createFromFormat('d.m.y', $sail_raw);
+                } else {
+                    $validationErrors[] = "Row {$excelRow}: Missing sail_date for vessel {$vesselName}";
+                }
+            } catch (\Throwable $e) {
+                $validationErrors[] = "Row {$excelRow}: Invalid sail_date format for vessel {$vesselName}";
+            }
+        }
+
+        if (!empty($validationErrors)) {
+            // return all collected errors at once; frontend can show persistent notification
+            \Log::error('Validation errors during vessel upload', ['errors' => $validationErrors]);
+            return response()->json([
+                'error' => $validationErrors,
+            ], 422);
+        }
+
+        // All validation passed - proceed with DB inserts
         \DB::beginTransaction();
         try {
             foreach (array_slice($rows, 3) as $index => $row) {
@@ -52,18 +235,10 @@ class VesselInfoService
                 if (empty($row[0])) {
                     continue;
                 }
+
                 $vesselName = strtoupper(trim($row[1]));
-                if (!$vesselName) {
-                    \Log::error("Row {$index}: Vessel name is empty");
-                    return response()->json(['error' => "Row {$index}: Vessel name is empty"], 422);
-                }
-
-                $vessel = $this->vesselService->getVesselByName($vesselName);
-                if (!$vessel) {
-                    \Log::error("Row {$index}: Vessel not found: $vesselName");
-                    return response()->json(['error' => "Row {$index}: Vessel not found: $vesselName"], 422);
-                }
-
+                $vessel = $this->vesselService->getVesselByName($vesselName); // cached earlier, but safe to fetch
+                // build required fields (parsing now safe)
                 $requiredFields = [
                     'operator' => trim($row[5]) ?? '',
                     'rotation_no' => trim($row[29]) ?? '',
@@ -73,13 +248,6 @@ class VesselInfoService
                     'jetty' => trim($row[32]) ?? '',
                     'local_agent' => trim($row[33]) ?? '',
                 ];
-
-                foreach ($requiredFields as $fieldName => $value) {
-                    if (empty($value)) {
-                        \Log::error("Missing $fieldName for vessel: $vesselName");
-                        return response()->json(['error' => "Missing $fieldName for vessel: $vesselName"], 422);
-                    }
-                }
 
                 $vesselInfoData = [
                     'vessel_id' => $vessel->id,
@@ -95,7 +263,6 @@ class VesselInfoService
                     'date' => $date,
                 ];
 
-                // $vesselInfoRecords[] = $vesselInfoData;
                 $vesselInfo = $this->vesselInfoRepository->createVesselInfos($vesselInfoData);
                 if (!$vesselInfo) {
                     \DB::rollBack();

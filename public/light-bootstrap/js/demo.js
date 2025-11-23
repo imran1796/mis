@@ -734,19 +734,32 @@ demo = {
         });
     },
 
-    customShowNotification: function (type, msg) {
+    customShowNotification: function (type, msg, sticky=false) {
+        const formattedMsg = msg.replace(/\n/g, '<br>');
         color = Math.floor((Math.random() * 4) + 1);
 
         $.notify({
             icon: "nc-icon nc-app",
-            message: msg
-        }, {
+            message: formattedMsg
+        }, 
+        // {
+        //     type: type,
+        //     timer: 8000,
+        //     placement: {
+        //         from: 'top',
+        //         align: 'right',
+        //     }
+        // });
+        {
             type: type,
-            timer: 8000,
+            allow_dismiss: true,
+            delay: sticky ? 0 : 8000,
+            timer: sticky ? 0 : 8000,
             placement: {
                 from: 'top',
-                align: 'right',
-            }
+                align: 'right'
+            },
+            z_index: 999999,
         });
     }
 
